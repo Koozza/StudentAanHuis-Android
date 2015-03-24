@@ -1,0 +1,160 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:orientation="vertical"
+    android:background="#EAF3FA"
+    tools:context=".LoginActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:scaleType="center"
+        android:src="@drawable/logo"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="0.3"
+        android:orientation="vertical">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="40dp"/>
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.8"
+                android:textSize="16dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:hint="@string/username"
+                android:textColor="#7db2d3"
+                android:textColorHint="#a9c4d5"
+                android:singleLine="true"
+                android:letterSpacing="0"
+                android:background="@drawable/login_username_background"
+                android:id="@+id/login_username" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="40dp"/>
+
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="1dp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="0.05"
+                android:background="#FFFFFF"
+                android:layout_height="1dp"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.7"
+                android:layout_height="1dp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="0.05"
+                android:background="#FFFFFF"
+                android:layout_height="1dp"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="1dp"/>
+
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="40dp"/>
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.8"
+                android:textSize="16dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:hint="@string/password"
+                android:textColor="#7db2d3"
+                android:textColorHint="#a9c4d5"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:letterSpacing="0"
+                android:background="@drawable/login_password_background"
+                android:id="@+id/login_password" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="40dp"/>
+
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="40dp"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.8"
+                android:textSize="16dp"
+                android:text="@string/login"
+                android:textStyle="bold"
+                android:textColor="#257ca6"
+                android:background="@drawable/btn_rounded_background"
+                android:id="@+id/login_btn_login"
+                android:onClick="doLogin"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="40dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_weight="0.12"
+        android:layout_height="0dp"/>
+    <TextView
+        android:layout_weight="0.08"
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:textSize="12dp"
+        android:text="Thijs Dalmaijer"
+        android:textColor="#257ca6"
+        android:gravity="center"/>
+</LinearLayout>
