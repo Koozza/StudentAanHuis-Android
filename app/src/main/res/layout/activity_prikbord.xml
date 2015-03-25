@@ -1,12 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#EAF3FA"
     android:orientation="vertical" >
 
-    <ListView
+    <ExpandableListView
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/prikbordList"
-        android:background="#ffffff"/>
+        android:id="@+id/prikbordList"/>
 
 </LinearLayout>

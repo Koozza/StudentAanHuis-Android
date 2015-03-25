@@ -6,8 +6,11 @@
     <string name="password">Wachtwoord</string>
     <string name="login">Login</string>
     <string name="title_activity_prikbord">PrikbordActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="location">Locatie:</string>
+    <string name="status">Status:</string>
+    <string name="tags">Tags:</string>
+    <string name="available">Beschikbaar</string>
+    <string name="unavailable">Niet beschikbaar</string>
+    <string name="none">Niet aangegeven</string>
 
 </resources>

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.apache.http.Header;
 import org.apache.http.HttpException;
@@ -40,7 +39,6 @@ public class LoginHTTPHandler {
                 client.getSource(obj, new Callback() {
                     @Override
                     public void onTaskCompleted(String result) {
-
                         Document doc = Jsoup.parse(result);
                         Elements elements = doc.select("h1");
                         for (Element element : elements) {

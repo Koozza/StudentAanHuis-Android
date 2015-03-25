@@ -1,7 +1,14 @@
 package com.thijsdev.studentaanhuis;
 
+import android.util.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class PrikbordItem {
-    private int id;
+    private int id, beschikbaar;
     private String type, adres, deadline, beschrijving;
 
     public int getId() {
@@ -32,8 +39,34 @@ public class PrikbordItem {
         return deadline;
     }
 
+    public Date getDeadlineDateObject() {
+        Date date = new Date();
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            date = dateFormat.parse(deadline);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
     public void setDeadline(String deadline) {
         this.deadline = deadline;
+    }
+
+    public void setDeadlineFromWebsite(String deadline) {
+        deadline = fixDate(deadline);
+
+        SimpleDateFormat importDateFormat = new SimpleDateFormat("dd MM yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        try {
+            Date date = importDateFormat.parse(deadline);
+            this.deadline = dateFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Log.v("DATE:", this.deadline);
     }
 
     public String getBeschrijving() {
@@ -42,5 +75,39 @@ public class PrikbordItem {
 
     public void setBeschrijving(String beschrijving) {
         this.beschrijving = beschrijving;
+    }
+
+    //0 = onbekend, 1 = niet beschikbaar, 2 = beschikbaar
+    public int getBeschikbaar() {
+        return beschikbaar;
+    }
+
+    public void setBeschikbaar(int beschikbaar) {
+        this.beschikbaar = beschikbaar;
+    }
+
+    private String fixDate(String date) {
+        date = date.replace("jan", "01");
+        date = date.replace("feb", "02");
+        date = date.replace("mrt", "03");
+        date = date.replace("apr", "04");
+        date = date.replace("mei", "05");
+        date = date.replace("jun", "06");
+        date = date.replace("jul", "07");
+        date = date.replace("aug", "08");
+        date = date.replace("sep", "09");
+        date = date.replace("okt", "10");
+        date = date.replace("nov", "11");
+        date = date.replace("dec", "12");
+
+        date = date.replace("maa ", "");
+        date = date.replace("din ", "");
+        date = date.replace("woe ", "");
+        date = date.replace("don ", "");
+        date = date.replace("vri ", "");
+        date = date.replace("zat ", "");
+        date = date.replace("zon ", "");
+
+        return date;
     }
 }
