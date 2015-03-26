@@ -1,13 +1,13 @@
 package com.thijsdev.studentaanhuis;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 public class LoginActivity extends Activity {
@@ -24,31 +24,8 @@ public class LoginActivity extends Activity {
         client.init();
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void doLogin(View view) {
-        RelativeLayout loadingScreen = (RelativeLayout) this.findViewById(R.id.login_loading);
+        final RelativeLayout loadingScreen = (RelativeLayout) this.findViewById(R.id.login_loading);
         loadingScreen.setVisibility(View.VISIBLE);
 
         LoginHTTPHandler lh = new LoginHTTPHandler();
@@ -61,6 +38,29 @@ public class LoginActivity extends Activity {
         else
             uname = username.getText().toString();
 
-        lh.doLogin(client, this, uname, password.getText().toString());
+        final Activity activity = this;
+
+        lh.doLogin(client, this, uname, password.getText().toString(), new Callback() {
+            @Override
+            public void onTaskCompleted(String result) {
+                //Werkgebieden ophalen
+                WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+                werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
+                    @Override
+                    public void onTaskCompleted(String result) {
+                        Intent goToNextActivity = new Intent(getApplicationContext(), PrikbordActivity.class);
+                        startActivity(goToNextActivity);
+                        finish();
+                    }
+                });
+            }
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(String result) {
+                TextView error = (TextView) findViewById(R.id.login_error);
+                error.setText(result);
+                loadingScreen.setVisibility(View.GONE);
+            }
+        });
     }
 }

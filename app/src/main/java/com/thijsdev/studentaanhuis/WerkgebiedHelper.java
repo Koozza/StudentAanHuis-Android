@@ -80,4 +80,10 @@ public class WerkgebiedHelper {
         final DatabaseHandler db = new DatabaseHandler(context);
         return db.getActiveWerkgebieden().get(0).getLocation();
     }
+
+    public void forceUpdateWerkgebieden(final Activity activity, Callback callback) {
+        final DatabaseHandler db = new DatabaseHandler(activity);
+        db.deleteAllWerkgebieden();
+        updateWerkgebieden(activity, callback);
+    }
 }

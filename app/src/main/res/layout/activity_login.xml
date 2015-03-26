@@ -16,9 +16,21 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.0"
+            android:layout_weight="0.9"
             android:scaleType="center"
             android:src="@drawable/logo"/>
+
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"
+            android:text=""
+            android:textColor="#257ca6"
+            android:gravity="center"
+            android:id="@+id/login_error"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"

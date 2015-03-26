@@ -1,4 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.thijsdev.studentaanhuis.PrikbordActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".LoginActivity">
+    <item android:id="@+id/action_force_reload_werkgebied" android:title="@string/force_reload_werkgebieden"
+        android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_force_reload_prikbord" android:title="@string/force_reload_prikbord"
+        android:orderInCategory="100" android:showAsAction="never" />
 </menu>

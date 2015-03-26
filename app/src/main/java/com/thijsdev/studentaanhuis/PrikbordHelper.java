@@ -73,6 +73,13 @@ public class PrikbordHelper {
         });
     }
 
+    public void forceUpdatePrikbordItems(final Activity activity, final PrikbordAdapter prikbordAdapter) {
+        final DatabaseHandler db = new DatabaseHandler(activity);
+        db.deleteAllPrikbordItems();
+        prikbordAdapter.clearItems();
+        updatePrikbordItems(activity, prikbordAdapter);
+    }
+
     public void declineItem(Context context, final PrikbordItem item, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
         final HttpClientClass client = HttpClientClass.getInstance();

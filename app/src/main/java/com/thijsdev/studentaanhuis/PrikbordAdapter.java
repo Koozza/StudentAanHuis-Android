@@ -36,6 +36,11 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
+    public void clearItems() {
+        mData.clear();
+        notifyDataSetChanged();
+    }
+
     public boolean isChildSelectable(int arg0, int arg1) {
         return true;
     }
@@ -179,8 +184,8 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(_context);
-        builder.setMessage("Weet je zeker dat je deze afspraak niet kan doen?").setPositiveButton("Ja", dialogClickListener)
-                .setNegativeButton("Nee", dialogClickListener).show();
+        builder.setMessage(_context.getString(R.string.sure_you_cant_do_appointment)).setPositiveButton(_context.getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(_context.getString(R.string.no), dialogClickListener).show();
     }
 
     private void acceptOnClick(final int position) {
@@ -193,7 +198,7 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         input.setGravity(Gravity.TOP | Gravity.LEFT);
         builder.setView(input);
 
-        builder.setPositiveButton("Verder", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(_context.getString(R.string.continu), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String userinput = input.getText().toString().trim();
@@ -204,7 +209,7 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(_context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -236,7 +241,7 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(_context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();

@@ -2,7 +2,6 @@ package com.thijsdev.studentaanhuis;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import org.apache.http.Header;
@@ -57,7 +56,7 @@ public class LoginHTTPHandler {
         }
     }
 
-    public void doLogin(final HttpClientClass client, final Activity activity, final String username, final String password) {
+    public void doLogin(final HttpClientClass client, final Activity activity, final String username, final String password, final Callback succes, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/login");
@@ -86,13 +85,13 @@ public class LoginHTTPHandler {
                         client.doPost(obj, new Callback() {
                             @Override
                             public void onTaskCompleted(String result) {
-                                WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
-                                werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
-                                    @Override
-                                    public void onTaskCompleted(String result) {
-                                        launchPrikbord(activity);
-                                    }
-                                });
+                                Document doc = Jsoup.parse(result);
+                                Element content = doc.getElementById("flash_alert");
+
+                                if(content == null)
+                                    succes.onTaskCompleted("");
+                                else
+                                    failure.onTaskCompleted(content.text());
                             }
                         });
                     } catch (JSONException e) {
@@ -123,17 +122,5 @@ public class LoginHTTPHandler {
                 edit.commit();
             }
         }
-    }
-
-    private void launchLogin(Activity activity) {
-        Intent goToNextActivity = new Intent(activity.getApplicationContext(), LoginActivity.class);
-        activity.startActivity(goToNextActivity);
-        activity.finish();
-    }
-
-    private void launchPrikbord(Activity activity) {
-        Intent goToNextActivity = new Intent(activity.getApplicationContext(), PrikbordActivity.class);
-        activity.startActivity(goToNextActivity);
-        activity.finish();
     }
 }

@@ -135,6 +135,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    // Deleting all items
+    public void deleteAllPrikbordItems() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_PITEMS);
+        db.close();
+    }
+
     /**
      * All CRUD functions for Werkgebieden
      */
@@ -255,6 +262,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_WERKGEBIEDEN, "id = ?",
                 new String[] { String.valueOf(item.getId()) });
+        db.close();
+    }
+
+    // Deleting all items
+    public void deleteAllWerkgebieden() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_WERKGEBIEDEN);
         db.close();
     }
 }

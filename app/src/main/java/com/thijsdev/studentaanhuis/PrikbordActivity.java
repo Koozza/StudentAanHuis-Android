@@ -2,14 +2,18 @@ package com.thijsdev.studentaanhuis;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 public class PrikbordActivity extends Activity {
-    ListView listView ;
+    PrikbordAdapter mAdapter = null;
+    PrikbordHelper prikbordHelper = new PrikbordHelper();
+    WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +21,8 @@ public class PrikbordActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_prikbord);
 
-        final PrikbordAdapter mAdapter = new PrikbordAdapter(this);
+        mAdapter = new PrikbordAdapter(this);
 
-        PrikbordHelper prikbordHelper = new PrikbordHelper();
         prikbordHelper.updatePrikbordItems(this, mAdapter);
 
         ExpandableListView lv = (ExpandableListView) findViewById(R.id.prikbordList);
@@ -31,5 +34,36 @@ public class PrikbordActivity extends Activity {
             }
         });
         lv.setAdapter(mAdapter);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_prikbord, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_force_reload_prikbord) {
+            prikbordHelper.forceUpdatePrikbordItems(this, mAdapter);
+            return true;
+        }
+
+        if(id == R.id.action_force_reload_werkgebied) {
+            final RelativeLayout loadingScreen = (RelativeLayout) this.findViewById(R.id.prikbord_loading);
+            loadingScreen.setVisibility(View.VISIBLE);
+            werkgebiedHelper.forceUpdateWerkgebieden(this, new Callback() {
+                @Override
+                public void onTaskCompleted(String result) {
+                    loadingScreen.setVisibility(View.GONE);
+                }
+            });
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
