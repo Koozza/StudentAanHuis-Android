@@ -88,14 +88,16 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
             holder.DeclinedImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    declineOnClick(position);
+                    if(mData.get(position).getBeschikbaar() == 0 || mData.get(position).getBeschikbaar() == 2)
+                        declineOnClick(position);
                 }
             });
 
             holder.AcceptedImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    acceptOnClick(position);
+                    if(mData.get(position).getBeschikbaar() == 0 || mData.get(position).getBeschikbaar() == 1)
+                        acceptOnClick(position);
                 }
             });
         } else {
