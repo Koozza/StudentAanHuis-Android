@@ -20,7 +20,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_PITEMS + "(id INTEGER PRIMARY KEY,adres TEXT,beschrijving TEXT,type TEXT,deadline DATETIME,beschikbaar INTEGER)";
+        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_PITEMS + "(id INTEGER PRIMARY KEY,adres TEXT,beschrijving TEXT,type TEXT,deadline DATETIME,beschikbaar INTEGER,lat REAL,lng REAL)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 

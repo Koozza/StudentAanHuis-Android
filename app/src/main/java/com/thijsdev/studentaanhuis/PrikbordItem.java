@@ -1,5 +1,6 @@
 package com.thijsdev.studentaanhuis;
 
+import android.location.Location;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -10,6 +11,7 @@ import java.util.Locale;
 public class PrikbordItem {
     private int id, beschikbaar;
     private String type, adres, deadline, beschrijving;
+    private double lat, lng;
 
     public int getId() {
         return id;
@@ -37,6 +39,15 @@ public class PrikbordItem {
 
     public String getDeadline() {
         return deadline;
+    }
+
+    public String getFormatedDeadline(String format, Locale locale) {
+        if(locale == null)
+            locale = Locale.getDefault();
+
+        Date date = getDeadlineDateObject();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, locale);
+        return dateFormat.format(date);
     }
 
     public Date getDeadlineDateObject() {
@@ -84,6 +95,29 @@ public class PrikbordItem {
 
     public void setBeschikbaar(int beschikbaar) {
         this.beschikbaar = beschikbaar;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
+    public Location getLocation() {
+        Location l = new Location("");
+        l.setLatitude(lat);
+        l.setLongitude(lng);
+        return l;
     }
 
     private String fixDate(String date) {
