@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Location;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -116,12 +117,17 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         }
 
         holder.locatie.setText(mData.get(position).getAdres());
+        Location werkgebiedLocation = werkgebiedHelper.getFirstWerkgebiedLocation(_context);
 
-        int distance = locHelper.getDistanceBetweenLocations(werkgebiedHelper.getFirstWerkgebiedLocation(_context), mData.get(position).getLocation());
-        if(distance < 1000) {
-            holder.Distance.setText(Integer.toString(distance) + " Meter");
-        }else {
-            holder.Distance.setText(Float.toString((float) ((int) (distance / 100)) / 10f) + " Kilometer");
+        if(werkgebiedLocation != null) {
+            int distance = locHelper.getDistanceBetweenLocations(werkgebiedLocation, mData.get(position).getLocation());
+            if (distance < 1000) {
+                holder.Distance.setText(Integer.toString(distance) + " Meter");
+            } else {
+                holder.Distance.setText(Float.toString((float) ((int) (distance / 100)) / 10f) + " Kilometer");
+            }
+        }else{
+            holder.Distance.setText("UNKNOWN - Probably a bug!");
         }
 
         return convertView;
