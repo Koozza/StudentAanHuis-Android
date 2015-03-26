@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 
 public class LoginActivity extends Activity {
@@ -47,11 +48,19 @@ public class LoginActivity extends Activity {
     }
 
     public void doLogin(View view) {
-        //getUsername();
+        RelativeLayout loadingScreen = (RelativeLayout) this.findViewById(R.id.login_loading);
+        loadingScreen.setVisibility(View.VISIBLE);
+
         LoginHTTPHandler lh = new LoginHTTPHandler();
         EditText username = (EditText) this.findViewById(R.id.login_username);
         EditText password = (EditText) this.findViewById(R.id.login_password);
+        String uname;
 
-        lh.doLogin(client, this, username.getText().toString(), password.getText().toString());
+        if(!username.toString().contains("@"))
+            uname = username.getText().toString() + "@studentaanhuis.nl";
+        else
+            uname = username.getText().toString();
+
+        lh.doLogin(client, this, uname, password.getText().toString());
     }
 }

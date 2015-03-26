@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 
 import org.apache.http.Header;
 import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -88,7 +86,13 @@ public class LoginHTTPHandler {
                         client.doPost(obj, new Callback() {
                             @Override
                             public void onTaskCompleted(String result) {
-                                launchPrikbord(activity);
+                                WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+                                werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
+                                    @Override
+                                    public void onTaskCompleted(String result) {
+                                        launchPrikbord(activity);
+                                    }
+                                });
                             }
                         });
                     } catch (JSONException e) {
@@ -119,19 +123,6 @@ public class LoginHTTPHandler {
                 edit.commit();
             }
         }
-    }
-
-    private class SessionInjector implements HttpRequestInterceptor {
-        private String session;
-        public SessionInjector(String _session) {
-            session = _session;
-        }
-
-        @Override
-        public void process(HttpRequest request, HttpContext context)  throws HttpException, IOException {
-            request.setHeader("Cookie", session);
-        }
-
     }
 
     private void launchLogin(Activity activity) {

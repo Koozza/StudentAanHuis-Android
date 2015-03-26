@@ -114,10 +114,11 @@ public class PrikbordItem {
     }
 
     public Location getLocation() {
-        Location l = new Location("");
-        l.setLatitude(lat);
-        l.setLongitude(lng);
-        return l;
+        Location tempLoc = new Location("");
+        tempLoc.setLatitude(lat);
+        tempLoc.setLongitude(lng);
+
+        return tempLoc;
     }
 
     private String fixDate(String date) {

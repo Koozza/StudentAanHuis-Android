@@ -5,17 +5,29 @@
     android:orientation="vertical"
     android:background="#EAF3FA"
     tools:context=".LoginActivity">
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5" />
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.0"
+        android:layout_height="wrap_content"
         android:scaleType="center"
         android:src="@drawable/logo"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/sah_progress"/>
 
     <TextView
-        android:layout_weight="0.08"
+        android:layout_weight="0.2"
         android:layout_width="fill_parent"
         android:layout_height="10dp"
         android:textSize="12dp"

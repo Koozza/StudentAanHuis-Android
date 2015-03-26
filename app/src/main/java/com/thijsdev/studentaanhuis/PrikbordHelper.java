@@ -1,26 +1,21 @@
 package com.thijsdev.studentaanhuis;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.protocol.HttpContext;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-
 public class PrikbordHelper {
     public void updatePrikbordItems(final Activity activity, final PrikbordAdapter prikbordAdapter) {
         final DatabaseHandler db = new DatabaseHandler(activity);
         final HttpClientClass client = HttpClientClass.getInstance();
-        final PrikbordHTTPHandler PrikbordHttpHandler = new PrikbordHTTPHandler();
+        final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
-        PrikbordHttpHandler.getPrikbordItems(client, activity, new Callback() {
+        prikbordHttpHandler.getPrikbordItems(client, activity, new Callback() {
             @Override
             public void onTaskCompleted(String result) {
 
@@ -41,7 +36,7 @@ public class PrikbordHelper {
                             pi.setId(id);
 
                             //Ophalen van details
-                            PrikbordHttpHandler.getPrikbordItem(client, activity, id, new Callback() {
+                            prikbordHttpHandler.getPrikbordItem(client, activity, id, new Callback() {
                                 @Override
                                 public void onTaskCompleted(String result) {
                                     Document doc = Jsoup.parse(result);
@@ -56,6 +51,12 @@ public class PrikbordHelper {
                                         pi.setBeschikbaar(2);
                                     else
                                         pi.setBeschikbaar(0);
+
+                                    String loc = doc.getElementById("appt_map_canvas").attr("data-positions").substring(1, doc.getElementById("appt_map_canvas").attr("data-positions").length() - 1);
+                                    String[] coords = loc.split(",");
+
+                                    pi.setLat(Double.parseDouble(coords[0]));
+                                    pi.setLng(Double.parseDouble(coords[1]));
 
                                     db.addPrikbordItem(pi);
                                     prikbordAdapter.addItem(pi);
@@ -72,16 +73,35 @@ public class PrikbordHelper {
         });
     }
 
-    private class SessionInjector implements HttpRequestInterceptor {
-        private String session;
-        public SessionInjector(String _session) {
-            session = _session;
-        }
+    public void declineItem(Context context, final PrikbordItem item, final Callback callback) {
+        final DatabaseHandler db = new DatabaseHandler(context);
+        final HttpClientClass client = HttpClientClass.getInstance();
+        final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
-        @Override
-        public void process(HttpRequest request, HttpContext context)  throws HttpException, IOException {
-            request.setHeader("Cookie", session);
-        }
+        prikbordHttpHandler.declineItem(client, item.getId(), new Callback() {
+            @Override
+            public void onTaskCompleted(String result) {
+                item.setBeschikbaar(1);
+                db.updatePrikbordItem(item);
 
+                callback.onTaskCompleted(result);
+            }
+        }, context);
+    }
+
+    public void acceptItem(Context context, final PrikbordItem item, final String beschikbaarheid, final Werkgebied werkgebied, final Callback callback) {
+        final DatabaseHandler db = new DatabaseHandler(context);
+        final HttpClientClass client = HttpClientClass.getInstance();
+        final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
+
+        prikbordHttpHandler.acceptItem(client, item.getId(), beschikbaarheid, werkgebied.getId(), new Callback() {
+            @Override
+            public void onTaskCompleted(String result) {
+                item.setBeschikbaar(2);
+                db.updatePrikbordItem(item);
+
+                callback.onTaskCompleted(result);
+            }
+        }, context);
     }
 }
