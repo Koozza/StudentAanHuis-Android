@@ -231,7 +231,7 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         final WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(_context);
-        builder.setTitle(_context.getString(R.string.when_availible));
+        builder.setTitle(_context.getString(R.string.select_workarea));
 
         builder.setItems(werkgebiedHelper.getWerkgebiedenArray(_context), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {

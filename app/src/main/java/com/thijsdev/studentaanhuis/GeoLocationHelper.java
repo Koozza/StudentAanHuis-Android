@@ -19,6 +19,7 @@ public class GeoLocationHelper {
             if (address == null) {
                 return null;
             }
+            //TODO: Nullpointer
             Address adressLocation = address.get(0);
 
             location = new Location("");

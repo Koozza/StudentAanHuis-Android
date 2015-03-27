@@ -15,11 +15,12 @@
     <string name="unavailable">Niet beschikbaar</string>
     <string name="none">Niet aangegeven</string>
     <string name="when_availible">Wanneer ben je beschikbaar?</string>
+    <string name="select_workarea">Selecteer Werkgebied</string>
     <string name="sure_you_cant_do_appointment">Weet je zeker dat je deze afspraak niet kan doen?</string>
     <string name="no">Nee</string>
     <string name="yes">Ja</string>
     <string name="continu">Verder</string>
     <string name="cancel">Annuleren</string>
-    <string name="force_reload_werkgebieden">Herlaad Werkgebieden</string>
-    <string name="force_reload_prikbord">Herlaad Prikbord</string>
+    <string name="prikbord">Prikbord</string>
+    <string name="refresh">Refresh</string>
 </resources>
