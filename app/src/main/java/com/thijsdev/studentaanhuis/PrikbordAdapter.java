@@ -124,15 +124,17 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         holder.locatie.setText(mData.get(position).getAdres());
         Location werkgebiedLocation = werkgebiedHelper.getFirstWerkgebiedLocation(_context);
 
-        if(werkgebiedLocation != null) {
-            if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (mData.get(position).getLocation().getLatitude() == 0 && mData.get(position).getLocation().getLongitude() == 0))
+        if(werkgebiedLocation != null || mData.get(position).getLocation() != null) {
+            if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (mData.get(position).getLocation().getLatitude() == 0 && mData.get(position).getLocation().getLongitude() == 0)) {
                 holder.Distance.setVisibility(View.GONE);
+            }else {
 
-            int distance = locHelper.getDistanceBetweenLocations(werkgebiedLocation, mData.get(position).getLocation());
-            if (distance < 1000) {
-                holder.Distance.setText(Integer.toString(distance) + " Meter");
-            } else {
-                holder.Distance.setText(Float.toString((float) ((int) (distance / 100)) / 10f) + " Kilometer");
+                int distance = locHelper.getDistanceBetweenLocations(werkgebiedLocation, mData.get(position).getLocation());
+                if (distance < 1000) {
+                    holder.Distance.setText(Integer.toString(distance) + " Meter");
+                } else {
+                    holder.Distance.setText(Float.toString((float) ((int) (distance / 100)) / 10f) + " Kilometer");
+                }
             }
         }else{
             holder.Distance.setVisibility(View.GONE);
