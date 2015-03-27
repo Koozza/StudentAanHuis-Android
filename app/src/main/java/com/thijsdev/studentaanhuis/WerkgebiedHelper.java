@@ -45,8 +45,13 @@ public class WerkgebiedHelper {
                         werkgebied.setNaam(tds.get(1).text());
                         werkgebied.setAdres(tds.get(2).text());
                         werkgebied.setStraal(tds.get(3).text());
-                        werkgebied.setLat(adres.getLatitude());
-                        werkgebied.setLng(adres.getLongitude());
+                        if(adres != null) {
+                            werkgebied.setLat(adres.getLatitude());
+                            werkgebied.setLng(adres.getLongitude());
+                        }else{
+                            werkgebied.setLat(0.0);
+                            werkgebied.setLng(0.0);
+                        }
 
                         db.addWerkgebied(werkgebied);
 
@@ -78,6 +83,10 @@ public class WerkgebiedHelper {
 
     public Location getFirstWerkgebiedLocation(Context context) {
         final DatabaseHandler db = new DatabaseHandler(context);
+        List<Werkgebied> werkgebieden = db.getActiveWerkgebieden();
+        if(werkgebieden.size() == 0)
+            return null;
+
         return db.getActiveWerkgebieden().get(0).getLocation();
     }
 

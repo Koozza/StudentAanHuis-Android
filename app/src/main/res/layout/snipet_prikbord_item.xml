@@ -19,13 +19,13 @@
             android:layout_height="wrap_content"
             android:gravity="fill_horizontal"
             android:text="Locatie"
+            android:layout_marginBottom="-3dp"
             android:id="@+id/prikbord_locatie"/>
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="fill_horizontal"
             android:text="10.3 Kilometer"
-            android:layout_marginTop="5dp"
             android:id="@+id/prikbord_afstand"/>
     </LinearLayout>
     <ImageView
