@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,9 +51,6 @@ public class WerkgebiedHelper {
                         }else{
                             werkgebied.setLat(0.0);
                             werkgebied.setLng(0.0);
-
-                            Toast toast = Toast.makeText(activity, "Could not get location from werkgebied. Probably a bug!", Toast.LENGTH_LONG);
-                            toast.show();
                         }
 
                         db.addWerkgebied(werkgebied);

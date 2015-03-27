@@ -19,17 +19,13 @@ public class GeoLocationHelper {
             if (address == null) {
                 return null;
             }
-            //TODO: Nullpointer
+
             if(address.size() > 0) {
                 Address adressLocation = address.get(0);
 
                 location = new Location("");
                 location.setLatitude(adressLocation.getLatitude());
                 location.setLongitude(adressLocation.getLongitude());
-            }else{
-                location = new Location("");
-                location.setLatitude(0);
-                location.setLongitude(0);
             }
 
         } catch (IOException e) {
