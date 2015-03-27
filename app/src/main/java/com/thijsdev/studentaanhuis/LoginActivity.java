@@ -33,7 +33,7 @@ public class LoginActivity extends Activity {
         EditText password = (EditText) this.findViewById(R.id.login_password);
         String uname;
 
-        if(!username.toString().contains("@"))
+        if(!username.getText().toString().contains("@"))
             uname = username.getText().toString() + "@studentaanhuis.nl";
         else
             uname = username.getText().toString();
