@@ -18,14 +18,15 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp">
+            android:layout_marginBottom="-4dp">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/status"
                 android:textStyle="bold"
                 android:gravity="fill_horizontal"
-                android:layout_weight="0.25"/>
+                android:layout_weight="0.25"
+                android:id="@+id/prikbord_snipet_label_status"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -39,14 +40,15 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp">
+            android:layout_marginBottom="-4dp">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/deadline"
                 android:textStyle="bold"
                 android:gravity="fill_horizontal"
-                android:layout_weight="0.25"/>
+                android:layout_weight="0.25"
+                android:id="@+id/prikbord_snipet_label_deadline"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -61,28 +63,30 @@
             android:layout_height="wrap_content"
             android:text="@string/tags"
             android:textStyle="bold"
-            android:layout_marginBottom="1dp"
-            android:gravity="fill_horizontal"/>
+            android:layout_marginBottom="-4dp"
+            android:gravity="fill_horizontal"
+            android:id="@+id/prikbord_snipet_label_tags"/>
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Computer, Windows 7, Virusscanner, APK/opschonen, Installeren software, Instellingen software, Opstartproblemen/afsluitproblemen/loopt vast PC, Virus verwijderen"
             android:gravity="fill_horizontal"
             android:id="@+id/prikbord_tags"
-            android:layout_marginBottom="6dp"/>
+            android:layout_marginBottom="1dp"/>
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/description"
             android:textStyle="bold"
-            android:layout_marginBottom="1dp"
-            android:gravity="fill_horizontal"/>
+            android:layout_marginBottom="-4dp"
+            android:gravity="fill_horizontal"
+            android:id="@+id/prikbord_snipet_label_omschrijving"/>
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Omschrijving"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="1dp"
             android:id="@+id/prikbord_description"
             android:gravity="fill_horizontal"/>
     </LinearLayout>

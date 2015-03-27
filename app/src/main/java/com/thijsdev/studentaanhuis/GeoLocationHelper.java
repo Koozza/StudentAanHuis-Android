@@ -19,11 +19,14 @@ public class GeoLocationHelper {
             if (address == null) {
                 return null;
             }
-            Address adressLocation = address.get(0);
 
-            location = new Location("");
-            location.setLatitude(adressLocation.getLatitude());
-            location.setLongitude(adressLocation.getLongitude());
+            if(address.size() > 0) {
+                Address adressLocation = address.get(0);
+
+                location = new Location("");
+                location.setLatitude(adressLocation.getLatitude());
+                location.setLongitude(adressLocation.getLongitude());
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

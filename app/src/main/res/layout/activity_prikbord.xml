@@ -8,6 +8,16 @@
         android:layout_height="fill_parent"
         android:id="@+id/prikbordList"/>
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:textSize="16dp"
+        android:visibility="gone"
+        android:text="@string/no_prikbord_items_found"
+        android:id="@+id/prikbord_status"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

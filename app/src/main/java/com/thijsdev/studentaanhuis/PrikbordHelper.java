@@ -2,7 +2,8 @@ package com.thijsdev.studentaanhuis;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,18 +15,24 @@ public class PrikbordHelper {
         final DatabaseHandler db = new DatabaseHandler(activity);
         final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
+        final TextView prikbord_status = (TextView) activity.findViewById(R.id.prikbord_status);
+
+        prikbord_status.setVisibility(View.GONE);
+
 
         prikbordHttpHandler.getPrikbordItems(client, activity, new Callback() {
             @Override
             public void onTaskCompleted(String result) {
-
+                boolean gotItem = false;
                 Document doc = Jsoup.parse(result);
                 Elements trs = doc.select("tr:has(td)");
                 for (Element tr : trs) {
 
                     Elements tds = tr.select("td");
                     if(tds.size() > 3) {
+                        gotItem = true;
                         int id = Integer.parseInt(tds.get(3).children().first().attr("href").split("/")[3]);
+                        final boolean heeftGereageerd = tds.get(3).children().first().text().contains("ingeschreven");
 
                         PrikbordItem piDB = db.getPrikbordItem(id);
                         if (piDB == null) {
@@ -45,12 +52,12 @@ public class PrikbordHelper {
 
                                     String checked_yes = doc.getElementById("pinboard_note_response_is_available_yes").attr("checked");
                                     String checked_no = doc.getElementById("pinboard_note_response_is_available_no").attr("checked");
-                                    if (checked_no.equals("checked"))
+                                    if (!heeftGereageerd)
+                                        pi.setBeschikbaar(0);
+                                    else if (checked_no.equals("checked"))
                                         pi.setBeschikbaar(1);
                                     else if (checked_yes.equals("checked"))
                                         pi.setBeschikbaar(2);
-                                    else
-                                        pi.setBeschikbaar(0);
 
                                     String loc = doc.getElementById("appt_map_canvas").attr("data-positions").substring(1, doc.getElementById("appt_map_canvas").attr("data-positions").length() - 1);
                                     String[] coords = loc.split(",");
@@ -60,14 +67,15 @@ public class PrikbordHelper {
 
                                     db.addPrikbordItem(pi);
                                     prikbordAdapter.addItem(pi);
-
-                                    Log.v("SAH", "Item Added");
                                 }
                             });
                         } else {
                             prikbordAdapter.addItem(piDB);
                         }
                     }
+                }
+                if(!gotItem) {
+                    prikbord_status.setVisibility(View.VISIBLE);
                 }
             }
         });

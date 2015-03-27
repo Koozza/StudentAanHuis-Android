@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
+import android.location.Location;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -83,6 +85,10 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
             holder.AcceptedImage = (ImageView) convertView.findViewById(R.id.statusImageAccepted);
             holder.DeclinedImage = (ImageView) convertView.findViewById(R.id.statusImageDeclined);
             holder.Distance = (TextView) convertView.findViewById(R.id.prikbord_afstand);
+
+            setFontForObject(holder.locatie, ((PrikbordActivity)_context).lucidaGrande);
+            setFontForObject(holder.Distance, ((PrikbordActivity)_context).lucidaGrande);
+
             convertView.setTag(holder);
 
             holder.DeclinedImage.setOnClickListener(new View.OnClickListener() {
@@ -116,12 +122,22 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         }
 
         holder.locatie.setText(mData.get(position).getAdres());
+        Location werkgebiedLocation = werkgebiedHelper.getFirstWerkgebiedLocation(_context);
 
-        int distance = locHelper.getDistanceBetweenLocations(werkgebiedHelper.getFirstWerkgebiedLocation(_context), mData.get(position).getLocation());
-        if(distance < 1000) {
-            holder.Distance.setText(Integer.toString(distance) + " Meter");
-        }else {
-            holder.Distance.setText(Float.toString((float) ((int) (distance / 100)) / 10f) + " Kilometer");
+        if(werkgebiedLocation != null || mData.get(position).getLocation() != null) {
+            if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (mData.get(position).getLocation().getLatitude() == 0 && mData.get(position).getLocation().getLongitude() == 0)) {
+                holder.Distance.setVisibility(View.GONE);
+            }else {
+
+                int distance = locHelper.getDistanceBetweenLocations(werkgebiedLocation, mData.get(position).getLocation());
+                if (distance < 1000) {
+                    holder.Distance.setText(Integer.toString(distance) + " Meter");
+                } else {
+                    holder.Distance.setText(Float.toString((float) ((int) (distance / 100)) / 10f) + " Kilometer");
+                }
+            }
+        }else{
+            holder.Distance.setVisibility(View.GONE);
         }
 
         return convertView;
@@ -137,6 +153,17 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
             holder.status = (TextView) convertView.findViewById(R.id.prikbord_status);
             holder.description = (TextView) convertView.findViewById(R.id.prikbord_description);
             holder.deadline = (TextView) convertView.findViewById(R.id.prikbord_deadline);
+
+            setFontForObject(holder.tags, ((PrikbordActivity)_context).lucidaGrande);
+            setFontForObject(holder.status, ((PrikbordActivity)_context).lucidaGrande);
+            setFontForObject(holder.description, ((PrikbordActivity)_context).lucidaGrande);
+            setFontForObject(holder.deadline, ((PrikbordActivity)_context).lucidaGrande);
+
+            setFontForObject((TextView) convertView.findViewById(R.id.prikbord_snipet_label_deadline), ((PrikbordActivity)_context).lucidaGrandeBold);
+            setFontForObject((TextView) convertView.findViewById(R.id.prikbord_snipet_label_omschrijving), ((PrikbordActivity)_context).lucidaGrandeBold);
+            setFontForObject((TextView) convertView.findViewById(R.id.prikbord_snipet_label_status), ((PrikbordActivity)_context).lucidaGrandeBold);
+            setFontForObject((TextView) convertView.findViewById(R.id.prikbord_snipet_label_tags), ((PrikbordActivity)_context).lucidaGrandeBold);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -225,12 +252,12 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         final WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(_context);
-        builder.setTitle(_context.getString(R.string.when_availible));
+        builder.setTitle(_context.getString(R.string.select_workarea));
 
         builder.setItems(werkgebiedHelper.getWerkgebiedenArray(_context), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 Werkgebied werkgebied = werkgebiedHelper.getActiveWerkgebieden(_context).get(item);
-                final RelativeLayout loadingScreen = (RelativeLayout) ((Activity)_context).findViewById(R.id.prikbord_loading);
+                final RelativeLayout loadingScreen = (RelativeLayout) ((Activity) _context).findViewById(R.id.prikbord_loading);
                 loadingScreen.setVisibility(View.VISIBLE);
 
                 prikbordHelper.acceptItem(_context, mData.get(position), beschikbaarheid, werkgebied, new Callback() {
@@ -251,5 +278,9 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         });
 
         builder.show();
+    }
+
+    private void setFontForObject(TextView obj, Typeface font) {
+        obj.setTypeface(font);
     }
 }
