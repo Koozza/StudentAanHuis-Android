@@ -2,6 +2,8 @@ package com.thijsdev.studentaanhuis;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.View;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,17 +15,22 @@ public class PrikbordHelper {
         final DatabaseHandler db = new DatabaseHandler(activity);
         final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
+        final TextView prikbord_status = (TextView) activity.findViewById(R.id.prikbord_status);
+
+        prikbord_status.setVisibility(View.GONE);
+
 
         prikbordHttpHandler.getPrikbordItems(client, activity, new Callback() {
             @Override
             public void onTaskCompleted(String result) {
-
+                boolean gotItem = false;
                 Document doc = Jsoup.parse(result);
                 Elements trs = doc.select("tr:has(td)");
                 for (Element tr : trs) {
 
                     Elements tds = tr.select("td");
                     if(tds.size() > 3) {
+                        gotItem = true;
                         int id = Integer.parseInt(tds.get(3).children().first().attr("href").split("/")[3]);
                         final boolean heeftGereageerd = tds.get(3).children().first().text().contains("ingeschreven");
 
@@ -66,6 +73,9 @@ public class PrikbordHelper {
                             prikbordAdapter.addItem(piDB);
                         }
                     }
+                }
+                if(!gotItem) {
+                    prikbord_status.setVisibility(View.VISIBLE);
                 }
             }
         });

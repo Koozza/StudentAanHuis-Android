@@ -1,5 +1,6 @@
 package com.thijsdev.studentaanhuis;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
 public class PrikbordActivity extends ActionBarActivity {
+    public Typeface lucidaGrande, lucidaGrandeBold;
     PrikbordAdapter mAdapter = null;
     PrikbordHelper prikbordHelper = new PrikbordHelper();
 
@@ -17,6 +19,11 @@ public class PrikbordActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prikbord);
+
+        //Load & Set Fonts
+        lucidaGrande = Typeface.createFromAsset(getAssets(), "lucida-grande.ttf");
+        lucidaGrandeBold = Typeface.createFromAsset(getAssets(), "lucida-grande-bold.ttf");
+
         setActionBar();
 
         mAdapter = new PrikbordAdapter(this);

@@ -23,4 +23,5 @@
     <string name="cancel">Annuleren</string>
     <string name="prikbord">Prikbord</string>
     <string name="refresh">Refresh</string>
+    <string name="no_prikbord_items_found">Geen prikbord items gevonden</string>
 </resources>
