@@ -75,7 +75,7 @@ public class PrikbordHelper {
                                     pi.setLat(Double.parseDouble(coords[0]));
                                     pi.setLng(Double.parseDouble(coords[1]));
 
-                                    //db.addPrikbordItem(pi);
+                                    db.addPrikbordItem(pi);
                                     newItemCallback.onTaskCompleted(pi);
                                 }
                             });

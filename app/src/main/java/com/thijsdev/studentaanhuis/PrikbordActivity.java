@@ -41,6 +41,18 @@ public class PrikbordActivity extends ActionBarActivity {
         updatePrikbordItems(null);
     }
 
+    @Override
+    protected void onStop() {
+        AlarmManagerHelper.getInstance().startAlarms(this);
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        AlarmManagerHelper.getInstance().cancelAlarms(this);
+        super.onStart();
+    }
+
     private void setActionBar() {
 
         ActionBar mActionBar = getSupportActionBar();
