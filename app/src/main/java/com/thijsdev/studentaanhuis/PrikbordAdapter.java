@@ -124,7 +124,7 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
         holder.locatie.setText(mData.get(position).getAdres());
         Location werkgebiedLocation = werkgebiedHelper.getFirstWerkgebiedLocation(_context);
 
-        if(werkgebiedLocation != null || mData.get(position).getLocation() != null) {
+        if(werkgebiedLocation != null && mData.get(position).getLocation() != null) {
             if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (mData.get(position).getLocation().getLatitude() == 0 && mData.get(position).getLocation().getLongitude() == 0)) {
                 holder.Distance.setVisibility(View.GONE);
             }else {
