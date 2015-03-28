@@ -1,7 +1,17 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#EAF3FA">
+
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
+
+    </android.support.v7.widget.Toolbar>
 
     <ExpandableListView
         android:layout_width="match_parent"
@@ -33,4 +43,4 @@
             android:indeterminateDrawable="@drawable/sah_progress"/>
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

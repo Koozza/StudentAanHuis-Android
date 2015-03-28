@@ -11,7 +11,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class PrikbordHelper {
-    public void updatePrikbordItems(final Context context, final Callback existingItemCallback, final Callback newItemCallback) {
+    private int itemsAdded = 0;
+
+    public void updatePrikbordItems(final Context context, final Callback existingItemCallback, final Callback newItemCallback, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
         final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
@@ -35,8 +37,16 @@ public class PrikbordHelper {
 
                 Document doc = Jsoup.parse((String) result);
                 final Elements trs = doc.select("tr:has(td)");
-                for (int i = 0; i < trs.size(); i++) {
-                    Element tr = trs.get(i);
+
+                //Count number of active prikbord items
+                int itemCounter = 0;
+                for (Element tr : trs)
+                    if(tr.select("td").size() > 3)
+                        itemCounter++;
+
+                final int totalItems = itemCounter;
+
+                for (Element tr : trs) {
                     Elements tds = tr.select("td");
 
                     if (tds.size() > 3) {
@@ -77,10 +87,13 @@ public class PrikbordHelper {
 
                                     db.addPrikbordItem(pi);
                                     newItemCallback.onTaskCompleted(pi);
+
+                                    isFinalPrikbordUpdate(totalItems, callback);
                                 }
                             });
                         } else {
                             existingItemCallback.onTaskCompleted(piDB);
+                            isFinalPrikbordUpdate(totalItems, callback);
                         }
                     }
                 }
@@ -124,5 +137,13 @@ public class PrikbordHelper {
                 callback.onTaskCompleted(result);
             }
         }, context);
+    }
+
+    private void isFinalPrikbordUpdate(int totalItems, Callback callback) {
+        itemsAdded++;
+        if(itemsAdded == totalItems) {
+            itemsAdded = 0;
+            callback.onTaskCompleted(null);
+        }
     }
 }

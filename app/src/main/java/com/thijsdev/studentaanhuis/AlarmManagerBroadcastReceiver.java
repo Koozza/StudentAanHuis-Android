@@ -36,15 +36,11 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
             //Check of het om de prikbord timer gaat
             if (extras != null && extras.getString(ALARM) != null) {
                 if(extras.getString(ALARM).equals(PRIKBORD)) {
-                    final StringBuffer s = new StringBuffer();
                     PrikbordHelper prikbordHelper = new PrikbordHelper();
-                    prikbordHelper.updatePrikbordItems(context, new Callback(), new Callback() {
+                    prikbordHelper.updatePrikbordItems(context, new Callback(), new Callback(), new Callback() {
                         @Override
                         public void onTaskCompleted(Object result) {
-                            if(!s.toString().equals("done")) {
-                                generateNewPrikbordNotification(context);
-                            }
-                            s.append("done");
+                            generateNewPrikbordNotification(context);
                         }
                     });
                 }
