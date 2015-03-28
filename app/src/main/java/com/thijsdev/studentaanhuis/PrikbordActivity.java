@@ -28,8 +28,6 @@ public class PrikbordActivity extends ActionBarActivity {
 
         mAdapter = new PrikbordAdapter(this);
 
-        prikbordHelper.updatePrikbordItems(this, mAdapter);
-
         ExpandableListView lv = (ExpandableListView) findViewById(R.id.prikbordList);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
@@ -39,6 +37,8 @@ public class PrikbordActivity extends ActionBarActivity {
             }
         });
         lv.setAdapter(mAdapter);
+
+        updatePrikbordItems(null);
     }
 
     private void setActionBar() {
@@ -54,8 +54,20 @@ public class PrikbordActivity extends ActionBarActivity {
         return true;
     }
 
-    public void reloadPrikbordItems(MenuItem  item) {
+    public void updatePrikbordItems(MenuItem i) {
         mAdapter.clearItems();
-        prikbordHelper.updatePrikbordItems(this, mAdapter);
+        prikbordHelper.updatePrikbordItems(this, new Callback() {
+            @Override
+            public void onTaskCompleted(Object result) {
+                PrikbordItem pi = (PrikbordItem) result;
+                mAdapter.addItem(pi);
+            }
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object result) {
+                PrikbordItem pi = (PrikbordItem) result;
+                mAdapter.addItem(pi);
+            }
+        });
     }
 }

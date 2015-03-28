@@ -35,8 +35,8 @@ public class LoginHTTPHandler {
 
                 client.getSource(obj, new Callback() {
                     @Override
-                    public void onTaskCompleted(String result) {
-                        Document doc = Jsoup.parse(result);
+                    public void onTaskCompleted(Object result) {
+                        Document doc = Jsoup.parse((String) result);
                         Elements elements = doc.select("h1");
                         for (Element element : elements) {
                             if(element.text().equals("Aanmelden") || element.text().contains("Bad Request")) {
@@ -63,8 +63,8 @@ public class LoginHTTPHandler {
 
             client.getSource(obj, new Callback() {
                 @Override
-                public void onTaskCompleted(String result) {
-                    Document doc = Jsoup.parse(result);
+                public void onTaskCompleted(Object result) {
+                    Document doc = Jsoup.parse((String) result);
                     Element content = doc.getElementsByAttributeValue("name", "authenticity_token").first();
 
 
@@ -84,8 +84,8 @@ public class LoginHTTPHandler {
 
                         client.doPost(obj, new Callback() {
                             @Override
-                            public void onTaskCompleted(String result) {
-                                Document doc = Jsoup.parse(result);
+                            public void onTaskCompleted(Object result) {
+                                Document doc = Jsoup.parse((String) result);
                                 Element content = doc.getElementById("flash_alert");
 
                                 if(content == null)

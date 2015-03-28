@@ -1,6 +1,5 @@
 package com.thijsdev.studentaanhuis;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -12,8 +11,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class PrikbordHTTPHandler {
-    public void getPrikbordItems(HttpClientClass client, Activity activity, Callback callback) {
-        SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+    public void getPrikbordItems(HttpClientClass client, Context context, Callback callback) {
+        SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
         String session = sharedpreferences.getString("session", null);
 
         try {
@@ -27,9 +26,9 @@ public class PrikbordHTTPHandler {
         }
     }
 
-    public void getPrikbordItem(HttpClientClass client, Activity activity, int id, Callback callback) {
+    public void getPrikbordItem(HttpClientClass client, Context context, int id, Callback callback) {
         try {
-            SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+            SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
             String session = sharedpreferences.getString("session", null);
 
             JSONObject obj = new JSONObject();
@@ -52,8 +51,8 @@ public class PrikbordHTTPHandler {
 
             client.getSource(obj, new Callback() {
                 @Override
-                public void onTaskCompleted(String result) {
-                    Document doc = Jsoup.parse(result);
+                public void onTaskCompleted(Object result) {
+                    Document doc = Jsoup.parse((String) result);
                     Element content = doc.getElementsByAttributeValue("name", "authenticity_token").first();
 
                     try {
@@ -90,8 +89,8 @@ public class PrikbordHTTPHandler {
 
             client.getSource(obj, new Callback() {
                 @Override
-                public void onTaskCompleted(String result) {
-                    Document doc = Jsoup.parse(result);
+                public void onTaskCompleted(Object result) {
+                    Document doc = Jsoup.parse((String) result);
                     Element content = doc.getElementsByAttributeValue("name", "authenticity_token").first();
 
                     try {

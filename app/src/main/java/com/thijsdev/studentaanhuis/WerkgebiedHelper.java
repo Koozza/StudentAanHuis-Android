@@ -22,9 +22,9 @@ public class WerkgebiedHelper {
 
         werkgebiedHTTPHandler.getWerkGebieden(client, activity, new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object result) {
 
-                Document doc = Jsoup.parse(result);
+                Document doc = Jsoup.parse((String) result);
                 Elements trs = doc.select("tr:has(td)");
                 for (Element tr : trs) {
 

@@ -30,14 +30,14 @@ public class SplashScreen extends Activity {
                 client.init();
                 lh.checkLogin(SplashScreen.this, client, new Callback() {
                     @Override
-                    public void onTaskCompleted(String result) {
+                    public void onTaskCompleted(Object result) {
                         Intent goToNextActivity = new Intent(getApplicationContext(), PrikbordActivity.class);
                         startActivity(goToNextActivity);
                         finish();
                     }
                 }, new Callback() {
                     @Override
-                    public void onTaskCompleted(String result) {
+                    public void onTaskCompleted(Object result) {
                         Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(goToNextActivity);
                         finish();
