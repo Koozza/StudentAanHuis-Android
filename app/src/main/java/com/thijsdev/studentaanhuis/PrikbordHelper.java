@@ -11,25 +11,35 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class PrikbordHelper {
-    public void updatePrikbordItems(final Activity activity, final PrikbordAdapter prikbordAdapter) {
-        final DatabaseHandler db = new DatabaseHandler(activity);
+    public void updatePrikbordItems(final Context context, final Callback existingItemCallback, final Callback newItemCallback) {
+        final DatabaseHandler db = new DatabaseHandler(context);
         final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
-        final TextView prikbord_status = (TextView) activity.findViewById(R.id.prikbord_status);
+        final TextView prikbord_status;
 
-        prikbord_status.setVisibility(View.GONE);
+        //Dit alleen doen als het door de UI thread is aangeroepen
+        if (context instanceof Activity) {
+            prikbord_status = (TextView) ((Activity)context).findViewById(R.id.prikbord_status);
+            prikbord_status.setVisibility(View.GONE);
+        }else{
+            prikbord_status = null;
+        }
+
+        client.init();
 
 
-        prikbordHttpHandler.getPrikbordItems(client, activity, new Callback() {
+        prikbordHttpHandler.getPrikbordItems(client, context, new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object result) {
                 boolean gotItem = false;
-                Document doc = Jsoup.parse(result);
-                Elements trs = doc.select("tr:has(td)");
-                for (Element tr : trs) {
 
+                Document doc = Jsoup.parse((String) result);
+                final Elements trs = doc.select("tr:has(td)");
+                for (int i = 0; i < trs.size(); i++) {
+                    Element tr = trs.get(i);
                     Elements tds = tr.select("td");
-                    if(tds.size() > 3) {
+
+                    if (tds.size() > 3) {
                         gotItem = true;
                         int id = Integer.parseInt(tds.get(3).children().first().attr("href").split("/")[3]);
                         final boolean heeftGereageerd = tds.get(3).children().first().text().contains("ingeschreven");
@@ -43,10 +53,10 @@ public class PrikbordHelper {
                             pi.setId(id);
 
                             //Ophalen van details
-                            prikbordHttpHandler.getPrikbordItem(client, activity, id, new Callback() {
+                            prikbordHttpHandler.getPrikbordItem(client, context, id, new Callback() {
                                 @Override
-                                public void onTaskCompleted(String result) {
-                                    Document doc = Jsoup.parse(result);
+                                public void onTaskCompleted(Object result) {
+                                    Document doc = Jsoup.parse((String) result);
                                     String omschrijving = doc.getElementsByClass("widget").first().children().last().text();
                                     pi.setBeschrijving(omschrijving);
 
@@ -66,26 +76,22 @@ public class PrikbordHelper {
                                     pi.setLng(Double.parseDouble(coords[1]));
 
                                     db.addPrikbordItem(pi);
-                                    prikbordAdapter.addItem(pi);
+                                    newItemCallback.onTaskCompleted(pi);
                                 }
                             });
                         } else {
-                            prikbordAdapter.addItem(piDB);
+                            existingItemCallback.onTaskCompleted(piDB);
                         }
                     }
                 }
-                if(!gotItem) {
-                    prikbord_status.setVisibility(View.VISIBLE);
+                if (!gotItem) {
+                    //Dit alleen doen als het door de UI thread is aangeroepen
+                    if (context instanceof Activity) {
+                        prikbord_status.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
-    }
-
-    public void forceUpdatePrikbordItems(final Activity activity, final PrikbordAdapter prikbordAdapter) {
-        final DatabaseHandler db = new DatabaseHandler(activity);
-        db.deleteAllPrikbordItems();
-        prikbordAdapter.clearItems();
-        updatePrikbordItems(activity, prikbordAdapter);
     }
 
     public void declineItem(Context context, final PrikbordItem item, final Callback callback) {
@@ -95,7 +101,7 @@ public class PrikbordHelper {
 
         prikbordHttpHandler.declineItem(client, item.getId(), new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object result) {
                 item.setBeschikbaar(1);
                 db.updatePrikbordItem(item);
 
@@ -111,7 +117,7 @@ public class PrikbordHelper {
 
         prikbordHttpHandler.acceptItem(client, item.getId(), beschikbaarheid, werkgebied.getId(), new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object result) {
                 item.setBeschikbaar(2);
                 db.updatePrikbordItem(item);
 

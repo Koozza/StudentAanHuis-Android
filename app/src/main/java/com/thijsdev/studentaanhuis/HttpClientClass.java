@@ -32,7 +32,7 @@ import java.util.List;
 public class HttpClientClass {
 
     private static HttpClientClass instance = null;
-    private HttpClient client;
+    private HttpClient client = null;
     private static String session_id;
 
     public HttpClientClass() {
@@ -45,7 +45,8 @@ public class HttpClientClass {
     }
 
     public void init() {
-        client = createClient();
+        if(client == null)
+            client = createClient();
     }
 
     public HttpClient getHTTPClient() {

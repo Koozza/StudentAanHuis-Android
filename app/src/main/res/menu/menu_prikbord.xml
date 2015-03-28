@@ -4,5 +4,5 @@
         android:icon="@drawable/ic_action_refresh"
         app:showAsAction="always"
         android:title="@string/refresh"
-        android:onClick="reloadPrikbordItems"/>
+        android:onClick="updatePrikbordItems"/>
 </menu>

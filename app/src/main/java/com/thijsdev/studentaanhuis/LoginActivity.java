@@ -54,12 +54,12 @@ public class LoginActivity extends Activity {
 
         lh.doLogin(client, this, uname, password.getText().toString(), new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object result) {
                 //Werkgebieden ophalen
                 WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
                 werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
                     @Override
-                    public void onTaskCompleted(String result) {
+                    public void onTaskCompleted(Object result) {
                         Intent goToNextActivity = new Intent(getApplicationContext(), PrikbordActivity.class);
                         startActivity(goToNextActivity);
                         finish();
@@ -68,9 +68,9 @@ public class LoginActivity extends Activity {
             }
         }, new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object result) {
                 TextView error = (TextView) findViewById(R.id.login_error);
-                error.setText(result);
+                error.setText((String) result);
                 loadingScreen.setVisibility(View.GONE);
             }
         });

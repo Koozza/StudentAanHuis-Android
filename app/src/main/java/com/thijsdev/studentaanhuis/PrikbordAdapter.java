@@ -199,7 +199,7 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
 
                         prikbordHelper.declineItem(_context, mData.get(position), new Callback() {
                             @Override
-                            public void onTaskCompleted(String result) {
+                            public void onTaskCompleted(Object result) {
                                 loadingScreen.setVisibility(View.GONE);
                                 notifyDataSetChanged();
                             }
@@ -262,7 +262,7 @@ class PrikbordAdapter extends BaseExpandableListAdapter {
 
                 prikbordHelper.acceptItem(_context, mData.get(position), beschikbaarheid, werkgebied, new Callback() {
                     @Override
-                    public void onTaskCompleted(String result) {
+                    public void onTaskCompleted(Object result) {
                         loadingScreen.setVisibility(View.GONE);
                         notifyDataSetChanged();
                     }
