@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
     private ArrayList<PrikbordItem> mData = new ArrayList<PrikbordItem>();
@@ -42,9 +43,16 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
             viewHolder.distance.setText(distance);
     }
 
-    public void addItem(int position, PrikbordItem data) {
-        mData.add(position, data);
+    public void addItem(int position, PrikbordItem prikbordItem) {
+        mData.add(position, prikbordItem);
         notifyItemInserted(position);
+    }
+
+    public boolean hasItem(PrikbordItem prikbordItem) {
+        for(PrikbordItem pi : mData)
+            if(pi.getId() == prikbordItem.getId())
+                return true;
+        return false;
     }
 
     private String getDistanceString(int position) {
@@ -67,5 +75,12 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
         }
     }
 
-
+    public static <E> boolean containsInstance(List<E> list, Class<? extends E> clazz) {
+        for (E e : list) {
+            if (clazz.isInstance(e)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

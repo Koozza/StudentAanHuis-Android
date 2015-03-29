@@ -14,6 +14,7 @@ import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
@@ -40,7 +41,8 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
                     prikbordHelper.updatePrikbordItems(context, new Callback(), new Callback(), new Callback() {
                         @Override
                         public void onTaskCompleted(Object result) {
-                            generateNewPrikbordNotification(context);
+                            if(((ArrayList<PrikbordItem>) result).size() != 0)
+                                generateNewPrikbordNotification(context);
                         }
                     });
                 }

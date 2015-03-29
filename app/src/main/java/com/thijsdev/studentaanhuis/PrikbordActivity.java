@@ -38,17 +38,13 @@ public class PrikbordActivity extends ActionBarActivity {
         robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         robotoMedium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
 
-        // Initializing views.
-        mRecyclerView = (RecyclerView) findViewById(R.id.prikbordList);
 
-        // If the size of views will not change as the data changes.
+        mRecyclerView = (RecyclerView) findViewById(R.id.prikbordList);
         mRecyclerView.setHasFixedSize(true);
 
-        // Setting the LayoutManager.
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // Setting the adapter.
         mAdapter = new PrikbordAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -108,13 +104,15 @@ public class PrikbordActivity extends ActionBarActivity {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
-                    mAdapter.addItem(mAdapter.getItemCount(), pi);
+                    if(!mAdapter.hasItem(pi))
+                        mAdapter.addItem(0, pi);
                 }
             }, new Callback() {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
-                    mAdapter.addItem(mAdapter.getItemCount(), pi);
+                    if(!mAdapter.hasItem(pi))
+                        mAdapter.addItem(0, pi);
                 }
             }, new Callback() {
                 @Override

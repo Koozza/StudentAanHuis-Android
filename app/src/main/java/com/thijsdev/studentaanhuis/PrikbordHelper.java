@@ -10,8 +10,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+
 public class PrikbordHelper {
     private int itemsAdded = 0;
+    final ArrayList<PrikbordItem> newItems = new ArrayList<PrikbordItem>();
 
     public void updatePrikbordItems(final Context context, final Callback existingItemCallback, final Callback newItemCallback, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
@@ -86,6 +89,7 @@ public class PrikbordHelper {
                                     pi.setLng(Double.parseDouble(coords[1]));
 
                                     db.addPrikbordItem(pi);
+                                    newItems.add(pi);
                                     newItemCallback.onTaskCompleted(pi);
 
                                     isFinalPrikbordUpdate(totalItems, callback);
@@ -143,7 +147,7 @@ public class PrikbordHelper {
         itemsAdded++;
         if(itemsAdded == totalItems) {
             itemsAdded = 0;
-            callback.onTaskCompleted(null);
+            callback.onTaskCompleted(newItems);
         }
     }
 }
