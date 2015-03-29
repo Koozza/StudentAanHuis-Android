@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 
 
 public class SplashScreen extends Activity {
-    Typeface lucidaGrande;
+    Typeface robotoLight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +19,8 @@ public class SplashScreen extends Activity {
         setContentView(R.layout.activity_splash_screen);
 
         //Load & Set Fonts
-        lucidaGrande = Typeface.createFromAsset(getAssets(), "lucida-grande.ttf");
-        setFontForObject((TextView) findViewById(R.id.splashscreen_creator), lucidaGrande);
+        robotoLight = Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf");
+        setFontForObject((TextView) findViewById(R.id.splashscreen_creator), robotoLight);
 
         new Handler().postDelayed(new Runnable() {
             @Override

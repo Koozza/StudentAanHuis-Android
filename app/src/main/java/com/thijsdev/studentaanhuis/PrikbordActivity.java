@@ -3,20 +3,22 @@ package com.thijsdev.studentaanhuis;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ExpandableListView;
 
 public class PrikbordActivity extends ActionBarActivity {
-    public Typeface lucidaGrande, lucidaGrandeBold;
-    PrikbordAdapter mAdapter = null;
+    Typeface robotoLight, robotoRegular, robotoMedium;
     PrikbordHelper prikbordHelper = new PrikbordHelper();
     Toolbar toolbar;
+
+    private RecyclerView mRecyclerView;
+    private PrikbordAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     private boolean isRefreshing = false;
 
@@ -32,23 +34,33 @@ public class PrikbordActivity extends ActionBarActivity {
         registerToolbarClick();
 
         //Load & Set Fonts
-        lucidaGrande = Typeface.createFromAsset(getAssets(), "lucida-grande.ttf");
-        lucidaGrandeBold = Typeface.createFromAsset(getAssets(), "lucida-grande-bold.ttf");
+        robotoLight = Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf");
+        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+        robotoMedium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
 
+        // Initializing views.
+        mRecyclerView = (RecyclerView) findViewById(R.id.prikbordList);
 
+        // If the size of views will not change as the data changes.
+        mRecyclerView.setHasFixedSize(true);
+
+        // Setting the LayoutManager.
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // Setting the adapter.
         mAdapter = new PrikbordAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
 
-        ExpandableListView lv = (ExpandableListView) findViewById(R.id.prikbordList);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-
-                //Niks?
-            }
-        });
-        lv.setAdapter(mAdapter);
 
         updatePrikbordItems(null);
+    }
+
+    private int GetDipsFromPixel(int pixels) {
+        // Get the screen's density scale
+        final float scale = getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+        return (int) (pixels * scale + 0.5f);
     }
 
     @Override
@@ -91,18 +103,18 @@ public class PrikbordActivity extends ActionBarActivity {
             a.setRepeatCount(Animation.INFINITE);
             toolbar.findViewById(R.id.action_refresh).startAnimation(a);
 
-            mAdapter.clearItems();
+            //TODO: mAdapter.clearItems();
             prikbordHelper.updatePrikbordItems(this, new Callback() {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
-                    mAdapter.addItem(pi);
+                    mAdapter.addItem(mAdapter.getItemCount(), pi);
                 }
             }, new Callback() {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
-                    mAdapter.addItem(pi);
+                    mAdapter.addItem(mAdapter.getItemCount(), pi);
                 }
             }, new Callback() {
                 @Override

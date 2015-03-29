@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 
 public class LoginActivity extends Activity {
-    Typeface lucidaGrande, lucidaGrandeBold;
+    Typeface robotoLight, robotoRegular, robotoMedium;
     HttpClientClass client;
 
     @Override
@@ -24,12 +24,13 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         //Load & Set Fonts
-        lucidaGrande = Typeface.createFromAsset(getAssets(), "lucida-grande.ttf");
-        lucidaGrandeBold = Typeface.createFromAsset(getAssets(), "lucida-grande-bold.ttf");
-        setFontForObject((EditText) findViewById(R.id.login_username), lucidaGrande);
-        setFontForObject((EditText) findViewById(R.id.login_password), lucidaGrande);
-        setFontForObject((Button) findViewById(R.id.login_btn_login), lucidaGrandeBold);
-        setFontForObject((TextView) findViewById(R.id.login_creator), lucidaGrande);
+        robotoLight = Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf");
+        robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+        robotoMedium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
+        setFontForObject((EditText) findViewById(R.id.login_username), robotoRegular);
+        setFontForObject((EditText) findViewById(R.id.login_password), robotoRegular);
+        setFontForObject((Button) findViewById(R.id.login_btn_login), robotoMedium);
+        setFontForObject((TextView) findViewById(R.id.login_creator), robotoLight);
         ((EditText)findViewById(R.id.login_password)).setTransformationMethod(new PasswordTransformationMethod());
 
         client = HttpClientClass.getInstance();

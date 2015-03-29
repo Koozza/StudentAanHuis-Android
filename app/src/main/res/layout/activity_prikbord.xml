@@ -13,10 +13,11 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <ExpandableListView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/prikbordList"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/prikbordList"/>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
 
     <TextView
         android:layout_width="fill_parent"
