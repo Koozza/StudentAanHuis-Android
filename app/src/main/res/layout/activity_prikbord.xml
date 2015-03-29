@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#EAF3FA">
+    android:background="@color/SAHlightblue">
 
     <android.support.v7.widget.Toolbar
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -32,7 +32,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#BB000000"
+        android:background="@color/black74"
         android:visibility="gone"
         android:id="@+id/prikbord_loading">
         <ProgressBar

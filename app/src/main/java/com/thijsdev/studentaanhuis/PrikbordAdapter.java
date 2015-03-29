@@ -1,8 +1,10 @@
 package com.thijsdev.studentaanhuis;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +46,16 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
 
         viewHolder.adress.setTypeface(((PrikbordActivity)context).robotoMedium);
         viewHolder.distance.setTypeface(((PrikbordActivity)context).robotoRegular);
-        viewHolder.omschrijving.setTypeface(((PrikbordActivity)context).robotoRegular);
+        viewHolder.omschrijving.setTypeface(((PrikbordActivity) context).robotoRegular);
+
+        viewHolder.setClickListener(new PrikbordViewHolder.ClickListener() {
+            @Override
+            public void onClick(View v, int pos) {
+                Log.v("SAH", "Click");
+                Intent goToNextActivity = new Intent(context, PrikbordDetailActivity.class);
+                context.startActivity(goToNextActivity);
+            }
+        });
     }
 
     public void addItem(int position, PrikbordItem prikbordItem) {

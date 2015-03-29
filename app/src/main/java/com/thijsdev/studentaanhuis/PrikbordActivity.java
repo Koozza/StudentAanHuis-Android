@@ -2,7 +2,6 @@ package com.thijsdev.studentaanhuis;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +10,7 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-public class PrikbordActivity extends ActionBarActivity {
+public class PrikbordActivity extends BasicActionBarActivity {
     public Typeface robotoLight, robotoRegular, robotoMedium;
     PrikbordHelper prikbordHelper = new PrikbordHelper();
     Toolbar toolbar;
@@ -61,17 +60,6 @@ public class PrikbordActivity extends ActionBarActivity {
         return (int) (pixels * scale + 0.5f);
     }
 
-    @Override
-    protected void onStop() {
-        AlarmManagerHelper.getInstance().startAlarms(this);
-        super.onStop();
-    }
-
-    @Override
-    protected void onStart() {
-        AlarmManagerHelper.getInstance().cancelAlarms(this);
-        super.onStart();
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {

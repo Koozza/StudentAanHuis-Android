@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name="com.thijsdev.studentaanhuis.SAHApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -29,6 +30,10 @@
         </activity>
         <activity
             android:name=".PrikbordActivity"
+            android:label="@string/title_activity_prikbord" >
+        </activity>
+        <activity
+            android:name=".PrikbordDetailActivity"
             android:label="@string/title_activity_prikbord" >
         </activity>
         <activity

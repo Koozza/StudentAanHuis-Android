@@ -1,8 +1,8 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">#95c4e7</item>
-        <item name="colorPrimaryDark">#6CAEDF</item>
-        <item name="colorAccent">#6CAEDF</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="colorPrimary">@color/SAHblue</item>
+        <item name="colorPrimaryDark">@color/SAHdarkblue</item>
+        <item name="colorAccent">@color/SAHdarkblue</item>
+        <item name="android:textColorPrimary">@color/white</item>
     </style>
 </resources>

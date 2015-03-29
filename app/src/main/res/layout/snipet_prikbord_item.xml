@@ -8,7 +8,8 @@
     android:paddingLeft="16sp"
     android:paddingRight="16sp"
     android:gravity="center_vertical"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:id="@+id/prikbord_item">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,6 +22,7 @@
             android:text="Locatie"
             android:layout_weight="1"
             android:textSize="14sp"
+            android:textColor="@color/black87"
             android:id="@+id/prikbord_locatie"/>
         <TextView
             android:layout_width="70sp"
@@ -28,6 +30,7 @@
             android:gravity="right"
             android:text="100.3Km"
             android:textSize="14sp"
+            android:textColor="@color/black87"
             android:id="@+id/prikbord_afstand"/>
     </LinearLayout>
     <LinearLayout
@@ -43,6 +46,7 @@
             android:lines="2"
             android:ellipsize="end"
             android:lineSpacingExtra="1sp"
+            android:textColor="@color/black87"
             android:id="@+id/prikbord_omschrijving"/>
         <View
             android:layout_width="80sp"
