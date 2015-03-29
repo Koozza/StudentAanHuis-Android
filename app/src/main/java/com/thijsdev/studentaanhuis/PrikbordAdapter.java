@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
 class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
     private ArrayList<PrikbordItem> mData = new ArrayList<PrikbordItem>();
@@ -37,10 +36,15 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
         String distance = getDistanceString(position);
 
         viewHolder.adress.setText(mData.get(position).getAdres());
+        viewHolder.omschrijving.setText(mData.get(position).getBeschrijving());
         if(distance == null)
             viewHolder.distance.setVisibility(View.GONE);
         else
             viewHolder.distance.setText(distance);
+
+        viewHolder.adress.setTypeface(((PrikbordActivity)context).robotoMedium);
+        viewHolder.distance.setTypeface(((PrikbordActivity)context).robotoRegular);
+        viewHolder.omschrijving.setTypeface(((PrikbordActivity)context).robotoRegular);
     }
 
     public void addItem(int position, PrikbordItem prikbordItem) {
@@ -65,22 +69,13 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
 
                 int distance = locHelper.getDistanceBetweenLocations(werkgebiedLocation, mData.get(position).getLocation());
                 if (distance < 1000) {
-                    return Integer.toString(distance) + " Meter";
+                    return Integer.toString(distance) + "M";
                 } else {
-                    return Float.toString((float) ((int) (distance / 100)) / 10f) + " Kilometer";
+                    return Float.toString((float) ((int) (distance / 100)) / 10f) + "Km";
                 }
             }
         }else{
             return null;
         }
-    }
-
-    public static <E> boolean containsInstance(List<E> list, Class<? extends E> clazz) {
-        for (E e : list) {
-            if (clazz.isInstance(e)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

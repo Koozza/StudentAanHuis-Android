@@ -12,7 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 public class PrikbordActivity extends ActionBarActivity {
-    Typeface robotoLight, robotoRegular, robotoMedium;
+    public Typeface robotoLight, robotoRegular, robotoMedium;
     PrikbordHelper prikbordHelper = new PrikbordHelper();
     Toolbar toolbar;
 
@@ -41,6 +41,8 @@ public class PrikbordActivity extends ActionBarActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.prikbordList);
         mRecyclerView.setHasFixedSize(true);
+
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
