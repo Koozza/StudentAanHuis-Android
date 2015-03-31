@@ -15,6 +15,7 @@ public class PrikbordActivity extends BasicActionBarActivity {
     Toolbar toolbar;
     PrikbordListFragment prikbordListFragment;
     boolean inSettings = true;
+    public PrikbordAdapter mAdapter;
 
     private boolean isRefreshing = false;
 
@@ -22,6 +23,8 @@ public class PrikbordActivity extends BasicActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prikbord);
+
+        mAdapter = new PrikbordAdapter(this);
 
         if (findViewById(R.id.prikbord_fragments) != null) {
             if (savedInstanceState != null)
@@ -32,16 +35,6 @@ public class PrikbordActivity extends BasicActionBarActivity {
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.add(R.id.prikbord_fragments, prikbordListFragment);
-            transaction.commit();
-
-
-
-            PrikbordDetailFragment newFragment = new PrikbordDetailFragment();
-            Bundle args = new Bundle();
-            newFragment.setArguments(args);
-
-            transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.prikbord_fragments, newFragment);
             transaction.commit();
         }
 
@@ -94,15 +87,15 @@ public class PrikbordActivity extends BasicActionBarActivity {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
-                    if (!prikbordListFragment.getPrikbordAdapter().hasItem(pi))
-                        prikbordListFragment.getPrikbordAdapter().addItem(0, pi);
+                    if (!mAdapter.hasItem(pi))
+                        mAdapter.addItem(0, pi);
                 }
             }, new Callback() {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
-                    if (!prikbordListFragment.getPrikbordAdapter().hasItem(pi))
-                        prikbordListFragment.getPrikbordAdapter().addItem(0, pi);
+                    if (!mAdapter.hasItem(pi))
+                        mAdapter.addItem(0, pi);
                 }
             }, new Callback() {
                 @Override
@@ -117,17 +110,9 @@ public class PrikbordActivity extends BasicActionBarActivity {
     @Override
     public void onBackPressed()
     {
-        if (inSettings)
-        {
-            backFromSettingsFragment();
-            return;
-        }
-        super.onBackPressed();
-    }
-
-    private void backFromSettingsFragment()
-    {
-        inSettings = false;
-        getFragmentManager().popBackStack();
+        if(getFragmentManager().getBackStackEntryCount() == 0)
+            super.onBackPressed();
+        else
+            getFragmentManager().popBackStack();
     }
 }
