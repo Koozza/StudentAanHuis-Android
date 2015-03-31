@@ -1,9 +1,8 @@
 package com.thijsdev.studentaanhuis;
 
+import android.app.FragmentTransaction;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,10 +13,8 @@ public class PrikbordActivity extends BasicActionBarActivity {
     public Typeface robotoLight, robotoRegular, robotoMedium;
     PrikbordHelper prikbordHelper = new PrikbordHelper();
     Toolbar toolbar;
-
-    private RecyclerView mRecyclerView;
-    private PrikbordAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    PrikbordListFragment prikbordListFragment;
+    boolean inSettings = true;
 
     private boolean isRefreshing = false;
 
@@ -25,6 +22,28 @@ public class PrikbordActivity extends BasicActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prikbord);
+
+        if (findViewById(R.id.prikbord_fragments) != null) {
+            if (savedInstanceState != null)
+                return;
+
+            prikbordListFragment = new PrikbordListFragment();
+            prikbordListFragment.setArguments(getIntent().getExtras());
+
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.add(R.id.prikbord_fragments, prikbordListFragment);
+            transaction.commit();
+
+
+
+            PrikbordDetailFragment newFragment = new PrikbordDetailFragment();
+            Bundle args = new Bundle();
+            newFragment.setArguments(args);
+
+            transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.prikbord_fragments, newFragment);
+            transaction.commit();
+        }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -38,26 +57,7 @@ public class PrikbordActivity extends BasicActionBarActivity {
         robotoMedium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
 
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.prikbordList);
-        mRecyclerView.setHasFixedSize(true);
-
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        mAdapter = new PrikbordAdapter(this);
-        mRecyclerView.setAdapter(mAdapter);
-
-
         updatePrikbordItems(null);
-    }
-
-    private int GetDipsFromPixel(int pixels) {
-        // Get the screen's density scale
-        final float scale = getResources().getDisplayMetrics().density;
-        // Convert the dps to pixels, based on density scale
-        return (int) (pixels * scale + 0.5f);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class PrikbordActivity extends BasicActionBarActivity {
     }
 
     public void updatePrikbordItems(MenuItem i) {
-        if(!isRefreshing) {
+        if (!isRefreshing) {
             isRefreshing = true;
             Animation a = AnimationUtils.loadAnimation(getApplication(), R.anim.rotate);
             a.setRepeatCount(Animation.INFINITE);
@@ -94,15 +94,15 @@ public class PrikbordActivity extends BasicActionBarActivity {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
-                    if(!mAdapter.hasItem(pi))
-                        mAdapter.addItem(0, pi);
+                    if (!prikbordListFragment.getPrikbordAdapter().hasItem(pi))
+                        prikbordListFragment.getPrikbordAdapter().addItem(0, pi);
                 }
             }, new Callback() {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
-                    if(!mAdapter.hasItem(pi))
-                        mAdapter.addItem(0, pi);
+                    if (!prikbordListFragment.getPrikbordAdapter().hasItem(pi))
+                        prikbordListFragment.getPrikbordAdapter().addItem(0, pi);
                 }
             }, new Callback() {
                 @Override
@@ -112,5 +112,22 @@ public class PrikbordActivity extends BasicActionBarActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if (inSettings)
+        {
+            backFromSettingsFragment();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    private void backFromSettingsFragment()
+    {
+        inSettings = false;
+        getFragmentManager().popBackStack();
     }
 }

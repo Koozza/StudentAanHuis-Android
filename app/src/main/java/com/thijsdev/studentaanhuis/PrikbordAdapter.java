@@ -1,8 +1,10 @@
 package com.thijsdev.studentaanhuis;
 
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,8 +54,15 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
             @Override
             public void onClick(View v, int pos) {
                 Log.v("SAH", "Click");
-                Intent goToNextActivity = new Intent(context, PrikbordDetailActivity.class);
-                context.startActivity(goToNextActivity);
+
+                PrikbordDetailFragment newFragment = new PrikbordDetailFragment();
+                Bundle args = new Bundle();
+                newFragment.setArguments(args);
+
+                FragmentTransaction transaction = ((Activity)context).getFragmentManager().beginTransaction();
+                transaction.replace(R.id.prikbord_fragments, newFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
     }
