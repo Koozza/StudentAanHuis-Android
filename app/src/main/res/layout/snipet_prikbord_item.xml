@@ -21,6 +21,8 @@
             android:gravity="fill_horizontal"
             android:text="Locatie"
             android:layout_weight="1"
+            android:ellipsize="end"
+            android:lines="1"
             android:textSize="14sp"
             android:textColor="@color/black87"
             android:id="@+id/prikbord_locatie"/>

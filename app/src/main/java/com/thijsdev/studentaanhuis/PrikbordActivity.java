@@ -1,9 +1,13 @@
 package com.thijsdev.studentaanhuis;
 
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
@@ -14,8 +18,9 @@ public class PrikbordActivity extends BasicActionBarActivity {
     PrikbordHelper prikbordHelper = new PrikbordHelper();
     Toolbar toolbar;
     PrikbordListFragment prikbordListFragment;
-    boolean inSettings = true;
     public PrikbordAdapter mAdapter;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     private boolean isRefreshing = false;
 
@@ -25,6 +30,7 @@ public class PrikbordActivity extends BasicActionBarActivity {
         setContentView(R.layout.activity_prikbord);
 
         mAdapter = new PrikbordAdapter(this);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (findViewById(R.id.prikbord_fragments) != null) {
             if (savedInstanceState != null)
@@ -42,6 +48,12 @@ public class PrikbordActivity extends BasicActionBarActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getString(R.string.prikbord));
         toolbar.inflateMenu(R.menu.menu_prikbord);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.app_name, R.string.app_name);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        //toolbar.setNavigationIcon(R.drawable.icon);
+        //toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        //toolbar.setLogo(R.drawable.ic_launcher);
+
         registerToolbarClick();
 
         //Load & Set Fonts
@@ -51,13 +63,6 @@ public class PrikbordActivity extends BasicActionBarActivity {
 
 
         updatePrikbordItems(null);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getMenuInflater().inflate(R.menu.menu_prikbord, menu);
-        return true;
     }
 
     public void registerToolbarClick() {
@@ -108,11 +113,37 @@ public class PrikbordActivity extends BasicActionBarActivity {
     }
 
     @Override
-    public void onBackPressed()
-    {
-        if(getFragmentManager().getBackStackEntryCount() == 0)
-            super.onBackPressed();
-        else
-            getFragmentManager().popBackStack();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_prikbord, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(Gravity.START|Gravity.LEFT)){
+            mDrawerLayout.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
     }
 }

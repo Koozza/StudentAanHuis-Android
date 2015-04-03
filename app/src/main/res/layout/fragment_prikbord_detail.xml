@@ -1,7 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black">
-
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingBottom="8sp"
+    android:paddingTop="8sp"
+    android:paddingLeft="16sp"
+    android:paddingRight="16sp"
+    android:background="#FFFFFF"
+    android:id="@+id/prikbord_item">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2sp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="fill_horizontal"
+            android:text="Locatie"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="@color/black87"
+            android:id="@+id/prikbord_locatie"/>
+        <TextView
+            android:layout_width="70sp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="100.3Km"
+            android:textSize="14sp"
+            android:textColor="@color/black87"
+            android:id="@+id/prikbord_afstand"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vehicula diam orci, in tristique dui euismod eu. Duis vestibulum quam neque, non faucibus nulla dictum eget. Aenean viverra tempus eros, gravida dignissim quam volutpat vel. Nulla laoreet, libero rutrum dictum volutpat, tellus enim euismod nisi, a elementum diam leo nec augue. Mauris a arcu commodo, mattis magna at, condimentum lectus. Sed enim diam, venenatis convallis aliquam in, fringilla nec diam. Phasellus dolor risus, bibendum quis risus eget, tristique egestas mauris. Donec dignissim vestibulum orci, a tempus diam imperdiet hendrerit. Sed ultricies malesuada risus vitae elementum. Nunc eu felis in dolor tincidunt volutpat vel id est. Mauris vehicula purus sit amet odio eleifend, id ultrices ipsum sollicitudin. Suspendisse potenti."
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:lineSpacingExtra="1sp"
+            android:textColor="@color/black87"
+            android:id="@+id/prikbord_omschrijving"/>
+        <View
+            android:layout_width="80sp"
+            android:layout_height="fill_parent"/>
+    </LinearLayout>
 </LinearLayout>

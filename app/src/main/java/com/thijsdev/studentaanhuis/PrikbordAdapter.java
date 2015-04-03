@@ -6,7 +6,6 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,18 +49,44 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
         viewHolder.distance.setTypeface(((PrikbordActivity)context).robotoRegular);
         viewHolder.omschrijving.setTypeface(((PrikbordActivity) context).robotoRegular);
 
+        /*
+        if(android.os.Build.VERSION.SDK_INT >= 21) {
+            viewHolder.adress.setTransitionName("adress" + position);
+            viewHolder.omschrijving.setTransitionName("omschrijving" + position);
+        }
+        */
+
         viewHolder.setClickListener(new PrikbordViewHolder.ClickListener() {
             @Override
             public void onClick(View v, int pos) {
-                Log.v("SAH", "Click");
+                PrikbordDetailFragment fragment = new PrikbordDetailFragment();
 
-                PrikbordDetailFragment newFragment = new PrikbordDetailFragment();
-                Bundle args = new Bundle();
-                newFragment.setArguments(args);
+                /*
+                View title = v.findViewById(R.id.prikbord_locatie);
+                View desc = v.findViewById(R.id.prikbord_omschrijving);
+
+                if(android.os.Build.VERSION.SDK_INT >= 21) {
+                    fragment.setSharedElementEnterTransition(TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+                    fragment.setEnterTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.explode));
+                    fragment.setLocationId(title.getTransitionName());
+                    fragment.setOmschrijvingId(desc.getTransitionName());
+                }
+                */
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("PrikbordId", mData.get(pos).getId());
+                fragment.setArguments(bundle);
 
                 FragmentTransaction transaction = ((Activity)context).getFragmentManager().beginTransaction();
-                transaction.replace(R.id.prikbord_fragments, newFragment);
+
+                transaction.replace(R.id.prikbord_fragments, fragment);
                 transaction.addToBackStack(null);
+                /*
+                if(android.os.Build.VERSION.SDK_INT >= 21) {
+                    transaction.addSharedElement(title, title.getTransitionName());
+                    transaction.addSharedElement(desc, desc.getTransitionName());
+                }
+                */
                 transaction.commit();
             }
         });

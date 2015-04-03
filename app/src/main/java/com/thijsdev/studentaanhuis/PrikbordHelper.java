@@ -1,8 +1,6 @@
 package com.thijsdev.studentaanhuis;
 
-import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -23,12 +21,14 @@ public class PrikbordHelper {
         final TextView prikbord_status;
 
         //Dit alleen doen als het door de UI thread is aangeroepen
+        /*
         if (context instanceof Activity) {
             prikbord_status = (TextView) ((Activity)context).findViewById(R.id.prikbord_status);
             prikbord_status.setVisibility(View.GONE);
         }else{
             prikbord_status = null;
         }
+        */
 
         client.init();
 
@@ -103,9 +103,11 @@ public class PrikbordHelper {
                 }
                 if (!gotItem) {
                     //Dit alleen doen als het door de UI thread is aangeroepen
+                    /*
                     if (context instanceof Activity) {
                         prikbord_status.setVisibility(View.VISIBLE);
                     }
+                    */
                 }
             }
         });
