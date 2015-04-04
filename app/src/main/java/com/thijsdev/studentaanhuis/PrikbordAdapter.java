@@ -45,9 +45,9 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
         else
             viewHolder.distance.setText(distance);
 
-        viewHolder.adress.setTypeface(((PrikbordActivity)context).robotoMedium);
-        viewHolder.distance.setTypeface(((PrikbordActivity)context).robotoRegular);
-        viewHolder.omschrijving.setTypeface(((PrikbordActivity) context).robotoRegular);
+        viewHolder.adress.setTypeface(((MainActivity)context).robotoMedium);
+        viewHolder.distance.setTypeface(((MainActivity)context).robotoRegular);
+        viewHolder.omschrijving.setTypeface(((MainActivity) context).robotoRegular);
 
         /*
         if(android.os.Build.VERSION.SDK_INT >= 21) {

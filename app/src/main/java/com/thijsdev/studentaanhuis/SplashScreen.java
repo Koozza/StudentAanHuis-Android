@@ -28,7 +28,7 @@ public class SplashScreen extends BasicActionBarActivity {
                 lh.checkLogin(SplashScreen.this, client, new Callback() {
                     @Override
                     public void onTaskCompleted(Object result) {
-                        Intent goToNextActivity = new Intent(getApplicationContext(), PrikbordActivity.class);
+                        Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(goToNextActivity);
                         finish();
                     }

@@ -59,7 +59,7 @@ public class LoginActivity extends BasicActionBarActivity {
                 werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
                     @Override
                     public void onTaskCompleted(Object result) {
-                        Intent goToNextActivity = new Intent(getApplicationContext(), PrikbordActivity.class);
+                        Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(goToNextActivity);
                         finish();
                     }

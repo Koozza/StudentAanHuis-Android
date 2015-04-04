@@ -29,11 +29,11 @@
             android:windowSoftInputMode="stateUnchanged|adjustResize">
         </activity>
         <activity
-            android:name=".PrikbordActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_prikbord" >
         </activity>
         <activity
-            android:name=".PrikbordDetailActivity"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_prikbord" >
         </activity>
         <activity

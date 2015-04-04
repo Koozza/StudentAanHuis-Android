@@ -3,6 +3,7 @@ package com.thijsdev.studentaanhuis;
 import android.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,10 @@ import android.widget.TextView;
 public class PrikbordDetailFragment extends Fragment {
     private WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
     private GeoLocationHelper locHelper = new GeoLocationHelper();
+
+    private MainActivity mainActivity;
+    private Toolbar toolbar;
+
     DatabaseHandler databaseHandler;
     PrikbordItem prikbordItem;
 
@@ -19,6 +24,23 @@ public class PrikbordDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_prikbord_detail, container, false);
+
+        mainActivity = (MainActivity) view.getContext();
+        toolbar = mainActivity.getToolbar();
+        toolbar.getMenu().clear();
+        toolbar.setTitle(getString(R.string.prikbord_item));
+        toolbar.inflateMenu(R.menu.menu_prikbord_detail);
+        mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(false);
+
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        mainActivity.mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mainActivity.onBackPressed();
+            }
+        });
+
         /*
         if(android.os.Build.VERSION.SDK_INT >= 21) {
             view.findViewById(R.id.prikbord_locatie).setTransitionName(locationId);
@@ -45,9 +67,9 @@ public class PrikbordDetailFragment extends Fragment {
             prikbordDistance.setText(distance);
 
 
-        prikbordLocatie.setTypeface(((PrikbordActivity)getActivity()).robotoMedium);
-        prikbordDistance.setTypeface(((PrikbordActivity)getActivity()).robotoRegular);
-        prikbordDescription.setTypeface(((PrikbordActivity) getActivity()).robotoRegular);
+        prikbordLocatie.setTypeface(((MainActivity)getActivity()).robotoMedium);
+        prikbordDistance.setTypeface(((MainActivity)getActivity()).robotoRegular);
+        prikbordDescription.setTypeface(((MainActivity) getActivity()).robotoRegular);
 
         return view;
     }

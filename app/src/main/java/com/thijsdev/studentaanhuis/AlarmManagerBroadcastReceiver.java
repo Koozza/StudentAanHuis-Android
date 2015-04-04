@@ -119,9 +119,9 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
         mBuilder.setContentText("Er zijn nieuwe prikbord items beschikbaar.");
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
-        Intent resultIntent = new Intent(context, PrikbordActivity.class);
+        Intent resultIntent = new Intent(context, MainActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(PrikbordActivity.class);
+        stackBuilder.addParentStack(MainActivity.class);
 
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =

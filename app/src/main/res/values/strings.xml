@@ -25,4 +25,5 @@
     <string name="settings">Instellingen</string>
     <string name="refresh">Refresh</string>
     <string name="no_prikbord_items_found">Geen prikbord items gevonden</string>
+    <string name="prikbord_item">Prikbord Item</string>
 </resources>
