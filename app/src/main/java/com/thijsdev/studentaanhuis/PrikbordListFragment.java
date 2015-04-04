@@ -32,7 +32,7 @@ public class PrikbordListFragment extends Fragment {
         toolbar = mainActivity.getToolbar();
         toolbar.getMenu().clear();
         toolbar.setTitle(getString(R.string.prikbord));
-        toolbar.inflateMenu(R.menu.menu_prikbord_detail);
+        toolbar.inflateMenu(R.menu.menu_prikbord);
         toolbar.setNavigationIcon(null);
 
         mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);

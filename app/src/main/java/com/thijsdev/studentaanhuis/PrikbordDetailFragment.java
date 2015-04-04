@@ -93,14 +93,4 @@ public class PrikbordDetailFragment extends Fragment {
             return null;
         }
     }
-
-    /*
-    public void setLocationId(String id) {
-        locationId = id;
-    }
-
-    public void setOmschrijvingId(String id) {
-        omschrijvingId = id;
-    }
-    */
 }
