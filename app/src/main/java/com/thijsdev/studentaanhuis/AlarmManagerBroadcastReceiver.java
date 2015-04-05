@@ -14,6 +14,7 @@ import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
@@ -36,15 +37,12 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
             //Check of het om de prikbord timer gaat
             if (extras != null && extras.getString(ALARM) != null) {
                 if(extras.getString(ALARM).equals(PRIKBORD)) {
-                    final StringBuffer s = new StringBuffer();
                     PrikbordHelper prikbordHelper = new PrikbordHelper();
-                    prikbordHelper.updatePrikbordItems(context, new Callback(), new Callback() {
+                    prikbordHelper.updatePrikbordItems(context, new Callback(), new Callback(), new Callback() {
                         @Override
                         public void onTaskCompleted(Object result) {
-                            if(!s.toString().equals("done")) {
+                            if(((ArrayList<PrikbordItem>) result).size() != 0)
                                 generateNewPrikbordNotification(context);
-                            }
-                            s.append("done");
                         }
                     });
                 }
@@ -121,9 +119,9 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
         mBuilder.setContentText("Er zijn nieuwe prikbord items beschikbaar.");
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
 
-        Intent resultIntent = new Intent(context, PrikbordActivity.class);
+        Intent resultIntent = new Intent(context, MainActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(PrikbordActivity.class);
+        stackBuilder.addParentStack(MainActivity.class);
 
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =

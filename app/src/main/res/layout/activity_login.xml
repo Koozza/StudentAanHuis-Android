@@ -3,15 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#EAF3FA"
+    android:background="@color/SAHlightblue"
     tools:context=".LoginActivity">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="#EAF3FA">
+        android:orientation="vertical">
 
         <ImageView
             android:layout_width="match_parent"
@@ -28,7 +27,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="10dp"
             android:text=""
-            android:textColor="#257ca6"
+            android:textColor="@color/darkblue"
             android:gravity="center"
             android:id="@+id/login_error"/>
 
@@ -51,12 +50,12 @@
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_weight="0.8"
-                    android:textSize="16dp"
+                    android:textSize="14sp"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:hint="@string/username"
-                    android:textColor="#7db2d3"
-                    android:textColorHint="#a9c4d5"
+                    android:textColor="@color/SAHblue"
+                    android:textColorHint="@color/SAHblue"
                     android:singleLine="true"
                     android:letterSpacing="0"
                     android:background="@drawable/login_username_background"
@@ -81,7 +80,7 @@
                 <View
                     android:layout_width="0dp"
                     android:layout_weight="0.05"
-                    android:background="#FFFFFF"
+                    android:background="@color/white"
                     android:layout_height="1dp"/>
 
                 <Space
@@ -92,7 +91,7 @@
                 <View
                     android:layout_width="0dp"
                     android:layout_weight="0.05"
-                    android:background="#FFFFFF"
+                    android:background="@color/white"
                     android:layout_height="1dp"/>
 
                 <Space
@@ -115,12 +114,12 @@
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_weight="0.8"
-                    android:textSize="16dp"
+                    android:textSize="14sp"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:hint="@string/password"
-                    android:textColor="#7db2d3"
-                    android:textColorHint="#a9c4d5"
+                    android:textColor="@color/SAHblue"
+                    android:textColorHint="@color/SAHblue"
                     android:inputType="textPassword"
                     android:singleLine="true"
                     android:letterSpacing="0"
@@ -149,10 +148,9 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="0.8"
                     android:paddingTop="3dp"
-                    android:textSize="16dp"
+                    android:textSize="14sp"
                     android:text="@string/login"
-                    android:textStyle="bold"
-                    android:textColor="#257ca6"
+                    android:textColor="@color/darkblue"
                     android:background="@drawable/btn_rounded_background"
                     android:id="@+id/login_btn_login"
                     android:onClick="doLogin"/>
@@ -173,16 +171,16 @@
             android:layout_weight="0.08"
             android:layout_width="fill_parent"
             android:layout_height="10dp"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:text="Thijs Dalmaijer"
-            android:textColor="#257ca6"
+            android:textColor="@color/darkblue"
             android:gravity="center"
             android:id="@+id/login_creator"/>
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#BB000000"
+        android:background="@color/black74"
         android:visibility="gone"
         android:id="@+id/login_loading">
         <ProgressBar
