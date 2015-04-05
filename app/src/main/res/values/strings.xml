@@ -26,4 +26,7 @@
     <string name="refresh">Refresh</string>
     <string name="no_prikbord_items_found">Geen prikbord items gevonden</string>
     <string name="prikbord_item">Prikbord Item</string>
+    <string name="aanmelden">Aanmelden</string>
+    <string name="afmelden">Afmelden</string>
+    <string name="distance">Afstand:</string>
 </resources>

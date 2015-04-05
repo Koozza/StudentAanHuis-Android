@@ -4,10 +4,14 @@ import android.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PrikbordDetailFragment extends Fragment {
     private WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
@@ -55,21 +59,54 @@ public class PrikbordDetailFragment extends Fragment {
         prikbordItem = databaseHandler.getPrikbordItem(PrikbordId);
         String distance = getDistanceString(prikbordItem);
 
+        //Set labels as bold
+        ((TextView) view.findViewById(R.id.prikbord_label_afstand)).setTypeface(((MainActivity)getActivity()).robotoMedium);
+        ((TextView) view.findViewById(R.id.prikbord_label_deadline)).setTypeface(((MainActivity)getActivity()).robotoMedium);
+        ((TextView) view.findViewById(R.id.prikbord_label_locatie)).setTypeface(((MainActivity)getActivity()).robotoMedium);
+        ((TextView) view.findViewById(R.id.prikbord_label_status)).setTypeface(((MainActivity)getActivity()).robotoMedium);
+        ((TextView) view.findViewById(R.id.prikbord_label_tags)).setTypeface(((MainActivity)getActivity()).robotoMedium);
+        ((TextView) view.findViewById(R.id.prikbord_label_omschrijving)).setTypeface(((MainActivity) getActivity()).robotoMedium);
+
         TextView prikbordLocatie = (TextView) view.findViewById(R.id.prikbord_locatie);
         TextView prikbordDistance = (TextView) view.findViewById(R.id.prikbord_afstand);
-        TextView prikbordDescription = (TextView) view.findViewById(R.id.prikbord_omschrijving);
+        TextView prikbordStatus = (TextView) view.findViewById(R.id.prikbord_status);
+        TextView prikbordDeadline = (TextView) view.findViewById(R.id.prikbord_deadline);
+        TextView prikbordTags = (TextView) view.findViewById(R.id.prikbord_tags);
+        TextView prikbordDescription = (TextView) view.findViewById(R.id.prikbord_description);
 
-        prikbordLocatie.setText(prikbordItem.getAdres());
         prikbordDescription.setText(prikbordItem.getBeschrijving());
+        prikbordTags.setText(prikbordItem.getType());
+
+        //Fix adress to strip postcode
+        Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
+        Matcher m = p.matcher(prikbordItem.getAdres());
+        m.find();
+        prikbordLocatie.setText(m.group(1)+", "+m.group(2));
+
+
+        //set deadline
+        prikbordDeadline.setText(prikbordItem.getFormatedDeadline("EEE dd MMMM yyyy", null));
+
+        //set distance
         if(distance == null)
             prikbordDistance.setVisibility(View.GONE);
         else
             prikbordDistance.setText(distance);
 
+        //set status
+        if(prikbordItem.getBeschikbaar() == 0)
+            prikbordStatus.setText(mainActivity.getString(R.string.none));
+        else if(prikbordItem.getBeschikbaar() == 1)
+            prikbordStatus.setText(mainActivity.getString(R.string.unavailable));
+        else
+            prikbordStatus.setText( mainActivity.getString(R.string.available));
 
-        prikbordLocatie.setTypeface(((MainActivity)getActivity()).robotoMedium);
+
+        prikbordLocatie.setTypeface(((MainActivity)getActivity()).robotoRegular);
         prikbordDistance.setTypeface(((MainActivity)getActivity()).robotoRegular);
         prikbordDescription.setTypeface(((MainActivity) getActivity()).robotoRegular);
+
+
 
         return view;
     }

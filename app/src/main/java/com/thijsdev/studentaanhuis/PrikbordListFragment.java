@@ -35,10 +35,6 @@ public class PrikbordListFragment extends Fragment {
         toolbar.inflateMenu(R.menu.menu_prikbord);
         toolbar.setNavigationIcon(null);
 
-        mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);
-        mainActivity.mDrawerLayout.setDrawerListener(mainActivity.mDrawerToggle);
-        mainActivity.mDrawerToggle.syncState();
-
         registerToolbarClick();
 
         if(mainActivity.getSharedObject("prikbordAdapter") == null) {
@@ -62,6 +58,10 @@ public class PrikbordListFragment extends Fragment {
 
     @Override
     public void onStart() {
+        mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mainActivity.mDrawerLayout.setDrawerListener(mainActivity.mDrawerToggle);
+        mainActivity.mDrawerToggle.syncState();
+
         if(mAdapter.getItemCount() == 0)
             updatePrikbordItems(null);
         super.onStart();

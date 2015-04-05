@@ -164,7 +164,7 @@
                 android:layout_marginLeft="4dp"
                 android:minWidth="88dp"
                 android:text="@string/afmelden"
-                android:background="@android:color/transparent"
+                android:background="?android:selectableItemBackgroundBorderless"
                 android:textColor="@color/SAHdarkblue"
                 android:layout_gravity="center"/>
             <Button
@@ -177,7 +177,7 @@
                 android:layout_marginLeft="4dp"
                 android:minWidth="88dp"
                 android:text="@string/aanmelden"
-                android:background="@android:color/transparent"
+                android:background="?android:selectableItemBackgroundBorderless"
                 android:textColor="@color/SAHdarkblue"
                 android:layout_gravity="center"/>
         </LinearLayout>

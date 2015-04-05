@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
     private ArrayList<PrikbordItem> mData = new ArrayList<PrikbordItem>();
@@ -38,7 +40,13 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
     public void onBindViewHolder(PrikbordViewHolder viewHolder, int position) {
         String distance = getDistanceString(position);
 
-        viewHolder.adress.setText(mData.get(position).getAdres());
+        //Fix adress to strip postcode
+        Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
+        Matcher m = p.matcher(mData.get(position).getAdres());
+        m.find();
+        viewHolder.adress.setText(m.group(1)+", "+m.group(2));
+
+        //Other information
         viewHolder.omschrijving.setText(mData.get(position).getBeschrijving());
         if(distance == null)
             viewHolder.distance.setVisibility(View.GONE);
