@@ -155,7 +155,7 @@
             android:orientation="horizontal"
             android:gravity="right">
             <Button
-                android:id="@+id/btn_prikbord_detail_aanmelden"
+                android:id="@+id/btn_prikbord_detail_afmelden"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:paddingRight="8dp"
@@ -168,7 +168,7 @@
                 android:textColor="@color/SAHdarkblue"
                 android:layout_gravity="center"/>
             <Button
-                android:id="@+id/btn_prikbord_detail_afmelden"
+                android:id="@+id/btn_prikbord_detail_aanmelden"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:paddingRight="8dp"

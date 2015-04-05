@@ -1,19 +1,26 @@
 package com.thijsdev.studentaanhuis;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PrikbordDetailFragment extends Fragment {
+    final private PrikbordHelper prikbordHelper = new PrikbordHelper();
     private WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
     private GeoLocationHelper locHelper = new GeoLocationHelper();
 
@@ -27,7 +34,7 @@ public class PrikbordDetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_prikbord_detail, container, false);
+        final View view = inflater.inflate(R.layout.fragment_prikbord_detail, container, false);
 
         mainActivity = (MainActivity) view.getContext();
         toolbar = mainActivity.getToolbar();
@@ -81,7 +88,7 @@ public class PrikbordDetailFragment extends Fragment {
         Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
         Matcher m = p.matcher(prikbordItem.getAdres());
         m.find();
-        prikbordLocatie.setText(m.group(1)+", "+m.group(2));
+        prikbordLocatie.setText(m.group(1) + ", " + m.group(2));
 
 
         //set deadline
@@ -93,22 +100,61 @@ public class PrikbordDetailFragment extends Fragment {
         else
             prikbordDistance.setText(distance);
 
-        //set status
-        if(prikbordItem.getBeschikbaar() == 0)
-            prikbordStatus.setText(mainActivity.getString(R.string.none));
-        else if(prikbordItem.getBeschikbaar() == 1)
-            prikbordStatus.setText(mainActivity.getString(R.string.unavailable));
-        else
-            prikbordStatus.setText( mainActivity.getString(R.string.available));
-
-
         prikbordLocatie.setTypeface(((MainActivity)getActivity()).robotoRegular);
         prikbordDistance.setTypeface(((MainActivity)getActivity()).robotoRegular);
         prikbordDescription.setTypeface(((MainActivity) getActivity()).robotoRegular);
 
+        Button aanmelden = ((Button) view.findViewById(R.id.btn_prikbord_detail_aanmelden));
+        Button afmelden = ((Button) view.findViewById(R.id.btn_prikbord_detail_afmelden));
+        aanmelden.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(prikbordItem.getBeschikbaar() == 0 || prikbordItem.getBeschikbaar() == 1)
+                    acceptOnClick(prikbordItem, view);
+            }
+        });
+        afmelden.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(prikbordItem.getBeschikbaar() == 0 || prikbordItem.getBeschikbaar() == 2)
+                    declineOnClick(prikbordItem, view);
+            }
+        });
 
+        //Set status & Buttons
+        updateStatus(view);
 
         return view;
+    }
+
+    private void updateStatus(View view) {
+        Button aanmelden = ((Button) view.findViewById(R.id.btn_prikbord_detail_aanmelden));
+        Button afmelden = ((Button) view.findViewById(R.id.btn_prikbord_detail_afmelden));
+        TextView prikbordStatus = (TextView) view.findViewById(R.id.prikbord_status);
+
+        //Button colors
+        if(prikbordItem.getBeschikbaar() == 2) {
+            aanmelden.setTextColor(getResources().getColor(R.color.SAHlightblue));
+            afmelden.setTextColor(getResources().getColor(R.color.SAHdarkblue));
+            prikbordStatus.setText(mainActivity.getString(R.string.available));
+
+            aanmelden.setClickable(false);
+            afmelden.setClickable(true);
+        }if(prikbordItem.getBeschikbaar() == 1) {
+            afmelden.setTextColor(getResources().getColor(R.color.SAHlightblue));
+            aanmelden.setTextColor(getResources().getColor(R.color.SAHdarkblue));
+            prikbordStatus.setText(mainActivity.getString(R.string.unavailable));
+
+            aanmelden.setClickable(true);
+            afmelden.setClickable(false);
+        }if(prikbordItem.getBeschikbaar() == 0) {
+            afmelden.setTextColor(getResources().getColor(R.color.SAHdarkblue));
+            aanmelden.setTextColor(getResources().getColor(R.color.SAHdarkblue));
+            prikbordStatus.setText(mainActivity.getString(R.string.none));
+
+            aanmelden.setClickable(true);
+            afmelden.setClickable(true);
+        }
     }
 
     private String getDistanceString(PrikbordItem prikbordItem) {
@@ -129,5 +175,118 @@ public class PrikbordDetailFragment extends Fragment {
         }else{
             return null;
         }
+    }
+
+
+
+    private void declineOnClick(final PrikbordItem prikbordItem, final View view) {
+        //Oude code met confirm; weggehaald op verzoek
+        /*
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        final RelativeLayout loadingScreen = (RelativeLayout) mainActivity.findViewById(R.id.main_loading);
+                        loadingScreen.setVisibility(View.VISIBLE);
+
+                        prikbordHelper.declineItem(mainActivity, prikbordItem, new Callback() {
+                            @Override
+                            public void onTaskCompleted(Object result) {
+                                loadingScreen.setVisibility(View.GONE);
+                                ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter")).notifyDataSetChanged();
+                                updateStatus(view);
+                            }
+                        });
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        builder.setMessage(mainActivity.getString(R.string.sure_you_cant_do_appointment)).setPositiveButton(mainActivity.getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(mainActivity.getString(R.string.no), dialogClickListener).show();
+                */
+
+        final RelativeLayout loadingScreen = (RelativeLayout) mainActivity.findViewById(R.id.main_loading);
+        loadingScreen.setVisibility(View.VISIBLE);
+
+        prikbordHelper.declineItem(mainActivity, prikbordItem, new Callback() {
+            @Override
+            public void onTaskCompleted(Object result) {
+                loadingScreen.setVisibility(View.GONE);
+                ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter")).notifyDataSetChanged();
+                updateStatus(view);
+            }
+        });
+    }
+
+    private void acceptOnClick(final PrikbordItem prikbordItem, final View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        builder.setTitle(mainActivity.getString(R.string.when_availible));
+
+        final EditText input = new EditText(mainActivity);
+        input.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setLines(3);
+        input.setGravity(Gravity.TOP | Gravity.LEFT);
+        input.setTextColor(getResources().getColor(R.color.black87));
+        input.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+        builder.setView(input);
+
+        builder.setPositiveButton(mainActivity.getString(R.string.continu), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String userinput = input.getText().toString().trim();
+                if(!userinput.equals("")) {
+                    showWerkgebiedDialog(prikbordItem, view, userinput);
+                }else{
+                    dialog.cancel();
+                }
+            }
+        });
+        builder.setNegativeButton(mainActivity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showWerkgebiedDialog(final PrikbordItem prikbordItem, final View view, final String beschikbaarheid) {
+        final WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        builder.setTitle(mainActivity.getString(R.string.select_workarea));
+
+        builder.setItems(werkgebiedHelper.getWerkgebiedenArray(mainActivity), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                Werkgebied werkgebied = werkgebiedHelper.getActiveWerkgebieden(mainActivity).get(item);
+                final RelativeLayout loadingScreen = (RelativeLayout) mainActivity.findViewById(R.id.main_loading);
+                loadingScreen.setVisibility(View.VISIBLE);
+
+                prikbordHelper.acceptItem(mainActivity, prikbordItem, beschikbaarheid, werkgebied, new Callback() {
+                    @Override
+                    public void onTaskCompleted(Object result) {
+                        loadingScreen.setVisibility(View.GONE);
+                        ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter")).notifyDataSetChanged();
+                        updateStatus(view);
+                    }
+                });
+            }
+        });
+
+        builder.setNegativeButton(mainActivity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 }

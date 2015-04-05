@@ -1,5 +1,6 @@
 package com.thijsdev.studentaanhuis;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -23,7 +24,7 @@ public class MainActivity extends BasicActionBarActivity {
 
     private Map<String, Object> sharedObjects = new HashMap<>();
 
-    PrikbordListFragment prikbordListFragment;
+    private PrikbordListFragment prikbordListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,5 +108,9 @@ public class MainActivity extends BasicActionBarActivity {
 
     public void removeSharedObject(String str) {
         sharedObjects.remove(str);
+    }
+
+    public Fragment getActiveFragement() {
+        return prikbordListFragment;
     }
 }
