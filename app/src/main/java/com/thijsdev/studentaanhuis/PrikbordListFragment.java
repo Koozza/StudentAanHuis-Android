@@ -58,9 +58,7 @@ public class PrikbordListFragment extends Fragment {
 
     @Override
     public void onStart() {
-        mainActivity.mDrawerToggle.setDrawerIndicatorEnabled(true);
-        mainActivity.mDrawerLayout.setDrawerListener(mainActivity.mDrawerToggle);
-        mainActivity.mDrawerToggle.syncState();
+        mainActivity.setupActionBar();
 
         if(mAdapter.getItemCount() == 0)
             updatePrikbordItems(null);
