@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -60,6 +61,21 @@ public class WerkgebiedHelper {
                 }
 
                 callback.onTaskCompleted(null);
+            }
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object result) {
+                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    client.retryLastCall();
+                }else {
+                    Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
         });
     }

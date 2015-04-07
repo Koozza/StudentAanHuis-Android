@@ -3,13 +3,8 @@ package com.thijsdev.studentaanhuis;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
-import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HttpContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -17,21 +12,18 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
-
 public class LoginHTTPHandler {
     public LoginHTTPHandler() {
 
     }
 
-    public void checkLogin(final Activity activity, HttpClientClass client, final Callback succes, final Callback failure) {
+    public void checkLogin(final Activity activity, final HttpClientClass client, final Callback succes, final Callback failure) {
         SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
         String session = sharedpreferences.getString("session", null);
         if(session != null) {
             try {
                 JSONObject obj = new JSONObject();
                 obj.put("url", "https://nl.sah3.net/students/time_offs");
-                ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
 
                 client.getSource(obj, new Callback() {
                     @Override
@@ -40,6 +32,7 @@ public class LoginHTTPHandler {
                         Elements elements = doc.select("h1");
                         for (Element element : elements) {
                             if(element.text().equals("Aanmelden") || element.text().contains("Bad Request")) {
+                                SAHApplication.cookieManager.getCookieStore().removeAll();
                                 failure.onTaskCompleted(null);
                             }else{
                                 succes.onTaskCompleted(null);
@@ -47,11 +40,39 @@ public class LoginHTTPHandler {
                             break;
                         }
                     }
+                }, new Callback() {
+                    @Override
+                    public void onTaskCompleted(Object result) {
+                        if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            client.retryLastCall();
+                        }else{
+                            SAHApplication.cookieManager.getCookieStore().removeAll();
+                            if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                client.retryLastCall();
+                            }else {
+                                failure.onTaskCompleted(null);
+
+                                Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                toast.show();
+                            }
+                        }
+                    }
                 });
             }catch (JSONException e) {
                 e.printStackTrace();
             }
         }else {
+            SAHApplication.cookieManager.getCookieStore().removeAll();
             failure.onTaskCompleted(null);
         }
     }
@@ -80,8 +101,6 @@ public class LoginHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/sessions");
                         obj.put("params", params);
 
-                        ((DefaultHttpClient) client.getHTTPClient()).addResponseInterceptor(new SessionKeeper(activity));
-
                         client.doPost(obj, new Callback() {
                             @Override
                             public void onTaskCompleted(Object result) {
@@ -93,34 +112,58 @@ public class LoginHTTPHandler {
                                 else
                                     failure.onTaskCompleted(content.text());
                             }
+                        }, new Callback() {
+                            @Override
+                            public void onTaskCompleted(Object result) {
+                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    client.retryLastCall();
+                                }else {
+                                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                        try {
+                                            Thread.sleep(500);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        client.retryLastCall();
+                                    }else {
+                                        failure.onTaskCompleted(null);
+
+                                        Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                        toast.show();
+                                    }
+                                }
+                            }
                         });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                 }
+            }, new Callback() {
+                @Override
+                public void onTaskCompleted(Object result) {
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted(null);
+
+                        Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
             });
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    private class SessionKeeper implements HttpResponseInterceptor {
-        private Activity activity;
-        public SessionKeeper(Activity _activity) {
-            activity = _activity;
-        }
-
-        @Override
-        public void process(HttpResponse response, HttpContext context)  throws HttpException, IOException {
-            Header[] headers = response.getHeaders("Set-Cookie");
-            if ( headers != null && headers.length == 1 ){
-                SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-
-                SharedPreferences.Editor edit = sharedpreferences.edit();
-                edit.putString("session", headers[0].getValue());
-                edit.commit();
-            }
         }
     }
 }

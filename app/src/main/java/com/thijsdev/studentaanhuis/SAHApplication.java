@@ -2,7 +2,13 @@ package com.thijsdev.studentaanhuis;
 
 import android.app.Application;
 
+import java.net.CookieManager;
+
 public class SAHApplication extends Application {
+    final public static int HTTP_RETRIES = 2;
+
+    public static CookieManager cookieManager = new CookieManager();
+
     public static boolean isActivityVisible() {
         return activityVisible;
     }

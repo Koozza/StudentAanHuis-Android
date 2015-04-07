@@ -48,8 +48,6 @@ public class MainActivity extends BasicActionBarActivity {
             transaction.commit();
         }
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.app_name, R.string.app_name);
-
         //toolbar.setNavigationIcon(R.drawable.icon);
         //toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         //toolbar.setLogo(R.drawable.ic_launcher);
@@ -58,6 +56,15 @@ public class MainActivity extends BasicActionBarActivity {
         robotoLight = Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf");
         robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         robotoMedium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
+    }
+
+    public void setupActionBar() {
+        if(mDrawerToggle == null)
+            mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.app_name, R.string.app_name);
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
     }
 
     @Override
