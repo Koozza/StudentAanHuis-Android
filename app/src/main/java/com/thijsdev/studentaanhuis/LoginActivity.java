@@ -1,7 +1,9 @@
 package com.thijsdev.studentaanhuis;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
@@ -10,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.net.HttpCookie;
 
 
 public class LoginActivity extends BasicActionBarActivity {
@@ -32,7 +36,6 @@ public class LoginActivity extends BasicActionBarActivity {
         ((EditText)findViewById(R.id.login_password)).setTransformationMethod(new PasswordTransformationMethod());
 
         client = HttpClientClass.getInstance();
-        client.init();
     }
 
     public void doLogin(View view) {
@@ -54,6 +57,17 @@ public class LoginActivity extends BasicActionBarActivity {
         lh.doLogin(client, this, uname, password.getText().toString(), new Callback() {
             @Override
             public void onTaskCompleted(Object result) {
+                //Zetten van de juiste cookie
+                for(HttpCookie cookie : SAHApplication.cookieManager.getCookieStore().getCookies()) {
+                    if(cookie.getName().equals("_session_id")) {
+                        SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+
+                        SharedPreferences.Editor edit = sharedpreferences.edit();
+                        edit.putString("session", cookie.getValue());
+                        edit.commit();
+                    }
+                }
+
                 //Werkgebieden ophalen
                 WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
                 werkgebiedHelper.updateWerkgebieden(activity, new Callback() {

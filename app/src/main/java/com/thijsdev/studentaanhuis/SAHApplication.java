@@ -2,7 +2,11 @@ package com.thijsdev.studentaanhuis;
 
 import android.app.Application;
 
+import java.net.CookieManager;
+
 public class SAHApplication extends Application {
+    public static CookieManager cookieManager = new CookieManager();
+
     public static boolean isActivityVisible() {
         return activityVisible;
     }

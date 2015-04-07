@@ -20,6 +20,7 @@ public class PrikbordHelper {
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
         final TextView prikbord_status;
 
+        //TODO: Dit moet er wel terug in
         //Dit alleen doen als het door de UI thread is aangeroepen
         /*
         if (context instanceof Activity) {
@@ -29,8 +30,6 @@ public class PrikbordHelper {
             prikbord_status = null;
         }
         */
-
-        client.init();
 
 
         prikbordHttpHandler.getPrikbordItems(client, context, new Callback() {

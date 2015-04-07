@@ -1,9 +1,7 @@
 package com.thijsdev.studentaanhuis;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -12,15 +10,12 @@ import org.jsoup.nodes.Element;
 
 public class PrikbordHTTPHandler {
     public void getPrikbordItems(HttpClientClass client, Context context, Callback callback) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-        String session = sharedpreferences.getString("session", null);
-
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes");
-            ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
 
-            client.getSource(obj, callback);
+            //TODO: Implement failure callback
+            client.getSource(obj, callback, new Callback());
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -28,23 +23,17 @@ public class PrikbordHTTPHandler {
 
     public void getPrikbordItem(HttpClientClass client, Context context, int id, Callback callback) {
         try {
-            SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-            String session = sharedpreferences.getString("session", null);
-
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/" + id + "/respond");
-            ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
 
-            client.getSource(obj, callback);
+            //TODO: Implement failure callback
+            client.getSource(obj, callback, new Callback());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public void declineItem(final HttpClientClass client, final int id, final Callback callback, Context context) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-        final String session = sharedpreferences.getString("session", null);
-
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
@@ -66,23 +55,20 @@ public class PrikbordHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/create_or_update");
                         obj.put("params", params);
 
-                        ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
-
-                        client.doPost(obj, callback);
+                        //TODO: Implement failure callback
+                        client.doPost(obj, callback, new Callback());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+            //TODO: Implement failure callback
                 }
-            });
+            }, new Callback());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public void acceptItem(final HttpClientClass client, final int id, final String beschikbaarheid, final int werkgebiedId, final Callback callback, Context context) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-        final String session = sharedpreferences.getString("session", null);
-
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
@@ -106,14 +92,14 @@ public class PrikbordHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/create_or_update");
                         obj.put("params", params);
 
-                        ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
-
-                        client.doPost(obj, callback);
+                        //TODO: Implement failure callback
+                        client.doPost(obj, callback, new Callback());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+            //TODO: Implement failure callback
                 }
-            });
+            }, new Callback());
         } catch (JSONException e) {
             e.printStackTrace();
         }
