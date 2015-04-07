@@ -3,6 +3,7 @@ package com.thijsdev.studentaanhuis;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +17,7 @@ public class LoginHTTPHandler {
 
     }
 
-    public void checkLogin(final Activity activity, HttpClientClass client, final Callback succes, final Callback failure) {
+    public void checkLogin(final Activity activity, final HttpClientClass client, final Callback succes, final Callback failure) {
         SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
         String session = sharedpreferences.getString("session", null);
         if(session != null) {
@@ -42,13 +43,36 @@ public class LoginHTTPHandler {
                 }, new Callback() {
                     @Override
                     public void onTaskCompleted(Object result) {
-                        //TODO: Failure callback implementeren
+                        if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            client.retryLastCall();
+                        }else{
+                            SAHApplication.cookieManager.getCookieStore().removeAll();
+                            if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                client.retryLastCall();
+                            }else {
+                                failure.onTaskCompleted(null);
+
+                                Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                toast.show();
+                            }
+                        }
                     }
                 });
             }catch (JSONException e) {
                 e.printStackTrace();
             }
         }else {
+            SAHApplication.cookieManager.getCookieStore().removeAll();
             failure.onTaskCompleted(null);
         }
     }
@@ -91,7 +115,28 @@ public class LoginHTTPHandler {
                         }, new Callback() {
                             @Override
                             public void onTaskCompleted(Object result) {
-                                //TODO: Implement failure callback
+                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    client.retryLastCall();
+                                }else {
+                                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                        try {
+                                            Thread.sleep(500);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        client.retryLastCall();
+                                    }else {
+                                        failure.onTaskCompleted(null);
+
+                                        Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                        toast.show();
+                                    }
+                                }
                             }
                         });
                     } catch (JSONException e) {
@@ -99,7 +144,24 @@ public class LoginHTTPHandler {
                     }
 
                 }
-            }, new Callback());
+            }, new Callback() {
+                @Override
+                public void onTaskCompleted(Object result) {
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted(null);
+
+                        Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }

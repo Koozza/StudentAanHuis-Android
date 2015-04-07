@@ -20,7 +20,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 
 public class HttpClientClass {
-
+    final private HttpClientObject httpClientObject = new HttpClientObject();
     private static HttpClientClass instance = null;
     public HttpClientClass() {
     }
@@ -31,22 +31,41 @@ public class HttpClientClass {
         return instance;
     }
 
+    public void retryLastCall() {
+        httpClientObject.addAttempt();
+        if(httpClientObject.getType() == HttpClientObject.GET) {
+            new getSource().execute(httpClientObject.getArguments());
+        }else{
+            new doPost().execute(httpClientObject.getArguments());
+        }
+    }
+
     public void getSource(JSONObject obj, Callback success, Callback failed) {
-        new getSource(success, failed).execute(obj);
+        httpClientObject.setArguments(obj);
+        httpClientObject.setSuccess(success);
+        httpClientObject.setFailed(failed);
+        httpClientObject.setAttempt(0);
+        httpClientObject.setType(HttpClientObject.GET);
+
+        new getSource().execute(obj);
     }
 
     public void doPost(JSONObject obj, Callback success, Callback failed) {
-        new doPost(success, failed).execute(obj);
+        httpClientObject.setArguments(obj);
+        httpClientObject.setSuccess(success);
+        httpClientObject.setFailed(failed);
+        httpClientObject.setAttempt(0);
+        httpClientObject.setType(HttpClientObject.POST);
+
+        new doPost().execute(obj);
+    }
+
+    public HttpClientObject getHttpClientObject() {
+        return httpClientObject;
     }
 
     private class getSource extends AsyncTask<JSONObject, Void, Void> {
-        private OnTaskCompleted succesCallback, failedCallback;
         private String result = null;
-
-        public getSource(OnTaskCompleted success, OnTaskCompleted failed){
-            this.succesCallback=success;
-            this.failedCallback=failed;
-        }
 
         @Override
         protected Void doInBackground(JSONObject... params) {
@@ -62,7 +81,7 @@ public class HttpClientClass {
                 urlConnection.setDoInput(true);
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                result = convertStreamToString(in);
+                //result = convertStreamToString(in);
                 in.close();
             }
             catch (IOException e)
@@ -83,21 +102,15 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                failedCallback.onTaskCompleted(result);
+                httpClientObject.getFailed().onTaskCompleted(result);
             else
-                succesCallback.onTaskCompleted(result);
+                httpClientObject.getSuccess().onTaskCompleted(result);
         }
     }
 
 
     private class doPost extends AsyncTask<JSONObject, Void, Void> {
-        private OnTaskCompleted succesCallback, failedCallback;
         private String result = null;
-
-        public doPost(OnTaskCompleted success, OnTaskCompleted failed){
-            this.succesCallback=success;
-            this.failedCallback=failed;
-        }
 
         @Override
         protected Void doInBackground(JSONObject... params) {
@@ -120,7 +133,7 @@ public class HttpClientClass {
                 os.close();
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                result = convertStreamToString(in);
+                //result = convertStreamToString(in);
                 in.close();
             }
             catch (IOException e)
@@ -142,9 +155,9 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                failedCallback.onTaskCompleted(result);
+                httpClientObject.getFailed().onTaskCompleted(result);
             else
-                succesCallback.onTaskCompleted(result);
+                httpClientObject.getSuccess().onTaskCompleted(result);
         }
     }
 

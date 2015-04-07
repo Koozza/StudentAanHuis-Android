@@ -1,7 +1,9 @@
 package com.thijsdev.studentaanhuis;
 
+import android.app.Activity;
 import android.content.Context;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -93,6 +95,26 @@ public class PrikbordHelper {
 
                                     isFinalPrikbordUpdate(totalItems, callback);
                                 }
+                            }, new Callback() {
+                                @Override
+                                public void onTaskCompleted(Object result) {
+                                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                        try {
+                                            Thread.sleep(500);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        client.retryLastCall();
+                                    }else {
+                                        isFinalPrikbordUpdate(totalItems, callback);
+
+                                        //Geen toast doen als het van de Alarm Manager komt
+                                        if (context instanceof Activity) {
+                                            Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                            toast.show();
+                                        }
+                                    }
+                                }
                             });
                         } else {
                             existingItemCallback.onTaskCompleted(piDB);
@@ -109,15 +131,35 @@ public class PrikbordHelper {
                     */
                 }
             }
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object result) {
+                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    client.retryLastCall();
+                }else {
+                    callback.onTaskCompleted(newItems);
+
+                    //Geen toast doen als het van de Alarm Manager komt
+                    if (context instanceof Activity) {
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            }
         });
     }
 
-    public void declineItem(Context context, final PrikbordItem item, final Callback callback) {
+    public void declineItem(final Context context, final PrikbordItem item, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
         final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
-        prikbordHttpHandler.declineItem(client, item.getId(), new Callback() {
+        prikbordHttpHandler.declineItem(client, item.getId(), context, new Callback() {
             @Override
             public void onTaskCompleted(Object result) {
                 item.setBeschikbaar(1);
@@ -125,15 +167,32 @@ public class PrikbordHelper {
 
                 callback.onTaskCompleted(result);
             }
-        }, context);
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object result) {
+                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    client.retryLastCall();
+                }else {
+                    callback.onTaskCompleted(newItems);
+
+                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            }
+        });
     }
 
-    public void acceptItem(Context context, final PrikbordItem item, final String beschikbaarheid, final Werkgebied werkgebied, final Callback callback) {
+    public void acceptItem(final Context context, final PrikbordItem item, final String beschikbaarheid, final Werkgebied werkgebied, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
         final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
-        prikbordHttpHandler.acceptItem(client, item.getId(), beschikbaarheid, werkgebied.getId(), new Callback() {
+        prikbordHttpHandler.acceptItem(client, item.getId(), beschikbaarheid, werkgebied.getId(), context, new Callback() {
             @Override
             public void onTaskCompleted(Object result) {
                 item.setBeschikbaar(2);
@@ -141,7 +200,24 @@ public class PrikbordHelper {
 
                 callback.onTaskCompleted(result);
             }
-        }, context);
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object result) {
+                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    client.retryLastCall();
+                }else {
+                    callback.onTaskCompleted(newItems);
+
+                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            }
+        });
     }
 
     private void isFinalPrikbordUpdate(int totalItems, Callback callback) {

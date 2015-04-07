@@ -1,6 +1,7 @@
 package com.thijsdev.studentaanhuis;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,31 +10,62 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class PrikbordHTTPHandler {
-    public void getPrikbordItems(HttpClientClass client, Context context, Callback callback) {
+    public void getPrikbordItems(final HttpClientClass client, final Context context, Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes");
+            client.getSource(obj, success, new Callback() {
+                @Override
+                public void onTaskCompleted(Object result) {
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted(null);
 
-            //TODO: Implement failure callback
-            client.getSource(obj, callback, new Callback());
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
         }catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void getPrikbordItem(HttpClientClass client, Context context, int id, Callback callback) {
+    public void getPrikbordItem(final HttpClientClass client, final Context context, int id, Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/" + id + "/respond");
 
-            //TODO: Implement failure callback
-            client.getSource(obj, callback, new Callback());
+            client.getSource(obj, success, new Callback() {
+                @Override
+                public void onTaskCompleted(Object result) {
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted(null);
+
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void declineItem(final HttpClientClass client, final int id, final Callback callback, Context context) {
+    public void declineItem(final HttpClientClass client, final int id, final Context context, final Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
@@ -55,20 +87,52 @@ public class PrikbordHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/create_or_update");
                         obj.put("params", params);
 
-                        //TODO: Implement failure callback
-                        client.doPost(obj, callback, new Callback());
+                        client.doPost(obj, success, new Callback() {
+                            @Override
+                            public void onTaskCompleted(Object result) {
+                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    client.retryLastCall();
+                                }else {
+                                    failure.onTaskCompleted(null);
+
+                                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                    toast.show();
+                                }
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-            //TODO: Implement failure callback
                 }
-            }, new Callback());
+            }, new Callback() {
+                @Override
+                public void onTaskCompleted(Object result) {
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted(null);
+
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void acceptItem(final HttpClientClass client, final int id, final String beschikbaarheid, final int werkgebiedId, final Callback callback, Context context) {
+    public void acceptItem(final HttpClientClass client, final int id, final String beschikbaarheid, final int werkgebiedId, final Context context, final Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
@@ -92,14 +156,46 @@ public class PrikbordHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/create_or_update");
                         obj.put("params", params);
 
-                        //TODO: Implement failure callback
-                        client.doPost(obj, callback, new Callback());
+                        client.doPost(obj, success, new Callback() {
+                            @Override
+                            public void onTaskCompleted(Object result) {
+                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    client.retryLastCall();
+                                }else {
+                                    failure.onTaskCompleted(null);
+
+                                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                    toast.show();
+                                }
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-            //TODO: Implement failure callback
                 }
-            }, new Callback());
+            }, new Callback() {
+                @Override
+                public void onTaskCompleted(Object result) {
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted(null);
+
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
