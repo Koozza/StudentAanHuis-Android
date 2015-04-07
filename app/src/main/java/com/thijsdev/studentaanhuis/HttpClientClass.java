@@ -81,7 +81,7 @@ public class HttpClientClass {
                 urlConnection.setDoInput(true);
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                //result = convertStreamToString(in);
+                result = convertStreamToString(in);
                 in.close();
             }
             catch (IOException e)
@@ -133,7 +133,7 @@ public class HttpClientClass {
                 os.close();
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                //result = convertStreamToString(in);
+                result = convertStreamToString(in);
                 in.close();
             }
             catch (IOException e)
