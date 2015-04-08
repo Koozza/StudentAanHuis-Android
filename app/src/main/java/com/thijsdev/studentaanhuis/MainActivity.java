@@ -18,6 +18,8 @@ import java.util.Map;
 public class MainActivity extends BasicActionBarActivity {
     public Typeface robotoLight, robotoRegular, robotoMedium;
 
+    public LoginHelper loginHelper = new LoginHelper();
+
     private Toolbar toolbar;
     public DrawerLayout mDrawerLayout;
     public ActionBarDrawerToggle mDrawerToggle;
@@ -97,7 +99,9 @@ public class MainActivity extends BasicActionBarActivity {
     }
 
     public void menuClick(View v) {
-
+        if(v.getTag().equals("logout")) {
+            loginHelper.doLogout(this, true);
+        }
     }
 
     public Toolbar getToolbar() {
