@@ -220,6 +220,7 @@ public class PrikbordDetailFragment extends Fragment {
                 loadingScreen.setVisibility(View.GONE);
                 ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter")).notifyDataSetChanged();
                 updateStatus(view);
+                mainActivity.onBackPressed();
             }
         });
     }
@@ -275,6 +276,7 @@ public class PrikbordDetailFragment extends Fragment {
                         loadingScreen.setVisibility(View.GONE);
                         ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter")).notifyDataSetChanged();
                         updateStatus(view);
+                        mainActivity.onBackPressed();
                     }
                 });
             }
