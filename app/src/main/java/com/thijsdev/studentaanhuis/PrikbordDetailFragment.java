@@ -52,13 +52,6 @@ public class PrikbordDetailFragment extends Fragment {
             }
         });
 
-        /*
-        if(android.os.Build.VERSION.SDK_INT >= 21) {
-            view.findViewById(R.id.prikbord_locatie).setTransitionName(locationId);
-            view.findViewById(R.id.prikbord_omschrijving).setTransitionName(locationId);
-        }
-        */
-
         databaseHandler = new DatabaseHandler(getActivity());
 
         Bundle bundle = this.getArguments();
@@ -218,7 +211,9 @@ public class PrikbordDetailFragment extends Fragment {
             @Override
             public void onTaskCompleted(Object result) {
                 loadingScreen.setVisibility(View.GONE);
-                ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter")).notifyDataSetChanged();
+                PrikbordAdapter prikbordAdapter = ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter"));
+                prikbordAdapter.moveItem(prikbordAdapter.findItem(prikbordItem.getId()), prikbordAdapter.findItem(prikbordItem.getBeschikbaar()) + 1);
+                prikbordAdapter.notifyDataSetChanged();
                 updateStatus(view);
                 mainActivity.onBackPressed();
             }
@@ -274,7 +269,9 @@ public class PrikbordDetailFragment extends Fragment {
                     @Override
                     public void onTaskCompleted(Object result) {
                         loadingScreen.setVisibility(View.GONE);
-                        ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter")).notifyDataSetChanged();
+                        PrikbordAdapter prikbordAdapter = ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter"));
+                        prikbordAdapter.moveItem(prikbordAdapter.findItem(prikbordItem.getId()), prikbordAdapter.findItem(prikbordItem.getBeschikbaar()) + 1);
+                        prikbordAdapter.notifyDataSetChanged();
                         updateStatus(view);
                         mainActivity.onBackPressed();
                     }

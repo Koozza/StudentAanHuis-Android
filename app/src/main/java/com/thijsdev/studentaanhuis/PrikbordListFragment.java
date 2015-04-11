@@ -44,7 +44,7 @@ public class PrikbordListFragment extends Fragment {
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.prikbordList);
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(false);
 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL_LIST));
 
@@ -60,12 +60,17 @@ public class PrikbordListFragment extends Fragment {
     public void onStart() {
         mainActivity.setupActionBar();
 
-        if(mAdapter.getItemCount() == 0)
-            updatePrikbordItems(null);
+        if(mAdapter.getItemCount() == 0) {
+            mAdapter.addItem(0, new PrikbordHeader(0, getString(R.string.pending)));
+            mAdapter.addItem(1, new PrikbordHeader(1, getString(R.string.denied)));
+            mAdapter.addItem(2, new PrikbordHeader(2, getString(R.string.accepted)));
+            updatePrikbordItems();
+        }
+
         super.onStart();
     }
 
-    public void updatePrikbordItems(MenuItem i) {
+    public void updatePrikbordItems() {
         if (!isRefreshing) {
             isRefreshing = true;
             Animation a = AnimationUtils.loadAnimation(mainActivity, R.anim.rotate);
@@ -78,14 +83,14 @@ public class PrikbordListFragment extends Fragment {
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
                     if (!mAdapter.hasItem(pi))
-                        mAdapter.addItem(0, pi);
+                        mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
                 }
             }, new Callback() {
                 @Override
                 public void onTaskCompleted(Object result) {
                     PrikbordItem pi = (PrikbordItem) result;
                     if (!mAdapter.hasItem(pi))
-                        mAdapter.addItem(0, pi);
+                        mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
                 }
             }, new Callback() {
                 @Override
@@ -103,7 +108,7 @@ public class PrikbordListFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.action_refresh:
-                        updatePrikbordItems(item);
+                        updatePrikbordItems();
                         return true;
                 }
 

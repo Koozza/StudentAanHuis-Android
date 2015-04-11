@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends BasicActionBarActivity {
-    public Typeface robotoLight, robotoRegular, robotoMedium;
+    public Typeface robotoLight, robotoRegular, robotoMedium, robotoBold;
 
     public LoginHelper loginHelper = new LoginHelper();
 
@@ -58,6 +58,7 @@ public class MainActivity extends BasicActionBarActivity {
         robotoLight = Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf");
         robotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         robotoMedium = Typeface.createFromAsset(getAssets(), "Roboto-Medium.ttf");
+        robotoBold = Typeface.createFromAsset(getAssets(), "Roboto-Bold.ttf");
     }
 
     public void setupActionBar() {

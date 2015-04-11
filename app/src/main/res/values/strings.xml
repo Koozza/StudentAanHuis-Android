@@ -29,6 +29,9 @@
     <string name="afmelden">Afmelden</string>
     <string name="distance">Afstand:</string>
     <string name="logout">Uitloggen</string>
+    <string name="pending">Openstaand</string>
+    <string name="denied">Afgewezen</string>
+    <string name="accepted">Aangenomen</string>
 
     <string name="sure_you_cant_do_appointment">Weet je zeker dat je deze afspraak niet kan doen?</string>
     <string name="error_no_connection">Er kon geen verbinding worden gemaakt met SAH3.net</string>
