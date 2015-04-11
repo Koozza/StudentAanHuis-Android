@@ -40,6 +40,9 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             case 1:
                 itemView = inflater.inflate(R.layout.snipet_prikbord_header, viewGroup, false);
                 return new PrikbordListHeader(itemView);
+            case 2:
+                itemView = inflater.inflate(R.layout.snipet_prikbord_message, viewGroup, false);
+                return new PrikbordListHeader(itemView);
         }
 
         return null;
@@ -49,8 +52,10 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     public int getItemViewType(int position) {
         if(mData.get(position) instanceof PrikbordItem)
             return 0;
-        else
+        else if(!((PrikbordHeader)mData.get(position)).isMessage())
             return 1;
+        else
+            return 2;
     }
 
     @Override
@@ -96,8 +101,13 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         }else{
             PrikbordListHeader prikbordListHeader = (PrikbordListHeader)viewHolder;
 
-            prikbordListHeader.title.setTypeface(((MainActivity) context).robotoBold);
-            prikbordListHeader.title.setText(((PrikbordHeader)mData.get(position)).getTitle());
+            if(!((PrikbordHeader)mData.get(position)).isMessage()) {
+                prikbordListHeader.title.setTypeface(((MainActivity) context).robotoBold);
+                prikbordListHeader.title.setText(((PrikbordHeader) mData.get(position)).getTitle());
+            }else{
+                prikbordListHeader.title.setTypeface(((MainActivity) context).robotoLight);
+                prikbordListHeader.title.setText(((PrikbordHeader) mData.get(position)).getTitle());
+            }
         }
     }
 
@@ -113,6 +123,12 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         Object item = mData.get(oldPosition);
         mData.remove(oldPosition);
         mData.add(newPosition, item);
+        notifyDataSetChanged();
+    }
+
+    public void removeItem(int position) {
+        mData.remove(position);
+        notifyDataSetChanged();
     }
 
     //TODO: Lompe functie, kan netter...
@@ -129,7 +145,7 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
             index++;
         }
-        return index;
+        return -1;
     }
 
     public boolean hasItem(PrikbordItem prikbordItem) {

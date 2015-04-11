@@ -61,9 +61,12 @@ public class PrikbordListFragment extends Fragment {
         mainActivity.setupActionBar();
 
         if(mAdapter.getItemCount() == 0) {
-            mAdapter.addItem(0, new PrikbordHeader(0, getString(R.string.pending)));
-            mAdapter.addItem(1, new PrikbordHeader(1, getString(R.string.denied)));
-            mAdapter.addItem(2, new PrikbordHeader(2, getString(R.string.accepted)));
+            mAdapter.addItem(0, new PrikbordHeader(0, getString(R.string.pending), false));
+            mAdapter.addItem(1, new PrikbordHeader(3, getString(R.string.no_prikbord_items_found), true));
+            mAdapter.addItem(2, new PrikbordHeader(1, getString(R.string.denied), false));
+            mAdapter.addItem(3, new PrikbordHeader(4, getString(R.string.no_prikbord_items_found), true));
+            mAdapter.addItem(4, new PrikbordHeader(2, getString(R.string.accepted), false));
+            mAdapter.addItem(5, new PrikbordHeader(5, getString(R.string.no_prikbord_items_found), true));
             updatePrikbordItems();
         }
 
@@ -82,15 +85,25 @@ public class PrikbordListFragment extends Fragment {
                 @Override
                 public void onTaskCompleted(Object... results) {
                     PrikbordItem pi = (PrikbordItem) results[0];
-                    if (!mAdapter.hasItem(pi))
+                    if (!mAdapter.hasItem(pi)) {
+                        int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
+                        if(noItemsFound > -1 )
+                            mAdapter.removeItem(noItemsFound);
+
                         mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
+                    }
                 }
             }, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {
                     PrikbordItem pi = (PrikbordItem) results[0];
-                    if (!mAdapter.hasItem(pi))
+                    if (!mAdapter.hasItem(pi)) {
+                        int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
+                        if(noItemsFound > -1 )
+                            mAdapter.removeItem(noItemsFound);
+
                         mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
+                    }
                 }
             }, new Callback() {
                 @Override

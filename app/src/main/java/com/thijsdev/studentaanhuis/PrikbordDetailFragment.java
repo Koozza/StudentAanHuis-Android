@@ -170,7 +170,20 @@ public class PrikbordDetailFragment extends Fragment {
         }
     }
 
+    private void fixNoItemsfound(PrikbordAdapter prikbordAdapter) {
+        for(int i = 0; i<3; i++) {
+            int headerLocation = prikbordAdapter.findItem(i);
+            if(headerLocation+1 < prikbordAdapter.getItemCount()) {
+                if(prikbordAdapter.getItemViewType(headerLocation+1) == 1)
+                    prikbordAdapter.addItem(headerLocation+1, new PrikbordHeader(i+3, getString(R.string.no_prikbord_items_found), true));
+                else if(prikbordAdapter.getItemViewType(headerLocation+1) == 0 && prikbordAdapter.findItem(i+3) != -1)
+                    prikbordAdapter.removeItem(prikbordAdapter.findItem(i+3));
 
+            }else{
+                prikbordAdapter.addItem(headerLocation+1, new PrikbordHeader(i+3, getString(R.string.no_prikbord_items_found), true));
+            }
+        }
+    }
 
     private void declineOnClick(final PrikbordItem prikbordItem, final View view) {
         //Oude code met confirm; weggehaald op verzoek
@@ -213,8 +226,8 @@ public class PrikbordDetailFragment extends Fragment {
                 loadingScreen.setVisibility(View.GONE);
                 PrikbordAdapter prikbordAdapter = ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter"));
                 prikbordAdapter.moveItem(prikbordAdapter.findItem(prikbordItem.getId()), prikbordAdapter.findItem(prikbordItem.getBeschikbaar()) + 1);
-                prikbordAdapter.notifyDataSetChanged();
                 updateStatus(view);
+                fixNoItemsfound(prikbordAdapter);
                 mainActivity.onBackPressed();
             }
         });
@@ -271,8 +284,8 @@ public class PrikbordDetailFragment extends Fragment {
                         loadingScreen.setVisibility(View.GONE);
                         PrikbordAdapter prikbordAdapter = ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter"));
                         prikbordAdapter.moveItem(prikbordAdapter.findItem(prikbordItem.getId()), prikbordAdapter.findItem(prikbordItem.getBeschikbaar()) + 1);
-                        prikbordAdapter.notifyDataSetChanged();
                         updateStatus(view);
+                        fixNoItemsfound(prikbordAdapter);
                         mainActivity.onBackPressed();
                     }
                 });

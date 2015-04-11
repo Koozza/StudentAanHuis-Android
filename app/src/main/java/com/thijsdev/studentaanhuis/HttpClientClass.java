@@ -21,6 +21,7 @@ import java.util.Iterator;
 
 public class HttpClientClass {
     private HttpClientObject httpClientObject = new HttpClientObject();
+    final private HttpClientClass self = this;
 
     public HttpClientClass() {
     }
@@ -96,7 +97,7 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                httpClientObject.getFailed().onTaskCompleted(result, this);
+                httpClientObject.getFailed().onTaskCompleted(result, self);
             else
                 httpClientObject.getSuccess().onTaskCompleted(result);
         }
@@ -149,7 +150,7 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                httpClientObject.getFailed().onTaskCompleted(result, this);
+                httpClientObject.getFailed().onTaskCompleted(result, self);
             else
                 httpClientObject.getSuccess().onTaskCompleted(result);
         }

@@ -3,10 +3,12 @@ package com.thijsdev.studentaanhuis;
 public class PrikbordHeader {
     private String title;
     private int id;
+    private boolean isMessage;
 
-    public PrikbordHeader(int id, String title) {
+    public PrikbordHeader(int id, String title, Boolean isMessage) {
         this.id = id;
         this.title = title;
+        this.isMessage = isMessage;
     }
 
     public int getId() {
@@ -23,5 +25,13 @@ public class PrikbordHeader {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isMessage() {
+        return isMessage;
+    }
+
+    public void setMessage(boolean isMessage) {
+        this.isMessage = isMessage;
     }
 }
