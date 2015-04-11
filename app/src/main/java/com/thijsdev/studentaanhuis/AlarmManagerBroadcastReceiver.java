@@ -31,23 +31,31 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
             PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SAH ALARM MANAGER");
 
-            wl.acquire();
             Bundle extras = intent.getExtras();
 
             //Check of het om de prikbord timer gaat
             if (extras != null && extras.getString(ALARM) != null) {
+                wl.acquire();
+
+                //Restore session
+                SessionHelper.registerCookieHandler();
+                SessionHelper.restoreSession(context);
+
+                //Prikbord update
                 if(extras.getString(ALARM).equals(PRIKBORD)) {
+
                     PrikbordHelper prikbordHelper = new PrikbordHelper();
                     prikbordHelper.updatePrikbordItems(context, new Callback(), new Callback(), new Callback() {
                         @Override
-                        public void onTaskCompleted(Object result) {
-                            if(((ArrayList<PrikbordItem>) result).size() != 0)
+                        public void onTaskCompleted(Object... results) {
+                            if(((ArrayList<PrikbordItem>) results[0]).size() != 0)
                                 generateNewPrikbordNotification(context);
                         }
                     });
                 }
+
+                wl.release();
             }
-            wl.release();
         }
     }
 
@@ -118,6 +126,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
         mBuilder.setContentTitle("Nieuwe Prikbord Items!");
         mBuilder.setContentText("Er zijn nieuwe prikbord items beschikbaar.");
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setAutoCancel(true);
 
         Intent resultIntent = new Intent(context, MainActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);

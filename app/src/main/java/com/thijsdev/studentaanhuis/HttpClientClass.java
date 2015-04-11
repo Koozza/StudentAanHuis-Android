@@ -20,23 +20,17 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 
 public class HttpClientClass {
-    final private HttpClientObject httpClientObject = new HttpClientObject();
-    private static HttpClientClass instance = null;
+    private HttpClientObject httpClientObject = new HttpClientObject();
+
     public HttpClientClass() {
-    }
-    public static HttpClientClass getInstance() {
-        if(instance == null) {
-            instance = new HttpClientClass();
-        }
-        return instance;
     }
 
     public void retryLastCall() {
         httpClientObject.addAttempt();
         if(httpClientObject.getType() == HttpClientObject.GET) {
-            new getSource().execute(httpClientObject.getArguments());
+            new getSource().execute(httpClientObject);
         }else{
-            new doPost().execute(httpClientObject.getArguments());
+            new doPost().execute(httpClientObject);
         }
     }
 
@@ -47,7 +41,7 @@ public class HttpClientClass {
         httpClientObject.setAttempt(0);
         httpClientObject.setType(HttpClientObject.GET);
 
-        new getSource().execute(obj);
+        new getSource().execute(httpClientObject);
     }
 
     public void doPost(JSONObject obj, Callback success, Callback failed) {
@@ -57,23 +51,23 @@ public class HttpClientClass {
         httpClientObject.setAttempt(0);
         httpClientObject.setType(HttpClientObject.POST);
 
-        new doPost().execute(obj);
+        new doPost().execute(httpClientObject);
     }
 
     public HttpClientObject getHttpClientObject() {
         return httpClientObject;
     }
 
-    private class getSource extends AsyncTask<JSONObject, Void, Void> {
+    private class getSource extends AsyncTask<HttpClientObject, Void, Void> {
         private String result = null;
 
         @Override
-        protected Void doInBackground(JSONObject... params) {
+        protected Void doInBackground(HttpClientObject... params) {
             HttpURLConnection urlConnection = null;
 
             try
             {
-                URL url = new URL(params[0].getString("url"));
+                URL url = new URL(params[0].getArguments().getString("url"));
                 urlConnection = (HttpURLConnection) url.openConnection();
 
                 urlConnection.setReadTimeout(5000);
@@ -102,22 +96,22 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                httpClientObject.getFailed().onTaskCompleted(result);
+                httpClientObject.getFailed().onTaskCompleted(result, this);
             else
                 httpClientObject.getSuccess().onTaskCompleted(result);
         }
     }
 
 
-    private class doPost extends AsyncTask<JSONObject, Void, Void> {
+    private class doPost extends AsyncTask<HttpClientObject, Void, Void> {
         private String result = null;
 
         @Override
-        protected Void doInBackground(JSONObject... params) {
+        protected Void doInBackground(HttpClientObject... params) {
             HttpURLConnection urlConnection = null;
             try
             {
-                URL url = new URL(params[0].getString("url"));
+                URL url = new URL(params[0].getArguments().getString("url"));
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setReadTimeout(5000);
                 urlConnection.setConnectTimeout(8000);
@@ -127,7 +121,7 @@ public class HttpClientClass {
 
                 OutputStream os = urlConnection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getQuery(params[0].getJSONObject("params")));
+                writer.write(getQuery(params[0].getArguments().getJSONObject("params")));
                 writer.flush();
                 writer.close();
                 os.close();
@@ -155,7 +149,7 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                httpClientObject.getFailed().onTaskCompleted(result);
+                httpClientObject.getFailed().onTaskCompleted(result, this);
             else
                 httpClientObject.getSuccess().onTaskCompleted(result);
         }

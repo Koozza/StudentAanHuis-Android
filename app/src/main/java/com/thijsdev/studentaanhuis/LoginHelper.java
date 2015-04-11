@@ -13,14 +13,11 @@ public class LoginHelper {
     public void doLogout(Activity activity, boolean askQuestion) {
         //Ask question
         if(askQuestion == true) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setMessage(activity.getString(R.string.sure_you_want_to_logout)).setPositiveButton(activity.getString(R.string.yes), dialogClickListener)
-                    .setNegativeButton(activity.getString(R.string.no), dialogClickListener).show();
+            generateDoLogoutQuestion(activity);
         } else {
 
             //Shared preff unsetten
             SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-            String session = sharedpreferences.getString("session", null);
 
             SharedPreferences.Editor edit = sharedpreferences.edit();
             edit.remove("session");
@@ -50,5 +47,9 @@ public class LoginHelper {
                 }
             }
         };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(activity.getString(R.string.sure_you_want_to_logout)).setPositiveButton(activity.getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(activity.getString(R.string.no), dialogClickListener).show();
     }
 }

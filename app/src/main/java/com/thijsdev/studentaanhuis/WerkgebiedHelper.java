@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,15 +16,14 @@ import java.util.List;
 public class WerkgebiedHelper {
     public void updateWerkgebieden(final Activity activity, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(activity);
-        final HttpClientClass client = HttpClientClass.getInstance();
         final GeoLocationHelper locHelper = new GeoLocationHelper();
         WerkgebiedHTTPHandler werkgebiedHTTPHandler = new WerkgebiedHTTPHandler();
 
-        werkgebiedHTTPHandler.getWerkGebieden(client, activity, new Callback() {
+        werkgebiedHTTPHandler.getWerkGebieden(activity, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
+            public void onTaskCompleted(Object... results) {
 
-                Document doc = Jsoup.parse((String) result);
+                Document doc = Jsoup.parse((String) results[0]);
                 Elements trs = doc.select("tr:has(td)");
                 for (Element tr : trs) {
 
@@ -60,24 +58,9 @@ public class WerkgebiedHelper {
                     }
                 }
 
-                callback.onTaskCompleted(null);
+                callback.onTaskCompleted((Object[])null);
             }
-        }, new Callback() {
-            @Override
-            public void onTaskCompleted(Object result) {
-                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    client.retryLastCall();
-                }else {
-                    Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            }
-        });
+        }, new Callback());
     }
 
     public CharSequence[] getWerkgebiedenArray(Context context) {

@@ -209,7 +209,7 @@ public class PrikbordDetailFragment extends Fragment {
 
         prikbordHelper.declineItem(mainActivity, prikbordItem, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
+            public void onTaskCompleted(Object... results) {
                 loadingScreen.setVisibility(View.GONE);
                 PrikbordAdapter prikbordAdapter = ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter"));
                 prikbordAdapter.moveItem(prikbordAdapter.findItem(prikbordItem.getId()), prikbordAdapter.findItem(prikbordItem.getBeschikbaar()) + 1);
@@ -267,7 +267,7 @@ public class PrikbordDetailFragment extends Fragment {
 
                 prikbordHelper.acceptItem(mainActivity, prikbordItem, beschikbaarheid, werkgebied, new Callback() {
                     @Override
-                    public void onTaskCompleted(Object result) {
+                    public void onTaskCompleted(Object... results) {
                         loadingScreen.setVisibility(View.GONE);
                         PrikbordAdapter prikbordAdapter = ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter"));
                         prikbordAdapter.moveItem(prikbordAdapter.findItem(prikbordItem.getId()), prikbordAdapter.findItem(prikbordItem.getBeschikbaar()) + 1);

@@ -18,7 +18,6 @@ import java.net.HttpCookie;
 
 public class LoginActivity extends BasicActionBarActivity {
     Typeface robotoLight, robotoRegular, robotoMedium;
-    HttpClientClass client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +33,6 @@ public class LoginActivity extends BasicActionBarActivity {
         setFontForObject((Button) findViewById(R.id.login_btn_login), robotoMedium);
         setFontForObject((TextView) findViewById(R.id.login_creator), robotoLight);
         ((EditText)findViewById(R.id.login_password)).setTransformationMethod(new PasswordTransformationMethod());
-
-        client = HttpClientClass.getInstance();
     }
 
     public void doLogin(View view) {
@@ -54,9 +51,9 @@ public class LoginActivity extends BasicActionBarActivity {
 
         final Activity activity = this;
 
-        lh.doLogin(client, this, uname, password.getText().toString(), new Callback() {
+        lh.doLogin(this, uname, password.getText().toString(), new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
+            public void onTaskCompleted(Object... results) {
                 //Zetten van de juiste cookie
                 for(HttpCookie cookie : SAHApplication.cookieManager.getCookieStore().getCookies()) {
                     if(cookie.getName().equals("_session_id")) {
@@ -72,7 +69,7 @@ public class LoginActivity extends BasicActionBarActivity {
                 WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
                 werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
                     @Override
-                    public void onTaskCompleted(Object result) {
+                    public void onTaskCompleted(Object... results) {
                         Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(goToNextActivity);
                         finish();
@@ -81,9 +78,9 @@ public class LoginActivity extends BasicActionBarActivity {
             }
         }, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
+            public void onTaskCompleted(Object... results) {
                 TextView error = (TextView) findViewById(R.id.login_error);
-                error.setText((String) result);
+                error.setText((String) results[0]);
                 loadingScreen.setVisibility(View.GONE);
             }
         });

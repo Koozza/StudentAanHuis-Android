@@ -80,21 +80,21 @@ public class PrikbordListFragment extends Fragment {
             //TODO: mAdapter.clearItems();
             prikbordHelper.updatePrikbordItems(mainActivity, new Callback() {
                 @Override
-                public void onTaskCompleted(Object result) {
-                    PrikbordItem pi = (PrikbordItem) result;
+                public void onTaskCompleted(Object... results) {
+                    PrikbordItem pi = (PrikbordItem) results[0];
                     if (!mAdapter.hasItem(pi))
                         mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
                 }
             }, new Callback() {
                 @Override
-                public void onTaskCompleted(Object result) {
-                    PrikbordItem pi = (PrikbordItem) result;
+                public void onTaskCompleted(Object... results) {
+                    PrikbordItem pi = (PrikbordItem) results[0];
                     if (!mAdapter.hasItem(pi))
                         mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
                 }
             }, new Callback() {
                 @Override
-                public void onTaskCompleted(Object result) {
+                public void onTaskCompleted(Object... results) {
                     toolbar.findViewById(R.id.action_refresh).clearAnimation();
                     isRefreshing = false;
                 }
