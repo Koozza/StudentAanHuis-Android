@@ -2,179 +2,206 @@ package com.thijsdev.studentaanhuis;
 
 import android.os.AsyncTask;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Iterator;
-import java.util.List;
 
 public class HttpClientClass {
-
-    private static HttpClientClass instance = null;
-    private HttpClient client;
-    private static String session_id;
+    private HttpClientObject httpClientObject = new HttpClientObject();
+    final private HttpClientClass self = this;
 
     public HttpClientClass() {
     }
-    public static HttpClientClass getInstance() {
-        if(instance == null) {
-            instance = new HttpClientClass();
+
+    public void retryLastCall() {
+        httpClientObject.addAttempt();
+        if(httpClientObject.getType() == HttpClientObject.GET) {
+            new getSource().execute(httpClientObject);
+        }else{
+            new doPost().execute(httpClientObject);
         }
-        return instance;
     }
 
-    public void init() {
-        client = createClient();
+    public void getSource(JSONObject obj, Callback success, Callback failed) {
+        httpClientObject.setArguments(obj);
+        httpClientObject.setSuccess(success);
+        httpClientObject.setFailed(failed);
+        httpClientObject.setAttempt(0);
+        httpClientObject.setType(HttpClientObject.GET);
+
+        new getSource().execute(httpClientObject);
     }
 
-    public HttpClient getHTTPClient() {
-        return this.client;
+    public void doPost(JSONObject obj, Callback success, Callback failed) {
+        httpClientObject.setArguments(obj);
+        httpClientObject.setSuccess(success);
+        httpClientObject.setFailed(failed);
+        httpClientObject.setAttempt(0);
+        httpClientObject.setType(HttpClientObject.POST);
+
+        new doPost().execute(httpClientObject);
     }
 
-    public String getSource(JSONObject obj, Callback callback) {
-        new getSource(callback).execute(obj);
-
-        return null;
+    public HttpClientObject getHttpClientObject() {
+        return httpClientObject;
     }
 
-    public String doPost(JSONObject obj, Callback callback) {
-        new doPost(callback).execute(obj);
+    private class getSource extends AsyncTask<HttpClientObject, Void, Void> {
+        private String result = null;
 
-        return null;
+        @Override
+        protected Void doInBackground(HttpClientObject... params) {
+            HttpURLConnection urlConnection = null;
+
+            try
+            {
+                URL url = new URL(params[0].getArguments().getString("url"));
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                urlConnection.setReadTimeout(5000);
+                urlConnection.setConnectTimeout(8000);
+                urlConnection.setDoInput(true);
+
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                result = convertStreamToString(in);
+                in.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            finally {
+                if(urlConnection != null)
+                    urlConnection.disconnect();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void r) {
+            if(result == null)
+                httpClientObject.getFailed().onTaskCompleted(result, self);
+            else
+                httpClientObject.getSuccess().onTaskCompleted(result);
+        }
     }
 
-    private DefaultHttpClient createClient()
+
+    private class doPost extends AsyncTask<HttpClientObject, Void, Void> {
+        private String result = null;
+
+        @Override
+        protected Void doInBackground(HttpClientObject... params) {
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                URL url = new URL(params[0].getArguments().getString("url"));
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setReadTimeout(5000);
+                urlConnection.setConnectTimeout(8000);
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoInput(true);
+                urlConnection.setDoOutput(true);
+
+                OutputStream os = urlConnection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getQuery(params[0].getArguments().getJSONObject("params")));
+                writer.flush();
+                writer.close();
+                os.close();
+
+                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                result = convertStreamToString(in);
+                in.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+            finally {
+                if(urlConnection != null)
+                    urlConnection.disconnect();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void r) {
+            if(result == null)
+                httpClientObject.getFailed().onTaskCompleted(result, self);
+            else
+                httpClientObject.getSuccess().onTaskCompleted(result);
+        }
+    }
+
+    private String getQuery(JSONObject jsonObject) throws UnsupportedEncodingException
     {
-        DefaultHttpClient ret = null;
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
 
-        //sets up parameters
-        HttpParams params = new BasicHttpParams();
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setContentCharset(params, "utf-8");
-        params.setBooleanParameter("http.protocol.expect-continue", false);
+        Iterator<String> params = jsonObject.keys();
+        while (params.hasNext()) {
+            if (first)
+                first = false;
+            else
+                result.append("&");
 
-        //registers schemes for both http and https
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        final SSLSocketFactory sslSocketFactory = SSLSocketFactory.getSocketFactory();
-        sslSocketFactory.setHostnameVerifier(SSLSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-        registry.register(new Scheme("https", sslSocketFactory, 443));
+            String key = params.next();
+            String value = null;
+            try {
+                value = jsonObject.getString(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-        ThreadSafeClientConnManager manager = new ThreadSafeClientConnManager(params, registry);
-        ret = new DefaultHttpClient(manager, params);
+            result.append(URLEncoder.encode(key, "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(value, "UTF-8"));
+        }
 
-        return ret;
+        return result.toString();
     }
 
-    private class getSource extends AsyncTask<JSONObject, Void, Void> {
-        HttpResponse response;
+    public static String convertStreamToString(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
 
-        private OnTaskCompleted listener;
-        private String result;
-
-        public getSource(OnTaskCompleted listener){
-            this.listener=listener;
-        }
-
-        @Override
-        protected Void doInBackground(JSONObject... params) {
-            try
-            {
-                HttpGet httpget = new HttpGet(params[0].getString("url"));
-                response = client.execute(httpget);
-                result = EntityUtils.toString(response.getEntity());
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
             }
-            catch (ClientProtocolException e)
-            {
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-
-            return null;
         }
-
-        @Override
-        protected void onPostExecute(Void r) {
-            listener.onTaskCompleted(result);
-        }
-    }
-
-    private class doPost extends AsyncTask<JSONObject, Void, Void> {
-        HttpResponse response;
-
-        private OnTaskCompleted listener;
-        private String result;
-
-        public doPost(OnTaskCompleted listener){
-            this.listener=listener;
-        }
-
-        @Override
-        protected Void doInBackground(JSONObject... params) {
-            try
-            {
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-
-                Iterator<String> iter = params[0].getJSONObject("params").keys();
-                while (iter.hasNext()) {
-                    String key = iter.next();
-                    String value = params[0].getJSONObject("params").getString(key);
-
-                    nameValuePairs.add(new BasicNameValuePair(key, value));
-                }
-
-                HttpPost httppost = new HttpPost(params[0].getString("url"));
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                response = client.execute(httppost);
-                result = EntityUtils.toString(response.getEntity());
-            }
-            catch (ClientProtocolException e)
-            {
-                e.printStackTrace();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void r) {
-            listener.onTaskCompleted(result);
-        }
+        return sb.toString();
     }
 }

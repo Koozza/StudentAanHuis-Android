@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="SAHdarkblue" type="color">#6CAEDF</item>
+    <item name="SAHblue" type="color">#95C4E7</item>
+    <item name="SAHlightblue" type="color">#EAF3FA</item>
+    <item name="darkblue" type="color">#257CA6</item>
+    <item name="white" type="color">#FFFFFF</item>
+    <item name="black87" type="color">#DD000000</item>
+    <item name="black74" type="color">#BB000000</item>
+</resources>

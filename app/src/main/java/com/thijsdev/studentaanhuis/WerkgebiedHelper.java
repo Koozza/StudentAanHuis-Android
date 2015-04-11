@@ -16,15 +16,14 @@ import java.util.List;
 public class WerkgebiedHelper {
     public void updateWerkgebieden(final Activity activity, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(activity);
-        final HttpClientClass client = HttpClientClass.getInstance();
         final GeoLocationHelper locHelper = new GeoLocationHelper();
         WerkgebiedHTTPHandler werkgebiedHTTPHandler = new WerkgebiedHTTPHandler();
 
-        werkgebiedHTTPHandler.getWerkGebieden(client, activity, new Callback() {
+        werkgebiedHTTPHandler.getWerkGebieden(activity, new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object... results) {
 
-                Document doc = Jsoup.parse(result);
+                Document doc = Jsoup.parse((String) results[0]);
                 Elements trs = doc.select("tr:has(td)");
                 for (Element tr : trs) {
 
@@ -59,9 +58,9 @@ public class WerkgebiedHelper {
                     }
                 }
 
-                callback.onTaskCompleted(null);
+                callback.onTaskCompleted((Object[])null);
             }
-        });
+        }, new Callback());
     }
 
     public CharSequence[] getWerkgebiedenArray(Context context) {

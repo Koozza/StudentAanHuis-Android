@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:layout_alignParentTop="true"
     android:orientation="vertical"
-    android:background="#EAF3FA"
+    android:background="@color/SAHlightblue"
     tools:context=".LoginActivity">
     <Space
         android:layout_width="fill_parent"
@@ -30,9 +30,9 @@
         android:layout_weight="0.2"
         android:layout_width="fill_parent"
         android:layout_height="10dp"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:text="Thijs Dalmaijer"
-        android:textColor="#257ca6"
+        android:textColor="@color/darkblue"
         android:gravity="center"
         android:id="@+id/splashscreen_creator"/>
 </LinearLayout>

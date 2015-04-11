@@ -1,10 +1,8 @@
 package com.thijsdev.studentaanhuis;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.widget.Toast;
 
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -12,48 +10,76 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class PrikbordHTTPHandler {
-    public void getPrikbordItems(HttpClientClass client, Activity activity, Callback callback) {
-        SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-        String session = sharedpreferences.getString("session", null);
-
+    public void getPrikbordItems(final Context context, Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes");
-            ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
 
-            client.getSource(obj, callback);
+            HttpClientClass client = new HttpClientClass();
+            client.getSource(obj, success, new Callback() {
+                @Override
+                public void onTaskCompleted(Object... results) {
+                    HttpClientClass client = ((HttpClientClass)results[1]);
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted((Object[])null);
+
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
         }catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void getPrikbordItem(HttpClientClass client, Activity activity, int id, Callback callback) {
+    public void getPrikbordItem(final Context context, final int id, final Callback success, final Callback failure) {
         try {
-            SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-            String session = sharedpreferences.getString("session", null);
-
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/" + id + "/respond");
-            ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
 
-            client.getSource(obj, callback);
+            HttpClientClass client = new HttpClientClass();
+            client.getSource(obj, success ,new Callback() {
+                @Override
+                public void onTaskCompleted(Object... results) {
+                    HttpClientClass client = ((HttpClientClass)results[1]);
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted((Object[])null);
+
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void declineItem(final HttpClientClass client, final int id, final Callback callback, Context context) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-        final String session = sharedpreferences.getString("session", null);
-
+    public void declineItem(final int id, final Context context, final Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
 
+            HttpClientClass client = new HttpClientClass();
             client.getSource(obj, new Callback() {
                 @Override
-                public void onTaskCompleted(String result) {
-                    Document doc = Jsoup.parse(result);
+                public void onTaskCompleted(Object... results) {
+                    Document doc = Jsoup.parse((String) results[0]);
                     Element content = doc.getElementsByAttributeValue("name", "authenticity_token").first();
 
                     try {
@@ -67,11 +93,46 @@ public class PrikbordHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/create_or_update");
                         obj.put("params", params);
 
-                        ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
+                        HttpClientClass client = new HttpClientClass();
+                        client.doPost(obj, success, new Callback() {
+                            @Override
+                            public void onTaskCompleted(Object... results) {
+                                HttpClientClass client = ((HttpClientClass)results[1]);
+                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    client.retryLastCall();
+                                }else {
+                                    failure.onTaskCompleted((Object[])null);
 
-                        client.doPost(obj, callback);
+                                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                    toast.show();
+                                }
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    }
+                }
+            }, new Callback() {
+                @Override
+                public void onTaskCompleted(Object... results) {
+                    HttpClientClass client = ((HttpClientClass)results[1]);
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted((Object[])null);
+
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
                     }
                 }
             });
@@ -80,18 +141,16 @@ public class PrikbordHTTPHandler {
         }
     }
 
-    public void acceptItem(final HttpClientClass client, final int id, final String beschikbaarheid, final int werkgebiedId, final Callback callback, Context context) {
-        SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-        final String session = sharedpreferences.getString("session", null);
-
+    public void acceptItem(final int id, final String beschikbaarheid, final int werkgebiedId, final Context context, final Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
 
+            HttpClientClass client = new HttpClientClass();
             client.getSource(obj, new Callback() {
                 @Override
-                public void onTaskCompleted(String result) {
-                    Document doc = Jsoup.parse(result);
+                public void onTaskCompleted(Object... results) {
+                    Document doc = Jsoup.parse((String) results[0]);
                     Element content = doc.getElementsByAttributeValue("name", "authenticity_token").first();
 
                     try {
@@ -107,11 +166,46 @@ public class PrikbordHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/create_or_update");
                         obj.put("params", params);
 
-                        ((DefaultHttpClient) client.getHTTPClient()).addRequestInterceptor(new SessionInjector(session));
+                        HttpClientClass client = new HttpClientClass();
+                        client.doPost(obj, success, new Callback() {
+                            @Override
+                            public void onTaskCompleted(Object... results) {
+                                HttpClientClass client = ((HttpClientClass)results[1]);
+                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    client.retryLastCall();
+                                }else {
+                                    failure.onTaskCompleted((Object[])null);
 
-                        client.doPost(obj, callback);
+                                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                                    toast.show();
+                                }
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    }
+                }
+            }, new Callback() {
+                @Override
+                public void onTaskCompleted(Object... results) {
+                    HttpClientClass client = ((HttpClientClass)results[1]);
+                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.retryLastCall();
+                    }else {
+                        failure.onTaskCompleted((Object[])null);
+
+                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                        toast.show();
                     }
                 }
             });

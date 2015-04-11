@@ -1,8 +1,6 @@
 package com.thijsdev.studentaanhuis;
 
-import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -10,26 +8,48 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+
 public class PrikbordHelper {
-    public void updatePrikbordItems(final Activity activity, final PrikbordAdapter prikbordAdapter) {
-        final DatabaseHandler db = new DatabaseHandler(activity);
-        final HttpClientClass client = HttpClientClass.getInstance();
+    private int itemsAdded = 0;
+    final ArrayList<PrikbordItem> newItems = new ArrayList<PrikbordItem>();
+
+    public void updatePrikbordItems(final Context context, final Callback existingItemCallback, final Callback newItemCallback, final Callback callback) {
+        final DatabaseHandler db = new DatabaseHandler(context);
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
-        final TextView prikbord_status = (TextView) activity.findViewById(R.id.prikbord_status);
+        final TextView prikbord_status;
 
-        prikbord_status.setVisibility(View.GONE);
+        //TODO: Dit moet er wel terug in
+        //Dit alleen doen als het door de UI thread is aangeroepen
+        /*
+        if (context instanceof Activity) {
+            prikbord_status = (TextView) ((Activity)context).findViewById(R.id.prikbord_status);
+            prikbord_status.setVisibility(View.GONE);
+        }else{
+            prikbord_status = null;
+        }
+        */
 
-
-        prikbordHttpHandler.getPrikbordItems(client, activity, new Callback() {
+        prikbordHttpHandler.getPrikbordItems(context, new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object... results) {
                 boolean gotItem = false;
-                Document doc = Jsoup.parse(result);
-                Elements trs = doc.select("tr:has(td)");
-                for (Element tr : trs) {
 
+                Document doc = Jsoup.parse((String) results[0]);
+                final Elements trs = doc.select("tr:has(td)");
+
+                //Count number of active prikbord items
+                int itemCounter = 0;
+                for (Element tr : trs)
+                    if(tr.select("td").size() > 3)
+                        itemCounter++;
+
+                final int totalItems = itemCounter;
+
+                for (Element tr : trs) {
                     Elements tds = tr.select("td");
-                    if(tds.size() > 3) {
+
+                    if (tds.size() > 3) {
                         gotItem = true;
                         int id = Integer.parseInt(tds.get(3).children().first().attr("href").split("/")[3]);
                         final boolean heeftGereageerd = tds.get(3).children().first().text().contains("ingeschreven");
@@ -43,10 +63,10 @@ public class PrikbordHelper {
                             pi.setId(id);
 
                             //Ophalen van details
-                            prikbordHttpHandler.getPrikbordItem(client, activity, id, new Callback() {
+                            prikbordHttpHandler.getPrikbordItem(context, id, new Callback() {
                                 @Override
-                                public void onTaskCompleted(String result) {
-                                    Document doc = Jsoup.parse(result);
+                                public void onTaskCompleted(Object... result) {
+                                    Document doc = Jsoup.parse((String) result[0]);
                                     String omschrijving = doc.getElementsByClass("widget").first().children().last().text();
                                     pi.setBeschrijving(omschrijving);
 
@@ -66,57 +86,85 @@ public class PrikbordHelper {
                                     pi.setLng(Double.parseDouble(coords[1]));
 
                                     db.addPrikbordItem(pi);
-                                    prikbordAdapter.addItem(pi);
+                                    newItems.add(pi);
+                                    newItemCallback.onTaskCompleted(pi);
+
+                                    isFinalPrikbordUpdate(totalItems, callback);
+                                }
+                            }, new Callback() {
+                                @Override
+                                public void onTaskCompleted(Object... results) {
+                                    isFinalPrikbordUpdate(totalItems, callback);
                                 }
                             });
                         } else {
-                            prikbordAdapter.addItem(piDB);
+                            existingItemCallback.onTaskCompleted(piDB);
+                            isFinalPrikbordUpdate(totalItems, callback);
                         }
                     }
                 }
-                if(!gotItem) {
-                    prikbord_status.setVisibility(View.VISIBLE);
+                if (!gotItem) {
+                    //Dit alleen doen als het door de UI thread is aangeroepen
+                    /*
+                    if (context instanceof Activity) {
+                        prikbord_status.setVisibility(View.VISIBLE);
+                    }
+                    */
                 }
+            }
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                callback.onTaskCompleted(newItems);
             }
         });
     }
 
-    public void forceUpdatePrikbordItems(final Activity activity, final PrikbordAdapter prikbordAdapter) {
-        final DatabaseHandler db = new DatabaseHandler(activity);
-        db.deleteAllPrikbordItems();
-        prikbordAdapter.clearItems();
-        updatePrikbordItems(activity, prikbordAdapter);
-    }
-
-    public void declineItem(Context context, final PrikbordItem item, final Callback callback) {
+    public void declineItem(final Context context, final PrikbordItem item, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
-        final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
-        prikbordHttpHandler.declineItem(client, item.getId(), new Callback() {
+        prikbordHttpHandler.declineItem(item.getId(), context, new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object... results) {
                 item.setBeschikbaar(1);
                 db.updatePrikbordItem(item);
 
-                callback.onTaskCompleted(result);
+                callback.onTaskCompleted(results);
             }
-        }, context);
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                callback.onTaskCompleted(newItems);
+            }
+        });
     }
 
-    public void acceptItem(Context context, final PrikbordItem item, final String beschikbaarheid, final Werkgebied werkgebied, final Callback callback) {
+    public void acceptItem(final Context context, final PrikbordItem item, final String beschikbaarheid, final Werkgebied werkgebied, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
-        final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
-        prikbordHttpHandler.acceptItem(client, item.getId(), beschikbaarheid, werkgebied.getId(), new Callback() {
+        prikbordHttpHandler.acceptItem(item.getId(), beschikbaarheid, werkgebied.getId(), context, new Callback() {
             @Override
-            public void onTaskCompleted(String result) {
+            public void onTaskCompleted(Object... results) {
                 item.setBeschikbaar(2);
                 db.updatePrikbordItem(item);
 
-                callback.onTaskCompleted(result);
+                callback.onTaskCompleted(results);
             }
-        }, context);
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                callback.onTaskCompleted(newItems);
+            }
+        });
+    }
+
+    private void isFinalPrikbordUpdate(int totalItems, Callback callback) {
+        itemsAdded++;
+        if(itemsAdded == totalItems) {
+            itemsAdded = 0;
+            callback.onTaskCompleted(newItems);
+        }
     }
 }
