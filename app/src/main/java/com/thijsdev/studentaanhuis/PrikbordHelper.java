@@ -1,9 +1,7 @@
 package com.thijsdev.studentaanhuis;
 
-import android.app.Activity;
 import android.content.Context;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,7 +16,6 @@ public class PrikbordHelper {
 
     public void updatePrikbordItems(final Context context, final Callback existingItemCallback, final Callback newItemCallback, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
-        final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
         final TextView prikbord_status;
 
@@ -33,13 +30,12 @@ public class PrikbordHelper {
         }
         */
 
-
-        prikbordHttpHandler.getPrikbordItems(client, context, new Callback() {
+        prikbordHttpHandler.getPrikbordItems(context, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
+            public void onTaskCompleted(Object... results) {
                 boolean gotItem = false;
 
-                Document doc = Jsoup.parse((String) result);
+                Document doc = Jsoup.parse((String) results[0]);
                 final Elements trs = doc.select("tr:has(td)");
 
                 //Count number of active prikbord items
@@ -67,10 +63,10 @@ public class PrikbordHelper {
                             pi.setId(id);
 
                             //Ophalen van details
-                            prikbordHttpHandler.getPrikbordItem(client, context, id, new Callback() {
+                            prikbordHttpHandler.getPrikbordItem(context, id, new Callback() {
                                 @Override
-                                public void onTaskCompleted(Object result) {
-                                    Document doc = Jsoup.parse((String) result);
+                                public void onTaskCompleted(Object... result) {
+                                    Document doc = Jsoup.parse((String) result[0]);
                                     String omschrijving = doc.getElementsByClass("widget").first().children().last().text();
                                     pi.setBeschrijving(omschrijving);
 
@@ -97,23 +93,8 @@ public class PrikbordHelper {
                                 }
                             }, new Callback() {
                                 @Override
-                                public void onTaskCompleted(Object result) {
-                                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                                        try {
-                                            Thread.sleep(500);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        client.retryLastCall();
-                                    }else {
-                                        isFinalPrikbordUpdate(totalItems, callback);
-
-                                        //Geen toast doen als het van de Alarm Manager komt
-                                        if (context instanceof Activity) {
-                                            Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                                            toast.show();
-                                        }
-                                    }
+                                public void onTaskCompleted(Object... results) {
+                                    isFinalPrikbordUpdate(totalItems, callback);
                                 }
                             });
                         } else {
@@ -133,89 +114,48 @@ public class PrikbordHelper {
             }
         }, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
-                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    client.retryLastCall();
-                }else {
-                    callback.onTaskCompleted(newItems);
-
-                    //Geen toast doen als het van de Alarm Manager komt
-                    if (context instanceof Activity) {
-                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
+            public void onTaskCompleted(Object... results) {
+                callback.onTaskCompleted(newItems);
             }
         });
     }
 
     public void declineItem(final Context context, final PrikbordItem item, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
-        final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
-        prikbordHttpHandler.declineItem(client, item.getId(), context, new Callback() {
+        prikbordHttpHandler.declineItem(item.getId(), context, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
+            public void onTaskCompleted(Object... results) {
                 item.setBeschikbaar(1);
                 db.updatePrikbordItem(item);
 
-                callback.onTaskCompleted(result);
+                callback.onTaskCompleted(results);
             }
         }, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
-                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    client.retryLastCall();
-                }else {
-                    callback.onTaskCompleted(newItems);
-
-                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                    toast.show();
-                }
+            public void onTaskCompleted(Object... results) {
+                callback.onTaskCompleted(newItems);
             }
         });
     }
 
     public void acceptItem(final Context context, final PrikbordItem item, final String beschikbaarheid, final Werkgebied werkgebied, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
-        final HttpClientClass client = HttpClientClass.getInstance();
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
-        prikbordHttpHandler.acceptItem(client, item.getId(), beschikbaarheid, werkgebied.getId(), context, new Callback() {
+        prikbordHttpHandler.acceptItem(item.getId(), beschikbaarheid, werkgebied.getId(), context, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
+            public void onTaskCompleted(Object... results) {
                 item.setBeschikbaar(2);
                 db.updatePrikbordItem(item);
 
-                callback.onTaskCompleted(result);
+                callback.onTaskCompleted(results);
             }
         }, new Callback() {
             @Override
-            public void onTaskCompleted(Object result) {
-                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    client.retryLastCall();
-                }else {
-                    callback.onTaskCompleted(newItems);
-
-                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                    toast.show();
-                }
+            public void onTaskCompleted(Object... results) {
+                callback.onTaskCompleted(newItems);
             }
         });
     }

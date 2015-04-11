@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
-    private ArrayList<PrikbordItem> mData = new ArrayList<PrikbordItem>();
+class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+    private ArrayList<Object> mData = new ArrayList<>();
     private GeoLocationHelper locHelper = new GeoLocationHelper();
     private WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
     private Context context;
@@ -30,97 +30,142 @@ class PrikbordAdapter extends RecyclerView.Adapter<PrikbordViewHolder>  {
     }
 
     @Override
-    public PrikbordViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View itemView = inflater.inflate(R.layout.snipet_prikbord_item, viewGroup, false);
-        return new PrikbordViewHolder(itemView);
+        View itemView;
+        switch (viewType) {
+            case 0:
+                itemView = inflater.inflate(R.layout.snipet_prikbord_item, viewGroup, false);
+                return new PrikbordListItem(itemView);
+            case 1:
+                itemView = inflater.inflate(R.layout.snipet_prikbord_header, viewGroup, false);
+                return new PrikbordListHeader(itemView);
+            case 2:
+                itemView = inflater.inflate(R.layout.snipet_prikbord_message, viewGroup, false);
+                return new PrikbordListHeader(itemView);
+        }
+
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(PrikbordViewHolder viewHolder, int position) {
-        String distance = getDistanceString(position);
-
-        //Fix adress to strip postcode
-        Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
-        Matcher m = p.matcher(mData.get(position).getAdres());
-        m.find();
-        viewHolder.adress.setText(m.group(1)+", "+m.group(2));
-
-        //Other information
-        viewHolder.omschrijving.setText(mData.get(position).getBeschrijving());
-        if(distance == null)
-            viewHolder.distance.setVisibility(View.GONE);
+    public int getItemViewType(int position) {
+        if(mData.get(position) instanceof PrikbordItem)
+            return 0;
+        else if(!((PrikbordHeader)mData.get(position)).isMessage())
+            return 1;
         else
-            viewHolder.distance.setText(distance);
-
-        viewHolder.adress.setTypeface(((MainActivity)context).robotoMedium);
-        viewHolder.distance.setTypeface(((MainActivity)context).robotoRegular);
-        viewHolder.omschrijving.setTypeface(((MainActivity) context).robotoRegular);
-
-        /*
-        if(android.os.Build.VERSION.SDK_INT >= 21) {
-            viewHolder.adress.setTransitionName("adress" + position);
-            viewHolder.omschrijving.setTransitionName("omschrijving" + position);
-        }
-        */
-
-        viewHolder.setClickListener(new PrikbordViewHolder.ClickListener() {
-            @Override
-            public void onClick(View v, int pos) {
-                PrikbordDetailFragment fragment = new PrikbordDetailFragment();
-
-                /*
-                View title = v.findViewById(R.id.prikbord_locatie);
-                View desc = v.findViewById(R.id.prikbord_omschrijving);
-
-                if(android.os.Build.VERSION.SDK_INT >= 21) {
-                    fragment.setSharedElementEnterTransition(TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-                    fragment.setEnterTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.explode));
-                    fragment.setLocationId(title.getTransitionName());
-                    fragment.setOmschrijvingId(desc.getTransitionName());
-                }
-                */
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("PrikbordId", mData.get(pos).getId());
-                fragment.setArguments(bundle);
-
-                FragmentTransaction transaction = ((Activity)context).getFragmentManager().beginTransaction();
-
-                transaction.replace(R.id.prikbord_fragments, fragment);
-                transaction.addToBackStack(null);
-                /*
-                if(android.os.Build.VERSION.SDK_INT >= 21) {
-                    transaction.addSharedElement(title, title.getTransitionName());
-                    transaction.addSharedElement(desc, desc.getTransitionName());
-                }
-                */
-                transaction.commit();
-            }
-        });
+            return 2;
     }
 
-    public void addItem(int position, PrikbordItem prikbordItem) {
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        if(viewHolder instanceof PrikbordListItem) {
+            PrikbordListItem prikbordListItem = (PrikbordListItem)viewHolder;
+            String distance = getDistanceString(position);
+
+            //Fix adress to strip postcode
+            Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
+            Matcher m = p.matcher(((PrikbordItem)mData.get(position)).getAdres());
+            m.find();
+            prikbordListItem.adress.setText(m.group(1) + ", " + m.group(2));
+
+            //Other information
+            prikbordListItem.omschrijving.setText(((PrikbordItem)mData.get(position)).getBeschrijving());
+            if (distance == null)
+                prikbordListItem.distance.setVisibility(View.GONE);
+            else
+                prikbordListItem.distance.setText(distance);
+
+            prikbordListItem.adress.setTypeface(((MainActivity) context).robotoMedium);
+            prikbordListItem.distance.setTypeface(((MainActivity) context).robotoRegular);
+            prikbordListItem.omschrijving.setTypeface(((MainActivity) context).robotoRegular);
+
+            prikbordListItem.setClickListener(new PrikbordListItem.ClickListener() {
+                @Override
+                public void onClick(View v, int pos) {
+                    PrikbordDetailFragment fragment = new PrikbordDetailFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("PrikbordId", ((PrikbordItem)mData.get(pos)).getId());
+                    fragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = ((Activity) context).getFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.prikbord_fragments, fragment);
+                    transaction.addToBackStack(null);
+
+                    transaction.commit();
+                }
+            });
+        }else{
+            PrikbordListHeader prikbordListHeader = (PrikbordListHeader)viewHolder;
+
+            if(!((PrikbordHeader)mData.get(position)).isMessage()) {
+                prikbordListHeader.title.setTypeface(((MainActivity) context).robotoBold);
+                prikbordListHeader.title.setText(((PrikbordHeader) mData.get(position)).getTitle());
+            }else{
+                prikbordListHeader.title.setTypeface(((MainActivity) context).robotoLight);
+                prikbordListHeader.title.setText(((PrikbordHeader) mData.get(position)).getTitle());
+            }
+        }
+    }
+
+    public void addItem(int position, Object prikbordItem) {
         mData.add(position, prikbordItem);
         notifyItemInserted(position);
     }
 
+    public void moveItem(int oldPosition, int newPosition) {
+        if(oldPosition < newPosition)
+            newPosition -= 1;
+
+        Object item = mData.get(oldPosition);
+        mData.remove(oldPosition);
+        mData.add(newPosition, item);
+        notifyDataSetChanged();
+    }
+
+    public void removeItem(int position) {
+        mData.remove(position);
+        notifyDataSetChanged();
+    }
+
+    //TODO: Lompe functie, kan netter...
+    public int findItem(int id) {
+        int index = 0;
+        for(Object pi : mData) {
+            if (pi instanceof PrikbordItem)
+                if (((PrikbordItem) pi).getId() == id)
+                    return index;
+
+            if (pi instanceof PrikbordHeader)
+                if (((PrikbordHeader) pi).getId() == id)
+                    return index;
+
+            index++;
+        }
+        return -1;
+    }
+
     public boolean hasItem(PrikbordItem prikbordItem) {
-        for(PrikbordItem pi : mData)
-            if(pi.getId() == prikbordItem.getId())
-                return true;
+        for(Object pi : mData)
+            if(pi instanceof PrikbordItem)
+                if(((PrikbordItem)pi).getId() == prikbordItem.getId())
+                    return true;
+
         return false;
     }
 
     private String getDistanceString(int position) {
         Location werkgebiedLocation = werkgebiedHelper.getFirstWerkgebiedLocation(context);
 
-        if(werkgebiedLocation != null && mData.get(position).getLocation() != null) {
-            if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (mData.get(position).getLocation().getLatitude() == 0 && mData.get(position).getLocation().getLongitude() == 0)) {
+        if(werkgebiedLocation != null && ((PrikbordItem)mData.get(position)).getLocation() != null) {
+            if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (((PrikbordItem)mData.get(position)).getLocation().getLatitude() == 0 && ((PrikbordItem)mData.get(position)).getLocation().getLongitude() == 0)) {
                 return null;
             }else {
 
-                int distance = locHelper.getDistanceBetweenLocations(werkgebiedLocation, mData.get(position).getLocation());
+                int distance = locHelper.getDistanceBetweenLocations(werkgebiedLocation, ((PrikbordItem)mData.get(position)).getLocation());
                 if (distance < 1000) {
                     return Integer.toString(distance) + "M";
                 } else {

@@ -17,7 +17,7 @@ public class LoginHTTPHandler {
 
     }
 
-    public void checkLogin(final Activity activity, final HttpClientClass client, final Callback succes, final Callback failure) {
+    public void checkLogin(final Activity activity, final Callback succes, final Callback failure) {
         SharedPreferences sharedpreferences = activity.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
         String session = sharedpreferences.getString("session", null);
         if(session != null) {
@@ -25,24 +25,26 @@ public class LoginHTTPHandler {
                 JSONObject obj = new JSONObject();
                 obj.put("url", "https://nl.sah3.net/students/time_offs");
 
+                HttpClientClass client = new HttpClientClass();
                 client.getSource(obj, new Callback() {
                     @Override
-                    public void onTaskCompleted(Object result) {
-                        Document doc = Jsoup.parse((String) result);
+                    public void onTaskCompleted(Object... results) {
+                        Document doc = Jsoup.parse((String) results[0]);
                         Elements elements = doc.select("h1");
                         for (Element element : elements) {
                             if(element.text().equals("Aanmelden") || element.text().contains("Bad Request")) {
                                 SAHApplication.cookieManager.getCookieStore().removeAll();
-                                failure.onTaskCompleted(null);
+                                failure.onTaskCompleted((Object[])null);
                             }else{
-                                succes.onTaskCompleted(null);
+                                succes.onTaskCompleted((Object[])null);
                             }
                             break;
                         }
                     }
                 }, new Callback() {
                     @Override
-                    public void onTaskCompleted(Object result) {
+                    public void onTaskCompleted(Object... results) {
+                        HttpClientClass client = ((HttpClientClass)results[1]);
                         if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
                             try {
                                 Thread.sleep(500);
@@ -60,7 +62,7 @@ public class LoginHTTPHandler {
                                 }
                                 client.retryLastCall();
                             }else {
-                                failure.onTaskCompleted(null);
+                                failure.onTaskCompleted((Object[])null);
 
                                 Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
                                 toast.show();
@@ -73,19 +75,20 @@ public class LoginHTTPHandler {
             }
         }else {
             SAHApplication.cookieManager.getCookieStore().removeAll();
-            failure.onTaskCompleted(null);
+            failure.onTaskCompleted((Object[])null);
         }
     }
 
-    public void doLogin(final HttpClientClass client, final Activity activity, final String username, final String password, final Callback succes, final Callback failure) {
+    public void doLogin(final Activity activity, final String username, final String password, final Callback succes, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/login");
 
+            HttpClientClass client = new HttpClientClass();
             client.getSource(obj, new Callback() {
                 @Override
-                public void onTaskCompleted(Object result) {
-                    Document doc = Jsoup.parse((String) result);
+                public void onTaskCompleted(Object... results) {
+                    Document doc = Jsoup.parse((String) results[0]);
                     Element content = doc.getElementsByAttributeValue("name", "authenticity_token").first();
 
 
@@ -101,10 +104,11 @@ public class LoginHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/sessions");
                         obj.put("params", params);
 
+                        HttpClientClass client = new HttpClientClass();
                         client.doPost(obj, new Callback() {
                             @Override
-                            public void onTaskCompleted(Object result) {
-                                Document doc = Jsoup.parse((String) result);
+                            public void onTaskCompleted(Object... results) {
+                                Document doc = Jsoup.parse((String) results[0]);
                                 Element content = doc.getElementById("flash_alert");
 
                                 if(content == null)
@@ -114,7 +118,8 @@ public class LoginHTTPHandler {
                             }
                         }, new Callback() {
                             @Override
-                            public void onTaskCompleted(Object result) {
+                            public void onTaskCompleted(Object... results) {
+                                HttpClientClass client = ((HttpClientClass)results[1]);
                                 if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
                                     try {
                                         Thread.sleep(500);
@@ -131,7 +136,7 @@ public class LoginHTTPHandler {
                                         }
                                         client.retryLastCall();
                                     }else {
-                                        failure.onTaskCompleted(null);
+                                        failure.onTaskCompleted((Object[])null);
 
                                         Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
                                         toast.show();
@@ -146,7 +151,8 @@ public class LoginHTTPHandler {
                 }
             }, new Callback() {
                 @Override
-                public void onTaskCompleted(Object result) {
+                public void onTaskCompleted(Object... results) {
+                    HttpClientClass client = ((HttpClientClass)results[1]);
                     if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
                         try {
                             Thread.sleep(500);
@@ -155,7 +161,7 @@ public class LoginHTTPHandler {
                         }
                         client.retryLastCall();
                     }else {
-                        failure.onTaskCompleted(null);
+                        failure.onTaskCompleted((Object[])null);
 
                         Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
                         toast.show();

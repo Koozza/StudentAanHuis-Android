@@ -16,7 +16,6 @@
     <string name="none">Niet aangegeven</string>
     <string name="when_availible">Wanneer ben je beschikbaar?</string>
     <string name="select_workarea">Selecteer Werkgebied</string>
-    <string name="sure_you_cant_do_appointment">Weet je zeker dat je deze afspraak niet kan doen?</string>
     <string name="no">Nee</string>
     <string name="yes">Ja</string>
     <string name="continu">Verder</string>
@@ -29,6 +28,12 @@
     <string name="aanmelden">Aanmelden</string>
     <string name="afmelden">Afmelden</string>
     <string name="distance">Afstand:</string>
+    <string name="logout">Uitloggen</string>
+    <string name="pending">Openstaand</string>
+    <string name="denied">Afgewezen</string>
+    <string name="accepted">Aangenomen</string>
 
+    <string name="sure_you_cant_do_appointment">Weet je zeker dat je deze afspraak niet kan doen?</string>
     <string name="error_no_connection">Er kon geen verbinding worden gemaakt met SAH3.net</string>
+    <string name="sure_you_want_to_logout">Weet je zeker dat je wilt uitloggen?</string>
 </resources>
