@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-public class PrikbordListFragment extends Fragment {
+public class PrikbordListFragment extends Fragment implements FragmentInterface{
     private PrikbordHelper prikbordHelper = new PrikbordHelper();
 
     private RecyclerView mRecyclerView;
@@ -128,5 +128,15 @@ public class PrikbordListFragment extends Fragment {
                 return false;
             }
         });
+    }
+
+    @Override
+    public int getDrawerId() {
+        return R.id.menu_prikbord;
+    }
+
+    @Override
+    public String getTitle() {
+        return getResources().getString(R.string.prikbord);
     }
 }

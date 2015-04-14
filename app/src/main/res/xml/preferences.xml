@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/prikbord"
+        android:key="pref_key_storage_settings">
+        <ListPreference
+            android:key="prikbord_refreshtime"
+            android:title="@string/prikbord_refreshtime"
+            android:summary="@string/prikbord_refreshtime_desc"
+            android:entries="@array/prikbord_refreshtime_entries"
+            android:entryValues="@array/prikbord_refreshtime_values"
+            android:defaultValue="@string/prikbord_refreshtime_default" />
+        <ListPreference
+            android:key="prikbord_werkgebied"
+            android:title="@string/prikbord_werkgebied"
+            android:summary="@string/prikbord_werkgebied_desc"
+            android:entries="@array/prikbord_refreshtime_entries"
+            android:entryValues="@array/prikbord_refreshtime_values"
+            android:defaultValue="@string/prikbord_refreshtime_default" />
+    </PreferenceCategory>
+</PreferenceScreen>
