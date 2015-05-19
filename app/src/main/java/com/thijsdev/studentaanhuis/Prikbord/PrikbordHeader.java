@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Prikbord;
 
 public class PrikbordHeader {
     private String title;

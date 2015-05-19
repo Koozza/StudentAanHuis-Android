@@ -43,12 +43,14 @@
     <string name="prikbord_refreshtime_desc">Tijd tussen de checks voor nieuwe prikbord items</string>
     <string name="prikbord_refreshtime_default">7200</string>
     <string-array name="prikbord_refreshtime_entries">
+        <item>30 Minuten</item>
         <item>2 Uur</item>
         <item>6 Uur</item>
         <item>12 Uur</item>
         <item>Niet</item>
     </string-array>
     <string-array name="prikbord_refreshtime_values">
+        <item>1800</item>
         <item>7200</item>
         <item>21600</item>
         <item>43200</item>

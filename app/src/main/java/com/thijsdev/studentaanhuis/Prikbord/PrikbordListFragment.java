@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -12,7 +12,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-public class PrikbordListFragment extends Fragment implements FragmentInterface{
+import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.DividerItemDecoration;
+import com.thijsdev.studentaanhuis.FragmentInterface;
+import com.thijsdev.studentaanhuis.MainActivity;
+import com.thijsdev.studentaanhuis.R;
+
+public class PrikbordListFragment extends Fragment implements FragmentInterface {
     private PrikbordHelper prikbordHelper = new PrikbordHelper();
 
     private RecyclerView mRecyclerView;

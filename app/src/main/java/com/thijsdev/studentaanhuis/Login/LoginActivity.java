@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Login;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.thijsdev.studentaanhuis.BasicActionBarActivity;
+import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.MainActivity;
+import com.thijsdev.studentaanhuis.R;
+import com.thijsdev.studentaanhuis.SAHApplication;
+import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
 
 import java.net.HttpCookie;
 

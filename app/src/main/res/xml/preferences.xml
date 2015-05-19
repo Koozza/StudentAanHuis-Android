@@ -13,9 +13,6 @@
         <ListPreference
             android:key="prikbord_werkgebied"
             android:title="@string/prikbord_werkgebied"
-            android:summary="@string/prikbord_werkgebied_desc"
-            android:entries="@array/prikbord_refreshtime_entries"
-            android:entryValues="@array/prikbord_refreshtime_values"
-            android:defaultValue="@string/prikbord_refreshtime_default" />
+            android:summary="@string/prikbord_werkgebied_desc"/>
     </PreferenceCategory>
 </PreferenceScreen>

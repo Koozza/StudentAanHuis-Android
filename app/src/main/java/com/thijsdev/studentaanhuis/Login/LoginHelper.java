@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Login;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import com.thijsdev.studentaanhuis.R;
+import com.thijsdev.studentaanhuis.SAHApplication;
 
 public class LoginHelper {
     private DialogInterface.OnClickListener dialogClickListener;

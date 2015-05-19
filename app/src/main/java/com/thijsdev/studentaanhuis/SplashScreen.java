@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.widget.TextView;
+
+import com.thijsdev.studentaanhuis.Login.LoginActivity;
+import com.thijsdev.studentaanhuis.Login.LoginHTTPHandler;
 
 
 public class SplashScreen extends BasicActionBarActivity {
@@ -14,6 +18,9 @@ public class SplashScreen extends BasicActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+        //set default settings
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         //Restore session
         SessionHelper.registerCookieHandler();
