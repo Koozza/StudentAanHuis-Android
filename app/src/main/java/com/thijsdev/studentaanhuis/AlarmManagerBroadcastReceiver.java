@@ -72,7 +72,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
     public static void createTimer(Context context, int frequency, String identifier) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MILLISECOND, frequency);
-        long later = cal.getTimeInMillis();
 
         Intent intent = new Intent("com.thijsdev.studentaanhuis.TIMER_UPDATE");
         intent.putExtra(ALARM, identifier);
@@ -88,7 +87,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
         PendingIntent sender = PendingIntent.getBroadcast(context,REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC_WAKEUP,later,frequency, sender);
+        am.setRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),frequency, sender);
     }
 
 
@@ -103,7 +102,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
     public static void updateAlaram(Context context, int frequency, String identifier) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MILLISECOND, frequency);
-        long later = cal.getTimeInMillis();
 
         Intent intent = new Intent("com.thijsdev.studentaanhuis.TIMER_UPDATE");
         intent.putExtra(ALARM, identifier);
@@ -113,7 +111,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
         AlarmManager am = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
 
-        am.setRepeating(AlarmManager.RTC_WAKEUP,later,frequency, sender);
+        am.setRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),frequency, sender);
 
     }
 
