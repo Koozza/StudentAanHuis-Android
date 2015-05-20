@@ -1,14 +1,21 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.thijsdev.studentaanhuis.GeoLocationHelper;
+import com.thijsdev.studentaanhuis.MainActivity;
+import com.thijsdev.studentaanhuis.R;
+import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -158,7 +165,10 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     }
 
     private String getDistanceString(int position) {
-        Location werkgebiedLocation = werkgebiedHelper.getFirstWerkgebiedLocation(context);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
+
+        Location werkgebiedLocation = werkgebiedHelper.getLocationFromWerkgebied(context, werkgebiedID);
 
         if(werkgebiedLocation != null && ((PrikbordItem)mData.get(position)).getLocation() != null) {
             if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (((PrikbordItem)mData.get(position)).getLocation().getLatitude() == 0 && ((PrikbordItem)mData.get(position)).getLocation().getLongitude() == 0)) {

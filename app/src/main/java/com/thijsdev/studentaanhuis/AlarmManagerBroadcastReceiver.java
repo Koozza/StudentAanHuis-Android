@@ -7,12 +7,17 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+
+import com.thijsdev.studentaanhuis.Prikbord.PrikbordHelper;
+import com.thijsdev.studentaanhuis.Prikbord.PrikbordItem;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,13 +25,18 @@ import java.util.Calendar;
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
     final public static String ALARM = "alarm";
     final public static String PRIKBORD = "prikbord";
-    final public static int PRIKBORD_UPDATE_TIME = 1000*60*120;
     public static final int REQUEST_CODE = 131131;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
         if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
-            createTimer(context, PRIKBORD_UPDATE_TIME, PRIKBORD);
+            //Get preferences
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+
+            //Set prikbord timer
+            int PRIKBORD_UPDATE_TIME = Integer.parseInt(sharedPref.getString("prikbord_refreshtime", Integer.toString(60 * 120))) * 1000;
+            if(PRIKBORD_UPDATE_TIME >= 1000*60)
+                createTimer(context, PRIKBORD_UPDATE_TIME, PRIKBORD);
         }else if ("com.thijsdev.studentaanhuis.TIMER_UPDATE".equals(intent.getAction())) {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
             PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SAH ALARM MANAGER");
@@ -62,7 +72,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
     public static void createTimer(Context context, int frequency, String identifier) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MILLISECOND, frequency);
-        long later = cal.getTimeInMillis();
 
         Intent intent = new Intent("com.thijsdev.studentaanhuis.TIMER_UPDATE");
         intent.putExtra(ALARM, identifier);
@@ -78,7 +87,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
         PendingIntent sender = PendingIntent.getBroadcast(context,REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC_WAKEUP,later,frequency, sender);
+        am.setRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),frequency, sender);
     }
 
 
@@ -93,7 +102,6 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
     public static void updateAlaram(Context context, int frequency, String identifier) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MILLISECOND, frequency);
-        long later = cal.getTimeInMillis();
 
         Intent intent = new Intent("com.thijsdev.studentaanhuis.TIMER_UPDATE");
         intent.putExtra(ALARM, identifier);
@@ -103,7 +111,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
         AlarmManager am = (AlarmManager) context
                 .getSystemService(Context.ALARM_SERVICE);
 
-        am.setRepeating(AlarmManager.RTC_WAKEUP,later,frequency, sender);
+        am.setRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),frequency, sender);
 
     }
 

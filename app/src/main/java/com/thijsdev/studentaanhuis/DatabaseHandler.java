@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.thijsdev.studentaanhuis.Prikbord.PrikbordItem;
+import com.thijsdev.studentaanhuis.Werkgebied.Werkgebied;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +43,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
 
     //New item
-    void addPrikbordItem(PrikbordItem item) {
+    public void addPrikbordItem(PrikbordItem item) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -59,7 +62,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Get Single Item
-    PrikbordItem getPrikbordItem(int id) {
+    public PrikbordItem getPrikbordItem(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_PITEMS, new String[] { "id",
@@ -84,7 +87,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Get All Items
-    List<PrikbordItem> getPrikbordItems() {
+    public List<PrikbordItem> getPrikbordItems() {
         List<PrikbordItem> prikbordItemsList = new ArrayList<PrikbordItem>();
         String selectQuery = "SELECT  * FROM " + TABLE_PITEMS;
 
@@ -147,7 +150,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
 
     //New item
-    void addWerkgebied(Werkgebied item) {
+    public void addWerkgebied(Werkgebied item) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -165,7 +168,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Get Single Item
-    Werkgebied getWerkgebied(int id) {
+    public Werkgebied getWerkgebied(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_WERKGEBIEDEN, new String[] { "id",
@@ -189,7 +192,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Get All Items
-    List<Werkgebied> getWerkgebieden() {
+    public List<Werkgebied> getWerkgebieden() {
         List<Werkgebied> werkgebiedList = new ArrayList<Werkgebied>();
         String selectQuery = "SELECT  * FROM " + TABLE_WERKGEBIEDEN;
 
@@ -216,7 +219,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Get Active All Items
-    List<Werkgebied> getActiveWerkgebieden() {
+    public List<Werkgebied> getActiveWerkgebieden() {
         List<Werkgebied> werkgebiedList = new ArrayList<Werkgebied>();
         String selectQuery = "SELECT  * FROM " + TABLE_WERKGEBIEDEN + " WHERE actief=1";
 

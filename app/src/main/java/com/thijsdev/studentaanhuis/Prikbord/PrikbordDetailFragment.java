@@ -1,10 +1,12 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.Gravity;
@@ -15,6 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.DatabaseHandler;
+import com.thijsdev.studentaanhuis.GeoLocationHelper;
+import com.thijsdev.studentaanhuis.MainActivity;
+import com.thijsdev.studentaanhuis.R;
+import com.thijsdev.studentaanhuis.Werkgebied.Werkgebied;
+import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -151,7 +161,10 @@ public class PrikbordDetailFragment extends Fragment {
     }
 
     private String getDistanceString(PrikbordItem prikbordItem) {
-        Location werkgebiedLocation = werkgebiedHelper.getFirstWerkgebiedLocation(getActivity());
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
+
+        Location werkgebiedLocation = werkgebiedHelper.getLocationFromWerkgebied(getActivity(), werkgebiedID);
 
         if(werkgebiedLocation != null && prikbordItem.getLocation() != null) {
             if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (prikbordItem.getLocation().getLatitude() == 0 && prikbordItem.getLocation().getLongitude() == 0)) {

@@ -12,6 +12,9 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.thijsdev.studentaanhuis.Login.LoginHelper;
+import com.thijsdev.studentaanhuis.Prikbord.PrikbordListFragment;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +29,7 @@ public class MainActivity extends BasicActionBarActivity {
 
     private Map<String, Object> sharedObjects = new HashMap<>();
 
-    private PrikbordListFragment prikbordListFragment;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +45,11 @@ public class MainActivity extends BasicActionBarActivity {
             if (savedInstanceState != null)
                 return;
 
-            prikbordListFragment = new PrikbordListFragment();
-            prikbordListFragment.setArguments(getIntent().getExtras());
+            currentFragment = new PrikbordListFragment();
+            currentFragment.setArguments(getIntent().getExtras());
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.add(R.id.prikbord_fragments, prikbordListFragment);
+            transaction.add(R.id.prikbord_fragments, currentFragment);
             transaction.commit();
         }
 
@@ -102,7 +105,24 @@ public class MainActivity extends BasicActionBarActivity {
     public void menuClick(View v) {
         if(v.getTag().equals("logout")) {
             loginHelper.doLogout(this, true);
+        }else if(v.getTag().equals("settings")) {
+            switchFragment(new PreferencesFragment());
+        }else if(v.getTag().equals("prikbord")) {
+            switchFragment(new PrikbordListFragment());
         }
+        mDrawerLayout.closeDrawers();
+    }
+
+    public void switchFragment(Fragment fragment) {
+        Fragment menu = getFragmentManager().findFragmentById(R.id.fragment_drawer);
+        menu.getView().findViewById(((FragmentInterface) currentFragment).getDrawerId()).setBackgroundColor(getResources().getColor(R.color.white));
+        menu.getView().findViewById(((FragmentInterface) fragment).getDrawerId()).setBackgroundColor(getResources().getColor(R.color.SAHlightblue));
+
+        currentFragment = fragment;
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.prikbord_fragments, fragment);
+        transaction.commit();
     }
 
     public Toolbar getToolbar() {
@@ -123,6 +143,6 @@ public class MainActivity extends BasicActionBarActivity {
     }
 
     public Fragment getActiveFragement() {
-        return prikbordListFragment;
+        return currentFragment;
     }
 }

@@ -1,7 +1,11 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.content.Context;
 import android.widget.TextView;
+
+import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.DatabaseHandler;
+import com.thijsdev.studentaanhuis.Werkgebied.Werkgebied;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

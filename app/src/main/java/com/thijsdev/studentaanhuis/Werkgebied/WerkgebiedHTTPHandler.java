@@ -1,7 +1,12 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Werkgebied;
 
 import android.app.Activity;
 import android.widget.Toast;
+
+import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.HttpClientClass;
+import com.thijsdev.studentaanhuis.R;
+import com.thijsdev.studentaanhuis.SAHApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;

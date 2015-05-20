@@ -1,9 +1,14 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Login;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
+
+import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.HttpClientClass;
+import com.thijsdev.studentaanhuis.R;
+import com.thijsdev.studentaanhuis.SAHApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
