@@ -1,12 +1,10 @@
 package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.DefaultCallbackFailure;
 import com.thijsdev.studentaanhuis.HttpClientClass;
-import com.thijsdev.studentaanhuis.R;
-import com.thijsdev.studentaanhuis.SAHApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,25 +19,7 @@ public class PrikbordHTTPHandler {
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes");
 
             HttpClientClass client = new HttpClientClass();
-            client.getSource(obj, success, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    HttpClientClass client = ((HttpClientClass)results[1]);
-                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        client.retryLastCall();
-                    }else {
-                        failure.onTaskCompleted((Object[])null);
-
-                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
-            });
+            client.getSource(obj, success, new DefaultCallbackFailure(context, failure));
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -51,25 +31,7 @@ public class PrikbordHTTPHandler {
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/" + id + "/respond");
 
             HttpClientClass client = new HttpClientClass();
-            client.getSource(obj, success ,new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    HttpClientClass client = ((HttpClientClass)results[1]);
-                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        client.retryLastCall();
-                    }else {
-                        failure.onTaskCompleted((Object[])null);
-
-                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
-            });
+            client.getSource(obj, success ,new DefaultCallbackFailure(context, failure));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -99,48 +61,12 @@ public class PrikbordHTTPHandler {
                         obj.put("params", params);
 
                         HttpClientClass client = new HttpClientClass();
-                        client.doPost(obj, success, new Callback() {
-                            @Override
-                            public void onTaskCompleted(Object... results) {
-                                HttpClientClass client = ((HttpClientClass)results[1]);
-                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                                    try {
-                                        Thread.sleep(500);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    client.retryLastCall();
-                                }else {
-                                    failure.onTaskCompleted((Object[])null);
-
-                                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                                    toast.show();
-                                }
-                            }
-                        });
+                        client.doPost(obj, success, new DefaultCallbackFailure(context, failure));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-            }, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    HttpClientClass client = ((HttpClientClass)results[1]);
-                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        client.retryLastCall();
-                    }else {
-                        failure.onTaskCompleted((Object[])null);
-
-                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
-            });
+            }, new DefaultCallbackFailure(context, failure));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -172,48 +98,12 @@ public class PrikbordHTTPHandler {
                         obj.put("params", params);
 
                         HttpClientClass client = new HttpClientClass();
-                        client.doPost(obj, success, new Callback() {
-                            @Override
-                            public void onTaskCompleted(Object... results) {
-                                HttpClientClass client = ((HttpClientClass)results[1]);
-                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                                    try {
-                                        Thread.sleep(500);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    client.retryLastCall();
-                                }else {
-                                    failure.onTaskCompleted((Object[])null);
-
-                                    Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                                    toast.show();
-                                }
-                            }
-                        });
+                        client.doPost(obj, success, new DefaultCallbackFailure(context, failure));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-            }, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    HttpClientClass client = ((HttpClientClass)results[1]);
-                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        client.retryLastCall();
-                    }else {
-                        failure.onTaskCompleted((Object[])null);
-
-                        Toast toast = Toast.makeText(context, context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
-            });
+            }, new DefaultCallbackFailure(context, failure));
         } catch (JSONException e) {
             e.printStackTrace();
         }

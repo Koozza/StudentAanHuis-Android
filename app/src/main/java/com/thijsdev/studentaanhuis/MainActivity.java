@@ -36,6 +36,8 @@ public class MainActivity extends BasicActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prikbord);
 
+
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 

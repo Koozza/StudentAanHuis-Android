@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.DividerItemDecoration;
 import com.thijsdev.studentaanhuis.FragmentInterface;
+import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 

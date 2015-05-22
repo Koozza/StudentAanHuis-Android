@@ -59,4 +59,8 @@
 
     <string name="prikbord_werkgebied">Werkgebied</string>
     <string name="prikbord_werkgebied_desc">Werkgebied voor afstand berekeningen</string>
+
+    <string name="send_anon_data">Verstuur anonieme data</string>
+    <string name="send_anon_data_desc">Verstuur anonieme data om de app te verbeteren</string>
+    <string name="send_anon_data_default">true</string>
 </resources>

@@ -1,6 +1,9 @@
 package com.thijsdev.studentaanhuis;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +56,28 @@ public class HttpClientClass {
         httpClientObject.setType(HttpClientObject.POST);
 
         new doPost().execute(httpClientObject);
+    }
+
+    public void giveFeedback(Context context, final String title, final String data) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        if(sharedPref.getBoolean("send_anon_data", true)) {
+            //Send anon data
+
+            try {
+                JSONObject obj = new JSONObject();
+                JSONObject params = new JSONObject();
+
+                params.put("title", title);
+                params.put("data", data);
+
+                obj.put("url", "http://thijsd.nl/SAH/feedback.php");
+                obj.put("params", params);
+
+                doPost(obj, new Callback(), new DefaultCallbackFailure(context));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public HttpClientObject getHttpClientObject() {

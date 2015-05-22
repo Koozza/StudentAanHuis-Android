@@ -14,5 +14,10 @@
             android:key="prikbord_werkgebied"
             android:title="@string/prikbord_werkgebied"
             android:summary="@string/prikbord_werkgebied_desc"/>
+        <CheckBoxPreference
+            android:key="send_anon_data"
+            android:title="@string/send_anon_data"
+            android:summary="@string/send_anon_data_desc"
+            android:defaultValue="@string/send_anon_data_default"/>
     </PreferenceCategory>
 </PreferenceScreen>
