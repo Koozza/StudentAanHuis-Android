@@ -67,7 +67,7 @@ action#com.thijsdev.studentaanhuis.TIMER_UPDATE
 ADDED from AndroidManifest.xml:22:17
 	android:name
 		ADDED from AndroidManifest.xml:22:25
-activity#com.thijsdev.studentaanhuis.LoginActivity
+activity#com.thijsdev.studentaanhuis.Login.LoginActivity
 ADDED from AndroidManifest.xml:26:9
 	android:label
 		ADDED from AndroidManifest.xml:28:13

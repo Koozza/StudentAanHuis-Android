@@ -1,14 +1,23 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.thijsdev.studentaanhuis.FragmentInterface;
+import com.thijsdev.studentaanhuis.GeoLocationHelper;
+import com.thijsdev.studentaanhuis.HttpClientClass;
+import com.thijsdev.studentaanhuis.MainActivity;
+import com.thijsdev.studentaanhuis.R;
+import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -65,10 +74,18 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             String distance = getDistanceString(position);
 
             //Fix adress to strip postcode
-            Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
-            Matcher m = p.matcher(((PrikbordItem)mData.get(position)).getAdres());
-            m.find();
-            prikbordListItem.adress.setText(m.group(1) + ", " + m.group(2));
+            try {
+                Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
+                Matcher m = p.matcher(((PrikbordItem) mData.get(position)).getAdres());
+                m.find();
+                prikbordListItem.adress.setText(m.group(1) + ", " + m.group(2));
+            }catch(IllegalStateException e) {
+                //TODO: Debugging code
+                HttpClientClass httpClientClass = new HttpClientClass();
+                httpClientClass.giveFeedback(context, "ADDRESS PARSE FAIL", ((PrikbordItem) mData.get(position)).getAdres());
+
+                prikbordListItem.adress.setText(((PrikbordItem) mData.get(position)).getAdres());
+            }
 
             //Other information
             prikbordListItem.omschrijving.setText(((PrikbordItem)mData.get(position)).getBeschrijving());
@@ -84,6 +101,8 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             prikbordListItem.setClickListener(new PrikbordListItem.ClickListener() {
                 @Override
                 public void onClick(View v, int pos) {
+                    ((FragmentInterface)((MainActivity) context).getActiveFragement()).unload();
+
                     PrikbordDetailFragment fragment = new PrikbordDetailFragment();
 
                     Bundle bundle = new Bundle();
@@ -158,7 +177,14 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     }
 
     private String getDistanceString(int position) {
-        Location werkgebiedLocation = werkgebiedHelper.getFirstWerkgebiedLocation(context);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
+
+        if(werkgebiedID == "" || werkgebiedID == null) {
+            return null;
+        }
+
+        Location werkgebiedLocation = werkgebiedHelper.getLocationFromWerkgebied(context, werkgebiedID);
 
         if(werkgebiedLocation != null && ((PrikbordItem)mData.get(position)).getLocation() != null) {
             if((werkgebiedLocation.getLatitude() == 0 && werkgebiedLocation.getLongitude() == 0) || (((PrikbordItem)mData.get(position)).getLocation().getLatitude() == 0 && ((PrikbordItem)mData.get(position)).getLocation().getLongitude() == 0)) {

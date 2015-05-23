@@ -1,8 +1,10 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import com.thijsdev.studentaanhuis.R;
 
 public class PrikbordListHeader extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView title;

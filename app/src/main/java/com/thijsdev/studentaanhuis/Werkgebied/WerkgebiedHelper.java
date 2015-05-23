@@ -1,9 +1,13 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Werkgebied;
 
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+
+import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.DatabaseHandler;
+import com.thijsdev.studentaanhuis.GeoLocationHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -74,6 +78,17 @@ public class WerkgebiedHelper {
         return werkgebieden.toArray(new CharSequence[db.getActiveWerkgebieden().size()]);
     }
 
+    public CharSequence[] getWerkgebiedenIDArray(Context context) {
+        final DatabaseHandler db = new DatabaseHandler(context);
+
+        ArrayList<String> werkgebieden = new ArrayList<String>();
+        for(Werkgebied werkgebied : db.getActiveWerkgebieden()) {
+            werkgebieden.add(Integer.toString(werkgebied.getId()));
+        }
+
+        return werkgebieden.toArray(new CharSequence[db.getActiveWerkgebieden().size()]);
+    }
+
     public List<Werkgebied> getActiveWerkgebieden(Context context) {
         final DatabaseHandler db = new DatabaseHandler(context);
 
@@ -84,6 +99,15 @@ public class WerkgebiedHelper {
         final DatabaseHandler db = new DatabaseHandler(context);
         List<Werkgebied> werkgebieden = db.getActiveWerkgebieden();
         if(werkgebieden.size() == 0)
+            return null;
+
+        return db.getActiveWerkgebieden().get(0).getLocation();
+    }
+
+    public Location getLocationFromWerkgebied(Context context, String WerkgebiedId) {
+        final DatabaseHandler db = new DatabaseHandler(context);
+        Werkgebied werkgebied = db.getWerkgebied(Integer.parseInt(WerkgebiedId));
+        if(werkgebied == null)
             return null;
 
         return db.getActiveWerkgebieden().get(0).getLocation();

@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -12,7 +12,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-public class PrikbordListFragment extends Fragment {
+import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.DividerItemDecoration;
+import com.thijsdev.studentaanhuis.FragmentInterface;
+import com.thijsdev.studentaanhuis.MainActivity;
+import com.thijsdev.studentaanhuis.R;
+
+public class PrikbordListFragment extends Fragment implements FragmentInterface {
     private PrikbordHelper prikbordHelper = new PrikbordHelper();
 
     private RecyclerView mRecyclerView;
@@ -87,7 +93,7 @@ public class PrikbordListFragment extends Fragment {
                     PrikbordItem pi = (PrikbordItem) results[0];
                     if (!mAdapter.hasItem(pi)) {
                         int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
-                        if(noItemsFound > -1 )
+                        if (noItemsFound > -1)
                             mAdapter.removeItem(noItemsFound);
 
                         mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
@@ -99,7 +105,7 @@ public class PrikbordListFragment extends Fragment {
                     PrikbordItem pi = (PrikbordItem) results[0];
                     if (!mAdapter.hasItem(pi)) {
                         int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
-                        if(noItemsFound > -1 )
+                        if (noItemsFound > -1)
                             mAdapter.removeItem(noItemsFound);
 
                         mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
@@ -108,11 +114,18 @@ public class PrikbordListFragment extends Fragment {
             }, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {
-                    toolbar.findViewById(R.id.action_refresh).clearAnimation();
+                    if (toolbar.findViewById(R.id.action_refresh) != null)
+                        toolbar.findViewById(R.id.action_refresh).clearAnimation();
                     isRefreshing = false;
                 }
             });
         }
+    }
+
+    @Override
+    public void unload() {
+        toolbar.findViewById(R.id.action_refresh).clearAnimation();
+        toolbar.removeView(toolbar.findViewById(R.id.action_refresh));
     }
 
     public void registerToolbarClick() {
@@ -128,5 +141,15 @@ public class PrikbordListFragment extends Fragment {
                 return false;
             }
         });
+    }
+
+    @Override
+    public int getDrawerId() {
+        return R.id.menu_prikbord;
+    }
+
+    @Override
+    public String getTitle() {
+        return getResources().getString(R.string.prikbord);
     }
 }

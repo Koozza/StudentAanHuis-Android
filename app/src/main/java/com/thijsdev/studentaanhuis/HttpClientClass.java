@@ -1,6 +1,9 @@
 package com.thijsdev.studentaanhuis;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +58,28 @@ public class HttpClientClass {
         new doPost().execute(httpClientObject);
     }
 
+    public void giveFeedback(Context context, final String title, final String data) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        if(sharedPref.getBoolean("send_anon_data", true)) {
+            //Send anon data
+
+            try {
+                JSONObject obj = new JSONObject();
+                JSONObject params = new JSONObject();
+
+                params.put("title", title);
+                params.put("data", data);
+
+                obj.put("url", "http://thijsd.nl/SAH/feedback.php");
+                obj.put("params", params);
+
+                doPost(obj, new Callback(), new DefaultCallbackFailure(context));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public HttpClientObject getHttpClientObject() {
         return httpClientObject;
     }
@@ -71,8 +96,8 @@ public class HttpClientClass {
                 URL url = new URL(params[0].getArguments().getString("url"));
                 urlConnection = (HttpURLConnection) url.openConnection();
 
-                urlConnection.setReadTimeout(5000);
-                urlConnection.setConnectTimeout(8000);
+                urlConnection.setReadTimeout(16000);
+                urlConnection.setConnectTimeout(16000);
                 urlConnection.setDoInput(true);
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
@@ -114,8 +139,8 @@ public class HttpClientClass {
             {
                 URL url = new URL(params[0].getArguments().getString("url"));
                 urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setReadTimeout(5000);
-                urlConnection.setConnectTimeout(8000);
+                urlConnection.setReadTimeout(16000);
+                urlConnection.setConnectTimeout(16000);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setDoInput(true);
                 urlConnection.setDoOutput(true);
