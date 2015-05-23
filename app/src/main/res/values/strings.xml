@@ -32,6 +32,7 @@
     <string name="pending">Openstaand</string>
     <string name="denied">Afgewezen</string>
     <string name="accepted">Aangenomen</string>
+    <string name="loon">Loon</string>
 
     <!-- Sentences -->
     <string name="sure_you_cant_do_appointment">Weet je zeker dat je deze afspraak niet kan doen?</string>
