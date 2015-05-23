@@ -136,9 +136,10 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setAutoCancel(true);
 
-        Intent resultIntent = new Intent(context, MainActivity.class);
+        Intent resultIntent = new Intent(context, SplashScreen.class);
+        resultIntent.putExtra("LAUNCH_FROM_NOTIFICATION", "PRIKBORD");
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addParentStack(SplashScreen.class);
 
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =

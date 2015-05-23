@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.DefaultCallbackFailure;
 import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.R;
 import com.thijsdev.studentaanhuis.SAHApplication;
@@ -59,19 +60,10 @@ public class LoginHTTPHandler {
                             client.retryLastCall();
                         }else{
                             SAHApplication.cookieManager.getCookieStore().removeAll();
-                            if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                client.retryLastCall();
-                            }else {
-                                failure.onTaskCompleted((Object[])null);
+                            failure.onTaskCompleted((Object[])null);
 
-                                Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                                toast.show();
-                            }
+                            Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
+                            toast.show();
                         }
                     }
                 });
@@ -121,58 +113,13 @@ public class LoginHTTPHandler {
                                 else
                                     failure.onTaskCompleted(content.text());
                             }
-                        }, new Callback() {
-                            @Override
-                            public void onTaskCompleted(Object... results) {
-                                HttpClientClass client = ((HttpClientClass)results[1]);
-                                if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                                    try {
-                                        Thread.sleep(500);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    client.retryLastCall();
-                                }else {
-                                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                                        try {
-                                            Thread.sleep(500);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        client.retryLastCall();
-                                    }else {
-                                        failure.onTaskCompleted((Object[])null);
-
-                                        Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                                        toast.show();
-                                    }
-                                }
-                            }
-                        });
+                        }, new DefaultCallbackFailure(activity, failure));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                 }
-            }, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    HttpClientClass client = ((HttpClientClass)results[1]);
-                    if(client.getHttpClientObject().getAttempt() < SAHApplication.HTTP_RETRIES) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        client.retryLastCall();
-                    }else {
-                        failure.onTaskCompleted((Object[])null);
-
-                        Toast toast = Toast.makeText(activity, activity.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
-            });
+            }, new DefaultCallbackFailure(activity, failure));
         } catch (JSONException e) {
             e.printStackTrace();
         }

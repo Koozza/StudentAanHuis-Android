@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thijsdev.studentaanhuis.GeoLocationHelper;
+import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
@@ -72,10 +73,18 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             String distance = getDistanceString(position);
 
             //Fix adress to strip postcode
-            Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
-            Matcher m = p.matcher(((PrikbordItem)mData.get(position)).getAdres());
-            m.find();
-            prikbordListItem.adress.setText(m.group(1) + ", " + m.group(2));
+            try {
+                Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
+                Matcher m = p.matcher(((PrikbordItem) mData.get(position)).getAdres());
+                m.find();
+                prikbordListItem.adress.setText(m.group(1) + ", " + m.group(2));
+            }catch(IllegalStateException e) {
+                //TODO: Debugging code
+                HttpClientClass httpClientClass = new HttpClientClass();
+                httpClientClass.giveFeedback(context, "ADDRESS PARSE FAIL", ((PrikbordItem) mData.get(position)).getAdres());
+
+                prikbordListItem.adress.setText(((PrikbordItem) mData.get(position)).getAdres());
+            }
 
             //Other information
             prikbordListItem.omschrijving.setText(((PrikbordItem)mData.get(position)).getBeschrijving());

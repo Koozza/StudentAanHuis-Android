@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.DatabaseHandler;
 import com.thijsdev.studentaanhuis.GeoLocationHelper;
+import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 import com.thijsdev.studentaanhuis.Werkgebied.Werkgebied;
@@ -88,10 +89,18 @@ public class PrikbordDetailFragment extends Fragment {
         prikbordTags.setText(prikbordItem.getType());
 
         //Fix adress to strip postcode
-        Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
-        Matcher m = p.matcher(prikbordItem.getAdres());
-        m.find();
-        prikbordLocatie.setText(m.group(1) + ", " + m.group(2));
+        try {
+            Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
+            Matcher m = p.matcher(prikbordItem.getAdres());
+            m.find();
+            prikbordLocatie.setText(m.group(1) + ", " + m.group(2));
+        }catch(IllegalStateException e) {
+            //TODO: Debugging code
+            HttpClientClass httpClientClass = new HttpClientClass();
+            httpClientClass.giveFeedback(mainActivity, "ADDRESS PARSE FAIL", prikbordItem.getAdres());
+
+            prikbordLocatie.setText(prikbordItem.getAdres());
+        }
 
 
         //set deadline
