@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
@@ -77,6 +78,18 @@ public class LoginActivity extends BasicActionBarActivity {
                 werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
                     @Override
                     public void onTaskCompleted(Object... results) {
+
+                        //Checken of er een werkgebied is, en deze als default zetten
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
+
+                        if(werkgebiedID == "" || werkgebiedID == null) {
+                            SharedPreferences.Editor edit = sharedPref.edit();
+                            WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+                            edit.putString("prikbord_werkgebied", Integer.toString(werkgebiedHelper.getActiveWerkgebieden(getApplicationContext()).get(0).getId()));
+                            edit.commit();
+                        }
+
                         Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(goToNextActivity);
                         finish();

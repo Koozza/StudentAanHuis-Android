@@ -15,7 +15,6 @@ import android.view.animation.AnimationUtils;
 import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.DividerItemDecoration;
 import com.thijsdev.studentaanhuis.FragmentInterface;
-import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 
@@ -94,7 +93,7 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
                     PrikbordItem pi = (PrikbordItem) results[0];
                     if (!mAdapter.hasItem(pi)) {
                         int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
-                        if(noItemsFound > -1 )
+                        if (noItemsFound > -1)
                             mAdapter.removeItem(noItemsFound);
 
                         mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
@@ -106,7 +105,7 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
                     PrikbordItem pi = (PrikbordItem) results[0];
                     if (!mAdapter.hasItem(pi)) {
                         int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
-                        if(noItemsFound > -1 )
+                        if (noItemsFound > -1)
                             mAdapter.removeItem(noItemsFound);
 
                         mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
@@ -115,11 +114,18 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
             }, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {
-                    toolbar.findViewById(R.id.action_refresh).clearAnimation();
+                    if (toolbar.findViewById(R.id.action_refresh) != null)
+                        toolbar.findViewById(R.id.action_refresh).clearAnimation();
                     isRefreshing = false;
                 }
             });
         }
+    }
+
+    @Override
+    public void unload() {
+        toolbar.findViewById(R.id.action_refresh).clearAnimation();
+        toolbar.removeView(toolbar.findViewById(R.id.action_refresh));
     }
 
     public void registerToolbarClick() {

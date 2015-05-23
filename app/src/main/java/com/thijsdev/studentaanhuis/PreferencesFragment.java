@@ -53,4 +53,7 @@ public class PreferencesFragment extends PreferenceFragment implements FragmentI
     public String getTitle() {
         return getResources().getString(R.string.settings);
     }
+
+    @Override
+    public void unload() { }
 }

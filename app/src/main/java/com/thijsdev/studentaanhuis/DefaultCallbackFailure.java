@@ -28,7 +28,7 @@ public class DefaultCallbackFailure extends Callback {
             }
             client.retryLastCall();
         }else {
-            _failure.onTaskCompleted((Object[])null);
+            _failure.onTaskCompleted(results);
 
             Toast toast = Toast.makeText(_context, _context.getString(R.string.error_no_connection), Toast.LENGTH_LONG);
             toast.show();

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thijsdev.studentaanhuis.FragmentInterface;
 import com.thijsdev.studentaanhuis.GeoLocationHelper;
 import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.MainActivity;
@@ -100,6 +101,8 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             prikbordListItem.setClickListener(new PrikbordListItem.ClickListener() {
                 @Override
                 public void onClick(View v, int pos) {
+                    ((FragmentInterface)((MainActivity) context).getActiveFragement()).unload();
+
                     PrikbordDetailFragment fragment = new PrikbordDetailFragment();
 
                     Bundle bundle = new Bundle();
@@ -176,6 +179,10 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private String getDistanceString(int position) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
+
+        if(werkgebiedID == "" || werkgebiedID == null) {
+            return null;
+        }
 
         Location werkgebiedLocation = werkgebiedHelper.getLocationFromWerkgebied(context, werkgebiedID);
 
