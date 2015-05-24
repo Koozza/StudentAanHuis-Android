@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis;
+package com.thijsdev.studentaanhuis.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.thijsdev.studentaanhuis.Prikbord.PrikbordItem;
-import com.thijsdev.studentaanhuis.Werkgebied.Werkgebied;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.Werkgebied;
 
 import java.util.ArrayList;
 import java.util.List;

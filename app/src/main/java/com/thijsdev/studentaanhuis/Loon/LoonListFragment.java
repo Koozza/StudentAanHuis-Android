@@ -17,7 +17,7 @@ import com.thijsdev.studentaanhuis.DividerItemDecoration;
 import com.thijsdev.studentaanhuis.FragmentInterface;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordHelper;
-import com.thijsdev.studentaanhuis.Prikbord.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.R;
 
 public class LoonListFragment extends Fragment implements FragmentInterface {

@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.DividerItemDecoration;
 import com.thijsdev.studentaanhuis.FragmentInterface;
 import com.thijsdev.studentaanhuis.MainActivity;

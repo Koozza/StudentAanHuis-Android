@@ -19,12 +19,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.Callback;
-import com.thijsdev.studentaanhuis.DatabaseHandler;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.GeoLocationHelper;
 import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
-import com.thijsdev.studentaanhuis.Werkgebied.Werkgebied;
+import com.thijsdev.studentaanhuis.Database.Werkgebied;
 import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
 
 import java.util.regex.Matcher;

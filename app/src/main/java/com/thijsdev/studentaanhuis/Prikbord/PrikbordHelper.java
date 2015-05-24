@@ -4,8 +4,9 @@ import android.content.Context;
 import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.Callback;
-import com.thijsdev.studentaanhuis.DatabaseHandler;
-import com.thijsdev.studentaanhuis.Werkgebied.Werkgebied;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
+import com.thijsdev.studentaanhuis.Database.Werkgebied;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

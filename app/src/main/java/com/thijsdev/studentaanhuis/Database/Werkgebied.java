@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis.Werkgebied;
+package com.thijsdev.studentaanhuis.Database;
 
 import android.location.Location;
 

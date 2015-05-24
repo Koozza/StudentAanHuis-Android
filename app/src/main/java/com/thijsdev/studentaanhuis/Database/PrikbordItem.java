@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis.Prikbord;
+package com.thijsdev.studentaanhuis.Database;
 
 import android.location.Location;
 import android.util.Log;

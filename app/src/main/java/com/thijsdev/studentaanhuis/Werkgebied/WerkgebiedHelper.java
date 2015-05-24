@@ -6,7 +6,8 @@ import android.location.Location;
 import android.util.Log;
 
 import com.thijsdev.studentaanhuis.Callback;
-import com.thijsdev.studentaanhuis.DatabaseHandler;
+import com.thijsdev.studentaanhuis.Database.Werkgebied;
+import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.GeoLocationHelper;
 
 import org.jsoup.Jsoup;

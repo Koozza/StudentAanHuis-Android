@@ -18,7 +18,7 @@ import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordDetailFragment;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordHeader;
-import com.thijsdev.studentaanhuis.Prikbord.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordListHeader;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordListItem;
 import com.thijsdev.studentaanhuis.R;
