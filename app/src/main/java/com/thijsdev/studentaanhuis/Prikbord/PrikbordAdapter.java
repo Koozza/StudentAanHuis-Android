@@ -75,7 +75,7 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
             //Fix adress to strip postcode
             try {
-                Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
+                Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(.+)");
                 Matcher m = p.matcher(((PrikbordItem) mData.get(position)).getAdres());
                 m.find();
                 prikbordListItem.adress.setText(m.group(1) + ", " + m.group(2));

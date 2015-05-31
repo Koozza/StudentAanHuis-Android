@@ -2,6 +2,8 @@ package com.thijsdev.studentaanhuis;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
@@ -67,6 +69,11 @@ public class HttpClientClass {
                 JSONObject obj = new JSONObject();
                 JSONObject params = new JSONObject();
 
+                //get version info
+                PackageManager manager = context.getPackageManager();
+                PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
+
+                params.put("app_version", info.versionName);
                 params.put("title", title);
                 params.put("data", data);
 
@@ -75,6 +82,8 @@ public class HttpClientClass {
 
                 doPost(obj, new Callback(), new DefaultCallbackFailure(context));
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
         }
