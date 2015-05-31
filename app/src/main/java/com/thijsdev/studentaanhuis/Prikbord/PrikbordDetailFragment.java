@@ -90,7 +90,7 @@ public class PrikbordDetailFragment extends Fragment {
 
         //Fix adress to strip postcode
         try {
-            Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(\\w+)");
+            Pattern p = Pattern.compile("(\\w+), \\d+ \\w+\\s+(.+)");
             Matcher m = p.matcher(prikbordItem.getAdres());
             m.find();
             prikbordLocatie.setText(m.group(1) + ", " + m.group(2));
@@ -172,6 +172,10 @@ public class PrikbordDetailFragment extends Fragment {
     private String getDistanceString(PrikbordItem prikbordItem) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
+
+        if(werkgebiedID == "" || werkgebiedID == null) {
+            return null;
+        }
 
         Location werkgebiedLocation = werkgebiedHelper.getLocationFromWerkgebied(getActivity(), werkgebiedID);
 
