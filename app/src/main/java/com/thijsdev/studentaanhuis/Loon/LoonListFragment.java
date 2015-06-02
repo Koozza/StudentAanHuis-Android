@@ -13,15 +13,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.Database.LoonMaand;
 import com.thijsdev.studentaanhuis.DividerItemDecoration;
 import com.thijsdev.studentaanhuis.FragmentInterface;
 import com.thijsdev.studentaanhuis.MainActivity;
-import com.thijsdev.studentaanhuis.Prikbord.PrikbordHelper;
-import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.R;
 
+import java.util.Date;
+import java.util.TreeMap;
+
 public class LoonListFragment extends Fragment implements FragmentInterface {
-    private PrikbordHelper prikbordHelper = new PrikbordHelper();
+    private LoonHelper loonHelper = new LoonHelper();
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -83,36 +85,13 @@ public class LoonListFragment extends Fragment implements FragmentInterface {
             toolbar.findViewById(R.id.action_refresh).startAnimation(a);
 
             //TODO: mAdapter.clearItems();
-            prikbordHelper.updatePrikbordItems(mainActivity, new Callback() {
+            loonHelper.updateLoon(mainActivity, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {
-                    PrikbordItem pi = (PrikbordItem) results[0];
-                    if (!mAdapter.hasItem(pi)) {
-                        int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
-                        if (noItemsFound > -1)
-                            mAdapter.removeItem(noItemsFound);
-
-                        mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
+                    TreeMap<Date, LoonMaand> loonMaandHashMap = (TreeMap<Date, LoonMaand>) results[0];
+                    for (LoonMaand loonMaand : loonMaandHashMap.values()) {
+                        mAdapter.addItem(0, loonMaand);
                     }
-                }
-            }, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    PrikbordItem pi = (PrikbordItem) results[0];
-                    if (!mAdapter.hasItem(pi)) {
-                        int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
-                        if (noItemsFound > -1)
-                            mAdapter.removeItem(noItemsFound);
-
-                        mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
-                    }
-                }
-            }, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    if (toolbar.findViewById(R.id.action_refresh) != null)
-                        toolbar.findViewById(R.id.action_refresh).clearAnimation();
-                    isRefreshing = false;
                 }
             });
         }

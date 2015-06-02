@@ -96,8 +96,8 @@ public class HttpClientClass {
                 URL url = new URL(params[0].getArguments().getString("url"));
                 urlConnection = (HttpURLConnection) url.openConnection();
 
-                urlConnection.setReadTimeout(16000);
-                urlConnection.setConnectTimeout(16000);
+                urlConnection.setReadTimeout(20000);
+                urlConnection.setConnectTimeout(20000);
                 urlConnection.setDoInput(true);
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());

@@ -6,9 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.thijsdev.studentaanhuis.Database.PrikbordItem;
-import com.thijsdev.studentaanhuis.Database.Werkgebied;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +14,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SAHInfo";
     private static final String TABLE_PITEMS = "PrikbordItems";
     private static final String TABLE_WERKGEBIEDEN = "Werkgebieden";
+    private static final String TABLE_LOONMAAND = "LoonMaand";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -29,6 +27,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
         CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_WERKGEBIEDEN + "(id INTEGER PRIMARY KEY,naam TEXT,adres TEXT,straal TEXT,actief INTEGER,lat REAL,lng REAL)";
+        db.execSQL(CREATE_CONTACTS_TABLE);
+
+
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(id INTEGER PRIMARY KEY,naam TEXT,iscompleet INTEGER)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
@@ -134,14 +136,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void deletePrikbordItem(PrikbordItem item) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PITEMS, "id = ?",
-                new String[] { String.valueOf(item.getId()) });
+                new String[]{String.valueOf(item.getId())});
         db.close();
     }
 
     // Deleting all items
     public void deleteAllPrikbordItems() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from "+ TABLE_PITEMS);
+        db.execSQL("delete from " + TABLE_PITEMS);
         db.close();
     }
 
@@ -264,14 +266,86 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void deleteWerkgebied(Werkgebied item) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_WERKGEBIEDEN, "id = ?",
-                new String[] { String.valueOf(item.getId()) });
+                new String[]{String.valueOf(item.getId())});
         db.close();
     }
 
     // Deleting all items
     public void deleteAllWerkgebieden() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from "+ TABLE_WERKGEBIEDEN);
+        db.execSQL("delete from " + TABLE_WERKGEBIEDEN);
         db.close();
+    }
+
+    /**
+     * All CRUD functions for Loon Maand
+     */
+
+    //New item
+    public void addLoonMaand(LoonMaand item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("id", item.getId());
+        values.put("naam", item.getNaam());
+        values.put("iscompleet", item.isCompleet());
+
+        // Inserting Row
+        db.insert(TABLE_LOONMAAND, null, values);
+        db.close();
+    }
+
+    // Get Single Item
+    public LoonMaand getLoonMaand(String naam) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_LOONMAAND, new String[] { "id",
+                        "naam", "iscompleet" }, "naam=?",
+                new String[] { naam }, null, null, null, null);
+        if (cursor.getCount() > 0)
+            cursor.moveToFirst();
+        else
+            return null;
+
+        LoonMaand item = new LoonMaand();
+        item.setId(cursor.getInt(0));
+        item.setNaam(cursor.getString(1));
+        item.setIsCompleet(cursor.getInt(2) == 1);
+
+        return item;
+    }
+
+    // Get All Items
+    public List<LoonMaand> getLoonMaanden() {
+        List<LoonMaand> loonmaandList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_LOONMAAND;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                LoonMaand item = new LoonMaand();
+                item.setId(cursor.getInt(0));
+                item.setNaam(cursor.getString(1));
+                item.setIsCompleet(cursor.getInt(2) == 1);
+
+                loonmaandList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+
+        return loonmaandList;
+    }
+    // Updating item
+    public int updateLoonMaand(LoonMaand item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("naam", item.getNaam());
+        values.put("iscompleet", item.isCompleet());
+
+        return db.update(TABLE_LOONMAAND, values, "id = ?",
+                new String[] { String.valueOf(item.getId()) });
     }
 }

@@ -12,6 +12,8 @@ public class Afspraak {
     private String werkbonNummer;
     private Date ingedient;
     private Date goedgekeurd;
+    private Date salarisronde;
+    private String type; // IDeal, Werkbon
 
     //Loon
     private float uurloon;
@@ -88,5 +90,21 @@ public class Afspraak {
 
     public void setVoorfietskosten(float voorfietskosten) {
         this.voorfietskosten = voorfietskosten;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Date getSalarisronde() {
+        return salarisronde;
+    }
+
+    public void setSalarisronde(Date salarisronde) {
+        this.salarisronde = salarisronde;
     }
 }

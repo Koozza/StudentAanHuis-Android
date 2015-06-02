@@ -3,6 +3,8 @@ package com.thijsdev.studentaanhuis.Database;
 import android.location.Location;
 import android.util.Log;
 
+import com.thijsdev.studentaanhuis.GeneralFunctions;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -66,9 +68,9 @@ public class PrikbordItem {
     }
 
     public void setDeadlineFromWebsite(String deadline) {
-        deadline = fixDate(deadline);
+        deadline = GeneralFunctions.fixDate(deadline);
 
-        SimpleDateFormat importDateFormat = new SimpleDateFormat("dd MM yyyy", Locale.getDefault());
+        SimpleDateFormat importDateFormat = new SimpleDateFormat("dd M yyyy", Locale.getDefault());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         try {
             Date date = importDateFormat.parse(deadline);
@@ -119,30 +121,5 @@ public class PrikbordItem {
         tempLoc.setLongitude(lng);
 
         return tempLoc;
-    }
-
-    private String fixDate(String date) {
-        date = date.replace("jan", "01");
-        date = date.replace("feb", "02");
-        date = date.replace("mrt", "03");
-        date = date.replace("apr", "04");
-        date = date.replace("mei", "05");
-        date = date.replace("jun", "06");
-        date = date.replace("jul", "07");
-        date = date.replace("aug", "08");
-        date = date.replace("sep", "09");
-        date = date.replace("okt", "10");
-        date = date.replace("nov", "11");
-        date = date.replace("dec", "12");
-
-        date = date.replace("maa ", "");
-        date = date.replace("din ", "");
-        date = date.replace("woe ", "");
-        date = date.replace("don ", "");
-        date = date.replace("vri ", "");
-        date = date.replace("zat ", "");
-        date = date.replace("zon ", "");
-
-        return date;
     }
 }
