@@ -32,6 +32,13 @@
     <string name="pending">Openstaand</string>
     <string name="denied">Afgewezen</string>
     <string name="accepted">Aangenomen</string>
+    <string name="loon">Loon</string>
+    <string name="algemeen">Algemeen</string>
+    <string name="verdiensten">Verdiensten:</string>
+    <string name="mogelijke_verdiensten">Mogelijke Verdiensten:</string>
+    <string name="totaal_mogelijk_verdiensten">Totaal Mogelijke Verdiensten:</string>
+    <string name="aantal_afspraken">Aantal Afspraken:</string>
+    <string name="aantal_servicevragen">Aantal Servicevragen:</string>
 
     <!-- Sentences -->
     <string name="sure_you_cant_do_appointment">Weet je zeker dat je deze afspraak niet kan doen?</string>
@@ -63,4 +70,8 @@
     <string name="send_anon_data">Verstuur anonieme data</string>
     <string name="send_anon_data_desc">Verstuur anonieme data om de app te verbeteren</string>
     <string name="send_anon_data_default">true</string>
+
+    <string name="loon_include_vat">Belasting aftrekken</string>
+    <string name="loon_include_vat_desc">Toon loon minus 36.50% belasting. Handig als je geen loonheffings korting hebt. (LET OP: Loon kan een paar cent afwijken met wat SAH uitbetaald)</string>
+    <string name="loon_include_vat_default">false</string>
 </resources>

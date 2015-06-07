@@ -1,11 +1,11 @@
 package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.content.Context;
-import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.Callback;
-import com.thijsdev.studentaanhuis.DatabaseHandler;
-import com.thijsdev.studentaanhuis.Werkgebied.Werkgebied;
+import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.Werkgebied;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,18 +21,6 @@ public class PrikbordHelper {
     public void updatePrikbordItems(final Context context, final Callback existingItemCallback, final Callback newItemCallback, final Callback callback) {
         final DatabaseHandler db = new DatabaseHandler(context);
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
-        final TextView prikbord_status;
-
-        //TODO: Dit moet er wel terug in
-        //Dit alleen doen als het door de UI thread is aangeroepen
-        /*
-        if (context instanceof Activity) {
-            prikbord_status = (TextView) ((Activity)context).findViewById(R.id.prikbord_status);
-            prikbord_status.setVisibility(View.GONE);
-        }else{
-            prikbord_status = null;
-        }
-        */
 
         prikbordHttpHandler.getPrikbordItems(context, new Callback() {
             @Override
@@ -106,14 +94,6 @@ public class PrikbordHelper {
                             isFinalPrikbordUpdate(totalItems, callback);
                         }
                     }
-                }
-                if (!gotItem) {
-                    //Dit alleen doen als het door de UI thread is aangeroepen
-                    /*
-                    if (context instanceof Activity) {
-                        prikbord_status.setVisibility(View.VISIBLE);
-                    }
-                    */
                 }
             }
         }, new Callback() {

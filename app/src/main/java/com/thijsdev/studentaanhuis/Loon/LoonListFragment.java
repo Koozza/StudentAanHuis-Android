@@ -1,4 +1,4 @@
-package com.thijsdev.studentaanhuis.Prikbord;
+package com.thijsdev.studentaanhuis.Loon;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -13,44 +13,47 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.thijsdev.studentaanhuis.Callback;
-import com.thijsdev.studentaanhuis.Database.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.LoonMaand;
 import com.thijsdev.studentaanhuis.DividerItemDecoration;
 import com.thijsdev.studentaanhuis.FragmentInterface;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 
-public class PrikbordListFragment extends Fragment implements FragmentInterface {
-    private PrikbordHelper prikbordHelper = new PrikbordHelper();
+import java.util.Date;
+import java.util.TreeMap;
+
+public class LoonListFragment extends Fragment implements FragmentInterface {
+    private LoonHelper loonHelper = new LoonHelper();
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private MainActivity mainActivity;
     private Toolbar toolbar;
 
-    public PrikbordAdapter mAdapter;
+    public LoonAdapter mAdapter;
 
     private boolean isRefreshing = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_prikbord_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_loon_list, container, false);
 
         mainActivity = (MainActivity) view.getContext();
         toolbar = mainActivity.getToolbar();
         toolbar.getMenu().clear();
-        toolbar.setTitle(getString(R.string.prikbord));
-        toolbar.inflateMenu(R.menu.menu_prikbord);
+        toolbar.setTitle(getString(R.string.loon));
+        toolbar.inflateMenu(R.menu.menu_loon);
         toolbar.setNavigationIcon(null);
 
         registerToolbarClick();
 
-        if(mainActivity.getSharedObject("prikbordAdapter") == null) {
-            mAdapter = (PrikbordAdapter) mainActivity.addSharedObject("prikbordAdapter", new PrikbordAdapter(mainActivity));
+        if(mainActivity.getSharedObject("loonAdapter") == null) {
+            mAdapter = (LoonAdapter) mainActivity.addSharedObject("loonAdapter", new LoonAdapter(mainActivity));
         }else{
-            mAdapter = (PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter");
+            mAdapter = (LoonAdapter) mainActivity.getSharedObject("loonAdapter");
         }
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.prikbordList);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.loonList);
         mRecyclerView.setHasFixedSize(false);
 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL_LIST));
@@ -68,19 +71,13 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
         mainActivity.setupActionBar();
 
         if(mAdapter.getItemCount() == 0) {
-            mAdapter.addItem(0, new PrikbordHeader(0, getString(R.string.pending), false));
-            mAdapter.addItem(1, new PrikbordHeader(3, getString(R.string.no_prikbord_items_found), true));
-            mAdapter.addItem(2, new PrikbordHeader(1, getString(R.string.denied), false));
-            mAdapter.addItem(3, new PrikbordHeader(4, getString(R.string.no_prikbord_items_found), true));
-            mAdapter.addItem(4, new PrikbordHeader(2, getString(R.string.accepted), false));
-            mAdapter.addItem(5, new PrikbordHeader(5, getString(R.string.no_prikbord_items_found), true));
-            updatePrikbordItems();
+            updateLoon();
         }
 
         super.onStart();
     }
 
-    public void updatePrikbordItems() {
+    public void updateLoon() {
         if (!isRefreshing) {
             isRefreshing = true;
             Animation a = AnimationUtils.loadAnimation(mainActivity, R.anim.rotate);
@@ -88,33 +85,18 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
             toolbar.findViewById(R.id.action_refresh).startAnimation(a);
 
             //TODO: mAdapter.clearItems();
-            prikbordHelper.updatePrikbordItems(mainActivity, new Callback() {
+            loonHelper.updateLoon(mainActivity, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {
-                    PrikbordItem pi = (PrikbordItem) results[0];
-                    if (!mAdapter.hasItem(pi)) {
-                        int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
-                        if (noItemsFound > -1)
-                            mAdapter.removeItem(noItemsFound);
-
-                        mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
+                    TreeMap<Date, LoonMaand> loonMaandHashMap = (TreeMap<Date, LoonMaand>) results[0];
+                    for (LoonMaand loonMaand : loonMaandHashMap.values()) {
+                        if(mAdapter.getPostition(loonMaand) == -1)
+                            mAdapter.addItem(0, loonMaand);
+                        else
+                            mAdapter.updateItem(loonMaand);
                     }
-                }
-            }, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    PrikbordItem pi = (PrikbordItem) results[0];
-                    if (!mAdapter.hasItem(pi)) {
-                        int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
-                        if (noItemsFound > -1)
-                            mAdapter.removeItem(noItemsFound);
 
-                        mAdapter.addItem(mAdapter.findItem(pi.getBeschikbaar()) + 1, pi);
-                    }
-                }
-            }, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
+                    //Stop refresh animation
                     if (toolbar.findViewById(R.id.action_refresh) != null)
                         toolbar.findViewById(R.id.action_refresh).clearAnimation();
                     isRefreshing = false;
@@ -135,7 +117,7 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.action_refresh:
-                        updatePrikbordItems();
+                        updateLoon();
                         return true;
                 }
 
@@ -146,11 +128,11 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
 
     @Override
     public int getDrawerId() {
-        return R.id.menu_prikbord;
+        return R.id.menu_loon;
     }
 
     @Override
     public String getTitle() {
-        return getResources().getString(R.string.prikbord);
+        return getResources().getString(R.string.loon);
     }
 }

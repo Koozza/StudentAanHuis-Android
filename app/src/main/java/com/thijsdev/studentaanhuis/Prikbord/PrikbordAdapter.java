@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.FragmentInterface;
 import com.thijsdev.studentaanhuis.GeoLocationHelper;
 import com.thijsdev.studentaanhuis.HttpClientClass;

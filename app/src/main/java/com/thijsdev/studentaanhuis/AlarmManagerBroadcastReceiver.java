@@ -17,7 +17,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordHelper;
-import com.thijsdev.studentaanhuis.Prikbord.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 
 import java.util.ArrayList;
 import java.util.Calendar;

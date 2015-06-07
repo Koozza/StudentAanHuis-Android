@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.thijsdev.studentaanhuis.Login.LoginHelper;
+import com.thijsdev.studentaanhuis.Loon.LoonListFragment;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordListFragment;
 
 import java.util.HashMap;
@@ -111,6 +112,8 @@ public class MainActivity extends BasicActionBarActivity {
             switchFragment(new PreferencesFragment());
         }else if(v.getTag().equals("prikbord")) {
             switchFragment(new PrikbordListFragment());
+        }else if(v.getTag().equals("loon")) {
+            switchFragment(new LoonListFragment());
         }
         mDrawerLayout.closeDrawers();
     }
