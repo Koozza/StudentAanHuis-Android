@@ -18,6 +18,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
 
+import static com.thijsdev.studentaanhuis.Reversed.reversed;
+
 public class LoonHelper {
     private int itemsAdded = 0;
     final TreeMap<Date, LoonMaand> loonMaandHashMap = new TreeMap<>();
@@ -61,13 +63,36 @@ public class LoonHelper {
                             //Happens when there's no items in this month
                             if (tbody != null) {
                                 Elements trs = tbody.select("tr:has(td)");
-                                for (Element tr : trs) {
+                                for (Element tr : reversed(trs)) {
                                     //Mogelijk voor de huidige maand
                                     if (tr.children().get(4).text() == "") {
-                                        //loonMaandHashMap.get(firstDateKey).addLoonMogelijk(Double.parseDouble(tr.children().get(7).text().substring(1).replace(",",".")));
+                                        //Find first unpayed loonmaand
+                                        LoonMaand current = null;
+                                        for (LoonMaand loonMaand : loonMaandHashMap.values()) {
+                                            if(!loonMaand.isUitbetaald())
+                                                current = loonMaand;
+                                        }
+
+                                        //Calculate price
+                                        boolean isServiceVraag = tr.children().get(7).text().contains("-");
+                                        Double price = Double.parseDouble(tr.children().get(7).text().replace("-","").substring(1).replace(",", "."));
+
+                                        //Check servicevraag
+                                        if(isServiceVraag) {
+                                            price = price * -1;
+                                            current.addServicevraag();
+                                        }
+
+                                        //check if uurloon
+                                        if(tr.children().get(1).text().contains("uurloon"))
+                                            current.addAfspraak();
+
+                                        current.addLoonMogelijk(price);
                                     } else {
+                                        //Payment for sure
                                         SimpleDateFormat format = new SimpleDateFormat("M yyyy");
                                         try {
+                                            //Calculate date
                                             String datumString = tr.children().get(4).text();
                                             String[] datumStringParts = datumString.split(" ");
                                             Date date = format.parse(GeneralFunctions.fixDate(datumStringParts[1] + " " + datumStringParts[2]));
@@ -76,7 +101,24 @@ public class LoonHelper {
                                             cal.add(Calendar.MONTH, -1);
                                             date = cal.getTime();
 
-                                            loonMaandHashMap.get(date).addLoonZeker(Double.parseDouble(tr.children().get(7).text().substring(1).replace(",",".")));
+                                            //Calculate price
+                                            boolean isServiceVraag = tr.children().get(7).text().contains("-");
+                                            Double price = Double.parseDouble(tr.children().get(7).text().replace("-","").substring(1).replace(",", "."));
+
+                                            //Check servicevraag
+                                            if(isServiceVraag) {
+                                                price = price * -1;
+                                                loonMaandHashMap.get(date).addServicevraag();
+                                            }
+
+                                            //check if uurloon
+                                            if(tr.children().get(1).text().contains("uurloon"))
+                                                loonMaandHashMap.get(date).addAfspraak();
+
+                                            //set this month to uitbetaald
+                                            loonMaandHashMap.get(date).setIsUitbetaald(true);
+
+                                            loonMaandHashMap.get(date).addLoonZeker(price);
                                         } catch (ParseException e1) {
                                             e1.printStackTrace();
                                         }

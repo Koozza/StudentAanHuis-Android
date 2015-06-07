@@ -90,8 +90,16 @@ public class LoonListFragment extends Fragment implements FragmentInterface {
                 public void onTaskCompleted(Object... results) {
                     TreeMap<Date, LoonMaand> loonMaandHashMap = (TreeMap<Date, LoonMaand>) results[0];
                     for (LoonMaand loonMaand : loonMaandHashMap.values()) {
-                        mAdapter.addItem(0, loonMaand);
+                        if(mAdapter.getPostition(loonMaand) == -1)
+                            mAdapter.addItem(0, loonMaand);
+                        else
+                            mAdapter.updateItem(loonMaand);
                     }
+
+                    //Stop refresh animation
+                    if (toolbar.findViewById(R.id.action_refresh) != null)
+                        toolbar.findViewById(R.id.action_refresh).clearAnimation();
+                    isRefreshing = false;
                 }
             });
         }

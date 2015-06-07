@@ -19,15 +19,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.Callback;
-import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
+import com.thijsdev.studentaanhuis.Database.Werkgebied;
 import com.thijsdev.studentaanhuis.GeoLocationHelper;
 import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
-import com.thijsdev.studentaanhuis.Database.Werkgebied;
 import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,7 +106,7 @@ public class PrikbordDetailFragment extends Fragment {
 
 
         //set deadline
-        prikbordDeadline.setText(prikbordItem.getFormatedDeadline("EEE dd MMMM yyyy", null));
+        prikbordDeadline.setText(prikbordItem.getFormatedDeadline("EEE dd MMMM yyyy", new Locale("nl", "NL")));
 
         //set distance
         if(distance == null)

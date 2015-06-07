@@ -3,13 +3,12 @@ package com.thijsdev.studentaanhuis.Database;
 import java.util.Date;
 
 public class LoonMaand {
-    private int id;
+    private int id, servicevragen, afspraken;
     private String naam;
-    private boolean isCompleet;
+    private boolean isCompleet, isUitbetaald;
     private Date datum;
-
-    //Numbers
-    private double loonZeker = 0d, loonMogelijk = 0d;
+    private double loon = 0d;
+    private double loonMogelijk = 0d;
 
     public int getId() {
         return id;
@@ -35,17 +34,49 @@ public class LoonMaand {
         this.isCompleet = isCompleet;
     }
 
-    public double getLoonZeker() {
-        return loonZeker;
+    public double getLoon() {
+        return loon;
     }
 
-    public void setLoonZeker(double loonZeker) {
-        this.loonZeker = loonZeker;
+    public void setLoon(double _loon) {
+        this.loon = _loon;
     }
 
 
-    public void addLoonZeker(double loonZeker) {
-        this.loonZeker += loonZeker;
+    public void addLoonZeker(double _loon) {
+        this.loon += _loon;
+    }
+
+    public Date getDatum() {
+        return datum;
+    }
+
+    public void setDatum(Date datum) {
+        this.datum = datum;
+    }
+
+    public int getServicevragen() {
+        return servicevragen;
+    }
+
+    public void addServicevraag() {
+        this.servicevragen++;
+    }
+
+    public int getAfspraken() {
+        return afspraken;
+    }
+
+    public void addAfspraak() {
+        this.afspraken++;
+    }
+
+    public boolean isUitbetaald() {
+        return isUitbetaald;
+    }
+
+    public void setIsUitbetaald(boolean isUitbetaald) {
+        this.isUitbetaald = isUitbetaald;
     }
 
     public double getLoonMogelijk() {
@@ -58,13 +89,5 @@ public class LoonMaand {
 
     public void addLoonMogelijk(double loonMogelijk) {
         this.loonMogelijk += loonMogelijk;
-    }
-
-    public Date getDatum() {
-        return datum;
-    }
-
-    public void setDatum(Date datum) {
-        this.datum = datum;
     }
 }
