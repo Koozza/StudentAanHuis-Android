@@ -1,6 +1,8 @@
 package com.thijsdev.studentaanhuis.Loon;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,15 +55,22 @@ class LoonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         LoonListItem loonListItem = (LoonListItem)viewHolder;
 
+        //Check if we should substract VAT
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        Double vat = 1d;
+
+        if(sharedPref.getBoolean("loon_include_vat", false))
+            vat = 0.635d;
+
         //Other information
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", new Locale("nl", "NL"));
         NumberFormat defaultFormat = NumberFormat.getCurrencyInstance(new Locale("nl", "NL"));
 
         loonListItem.maand.setText(dateFormat.format(((LoonMaand) mData.get(position)).getDatum()));
-        loonListItem.verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoon()));
+        loonListItem.verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoon() * vat));
         if(getItemViewType(position) == 1) {
-            loonListItem.mogelijke_verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoonMogelijk()));
-            loonListItem.totaal_mogelijk_verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonMogelijk()));
+            loonListItem.mogelijke_verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoonMogelijk() * vat));
+            loonListItem.totaal_mogelijk_verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonMogelijk()) * vat));
         }
         loonListItem.aantal_afspraken.setText(Integer.toString(((LoonMaand) mData.get(position)).getAfspraken()));
         loonListItem.aantal_servicevragen.setText(Integer.toString(((LoonMaand) mData.get(position)).getServicevragen()));
@@ -97,7 +106,13 @@ class LoonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
     public void updateItem(Object loonItem) {
         int position = getPostition(loonItem);
-        mData.set(position, loonItem);
+
+        if(position == -1) {
+            addItem(0, loonItem);
+            position = 0;
+        }else {
+            mData.set(position, loonItem);
+        }
         notifyItemInserted(position);
     }
 

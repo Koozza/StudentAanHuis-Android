@@ -65,26 +65,26 @@ public class LoonHelper {
                                 Elements trs = tbody.select("tr:has(td)");
                                 for (Element tr : reversed(trs)) {
                                     //Mogelijk voor de huidige maand
-                                    if (tr.children().get(4).text() == "") {
+                                    if (tr.children().get(3).text().equals("")) {
                                         //Find first unpayed loonmaand
                                         LoonMaand current = null;
                                         for (LoonMaand loonMaand : loonMaandHashMap.values()) {
-                                            if(!loonMaand.isUitbetaald())
+                                            if (!loonMaand.isUitbetaald())
                                                 current = loonMaand;
                                         }
 
                                         //Calculate price
                                         boolean isServiceVraag = tr.children().get(7).text().contains("-");
-                                        Double price = Double.parseDouble(tr.children().get(7).text().replace("-","").substring(1).replace(",", "."));
+                                        Double price = Double.parseDouble(tr.children().get(7).text().replace("-", "").substring(1).replace(",", "."));
 
                                         //Check servicevraag
-                                        if(isServiceVraag) {
+                                        if (isServiceVraag) {
                                             price = price * -1;
                                             current.addServicevraag();
                                         }
 
                                         //check if uurloon
-                                        if(tr.children().get(1).text().contains("uurloon"))
+                                        if (tr.children().get(1).text().contains("uurloon"))
                                             current.addAfspraak();
 
                                         current.addLoonMogelijk(price);
@@ -93,12 +93,18 @@ public class LoonHelper {
                                         SimpleDateFormat format = new SimpleDateFormat("M yyyy");
                                         try {
                                             //Calculate date
-                                            String datumString = tr.children().get(4).text();
+                                            String datumString;
+                                            if(!tr.children().get(4).text().equals(""))
+                                                datumString = tr.children().get(4).text();
+                                            else
+                                                datumString = tr.children().get(3).text();
+
                                             String[] datumStringParts = datumString.split(" ");
                                             Date date = format.parse(GeneralFunctions.fixDate(datumStringParts[1] + " " + datumStringParts[2]));
                                             Calendar cal = Calendar.getInstance();
                                             cal.setTime(date);
-                                            cal.add(Calendar.MONTH, -1);
+                                            if(!tr.children().get(4).text().equals(""))
+                                                cal.add(Calendar.MONTH, -1);
                                             date = cal.getTime();
 
                                             //Calculate price
@@ -116,7 +122,8 @@ public class LoonHelper {
                                                 loonMaandHashMap.get(date).addAfspraak();
 
                                             //set this month to uitbetaald
-                                            loonMaandHashMap.get(date).setIsUitbetaald(true);
+                                            if(!tr.children().get(4).text().equals(""))
+                                                loonMaandHashMap.get(date).setIsUitbetaald(true);
 
                                             loonMaandHashMap.get(date).addLoonZeker(price);
                                         } catch (ParseException e1) {
