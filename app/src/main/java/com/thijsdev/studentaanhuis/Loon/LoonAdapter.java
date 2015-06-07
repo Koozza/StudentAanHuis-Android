@@ -109,11 +109,11 @@ class LoonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
         if(position == -1) {
             addItem(0, loonItem);
-            position = 0;
+            notifyItemInserted(0);
         }else {
             mData.set(position, loonItem);
+            notifyDataSetChanged();
         }
-        notifyItemInserted(position);
     }
 
     public int getPostition(Object loonItem) {
