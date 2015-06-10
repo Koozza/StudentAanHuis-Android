@@ -34,7 +34,7 @@ public class LoonHelper {
                 Document doc = Jsoup.parse((String) results[0]);
                 Element table = doc.getElementsByClass("table").get(0);
 
-                for(Element e : table.getElementsByTag("a")) {
+                for (Element e : table.getElementsByTag("a")) {
                     //Get Date & add to hasmap
                     SimpleDateFormat format = new SimpleDateFormat("M yyyy");
                     try {
@@ -76,7 +76,7 @@ public class LoonHelper {
             Elements trs = tbody.select("tr:has(td)");
             for (Element tr : reversed(trs)) {
                 //Mogelijk voor de huidige maand
-                if (tr.children().get(3).text().equals("")) {
+                if (tr.children().get(3).text().equals("") && tr.children().get(4).text().equals("")) {
                     //Find first unpayed loonmaand
                     LoonMaand current = null;
                     for (LoonMaand loonMaand : loonMaandHashMap.values()) {
@@ -121,6 +121,18 @@ public class LoonHelper {
                         //Calculate price
                         boolean isServiceVraag = tr.children().get(tr.children().size() - 1).text().contains("-");
                         Double price = Double.parseDouble(tr.children().get(tr.children().size() - 1).text().replace("-","").substring(1).replace(",", "."));
+
+                        //Add date if it doesn't exist yet:
+                        if(!loonMaandHashMap.containsKey(date)) {
+                            SimpleDateFormat f = new SimpleDateFormat("M yyyy");
+                            try {
+                                LoonMaand loonMaand = new LoonMaand();
+                                loonMaand.setDatum(date);
+                                loonMaandHashMap.put(date, loonMaand);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
 
                         //Check servicevraag
                         if(isServiceVraag) {
