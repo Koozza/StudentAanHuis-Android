@@ -42,13 +42,15 @@ public class LoonHelper {
                         Date datum = format.parse(GeneralFunctions.fixDate(e.children().get(0).text()));
                         loonMaand.setDatum(datum);
 
-                        loonMaandHashMap.put(datum, loonMaand);
+                        //Check if the date is after july 2013
+                        if(datum.after(format.parse("7 2013")))
+                            loonMaandHashMap.put(datum, loonMaand);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
 
-                final int totalItems = table.getElementsByTag("a").size();
+                final int totalItems = loonMaandHashMap.size();
                 nextPage(table.getElementsByTag("a"), 0, context, totalItems, callback);
             }
         }, new Callback());
@@ -57,14 +59,24 @@ public class LoonHelper {
     private void nextPage(final Elements elm, final int index, final Context context, final int totalItems, final Callback callback) {
         //Get details for month
         String[] datumStringParts = GeneralFunctions.fixDate(elm.get(index).children().get(0).text()).split(" ");
-        loonHTTPHandler.getMonth(context, datumStringParts[1] + "-" + datumStringParts[0] + "-1", new Callback() {
-            @Override
-            public void onTaskCompleted(Object... results) {
-                processPage((String) results[0], callback, totalItems);
-                if(index < elm.size() - 1)
+        SimpleDateFormat format = new SimpleDateFormat("M yyyy");
+        try {
+            if(format.parse(datumStringParts[0] + " " + datumStringParts[1]).after(format.parse("7 2013"))) {
+                loonHTTPHandler.getMonth(context, datumStringParts[1] + "-" + datumStringParts[0] + "-1", new Callback() {
+                    @Override
+                    public void onTaskCompleted(Object... results) {
+                        processPage((String) results[0], callback, totalItems);
+                        if (index < elm.size() - 1)
+                            nextPage(elm, index + 1, context, totalItems, callback);
+                    }
+                }, new Callback());
+            }else{
+                if (index < elm.size() - 1)
                     nextPage(elm, index + 1, context, totalItems, callback);
             }
-        }, new Callback());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private void processPage(String source, Callback callback, int totalItems) {
