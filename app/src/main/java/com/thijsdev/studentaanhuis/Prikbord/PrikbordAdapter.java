@@ -46,7 +46,28 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         switch (viewType) {
             case 0:
                 itemView = inflater.inflate(R.layout.snipet_prikbord_item, viewGroup, false);
-                return new PrikbordListItem(itemView);
+                PrikbordListItem prikbordListItem = new PrikbordListItem(itemView);
+
+                prikbordListItem.setClickListener(new PrikbordListItem.ClickListener() {
+                    @Override
+                    public void onClick(View v, int pos) {
+                        ((FragmentInterface)((MainActivity) context).getActiveFragement()).unload();
+
+                        PrikbordDetailFragment fragment = new PrikbordDetailFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("PrikbordId", ((PrikbordItem)mData.get(pos)).getId());
+                        fragment.setArguments(bundle);
+
+                        FragmentTransaction transaction = ((Activity) context).getFragmentManager().beginTransaction();
+
+                        transaction.replace(R.id.prikbord_fragments, fragment);
+                        transaction.addToBackStack(null);
+
+                        transaction.commit();
+                    }
+                });
+                return prikbordListItem;
             case 1:
                 itemView = inflater.inflate(R.layout.snipet_prikbord_header, viewGroup, false);
                 return new PrikbordListHeader(itemView);
@@ -98,26 +119,6 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             prikbordListItem.adress.setTypeface(((MainActivity) context).robotoMedium);
             prikbordListItem.distance.setTypeface(((MainActivity) context).robotoRegular);
             prikbordListItem.omschrijving.setTypeface(((MainActivity) context).robotoRegular);
-
-            prikbordListItem.setClickListener(new PrikbordListItem.ClickListener() {
-                @Override
-                public void onClick(View v, int pos) {
-                    ((FragmentInterface)((MainActivity) context).getActiveFragement()).unload();
-
-                    PrikbordDetailFragment fragment = new PrikbordDetailFragment();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("PrikbordId", ((PrikbordItem)mData.get(pos)).getId());
-                    fragment.setArguments(bundle);
-
-                    FragmentTransaction transaction = ((Activity) context).getFragmentManager().beginTransaction();
-
-                    transaction.replace(R.id.prikbord_fragments, fragment);
-                    transaction.addToBackStack(null);
-
-                    transaction.commit();
-                }
-            });
         }else{
             PrikbordListHeader prikbordListHeader = (PrikbordListHeader)viewHolder;
 
