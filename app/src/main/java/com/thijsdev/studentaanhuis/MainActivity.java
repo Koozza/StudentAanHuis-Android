@@ -123,7 +123,8 @@ public class MainActivity extends BasicActionBarActivity {
             ((FragmentInterface) currentFragment).unload();
 
         Fragment menu = getFragmentManager().findFragmentById(R.id.fragment_drawer);
-        menu.getView().findViewById(((FragmentInterface) currentFragment).getDrawerId()).setBackgroundColor(getResources().getColor(R.color.white));
+        if(currentFragment != null)
+            menu.getView().findViewById(((FragmentInterface) currentFragment).getDrawerId()).setBackgroundColor(getResources().getColor(R.color.white));
         menu.getView().findViewById(((FragmentInterface) fragment).getDrawerId()).setBackgroundColor(getResources().getColor(R.color.SAHlightblue));
 
         currentFragment = fragment;
