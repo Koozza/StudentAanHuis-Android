@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.widget.TextView;
 
+import com.thijsdev.studentaanhuis.Data.DataActivity;
 import com.thijsdev.studentaanhuis.Login.LoginActivity;
 import com.thijsdev.studentaanhuis.Login.LoginHTTPHandler;
 
@@ -38,7 +39,8 @@ public class SplashScreen extends BasicActionBarActivity {
                 lh.checkLogin(SplashScreen.this, new Callback() {
                     @Override
                     public void onTaskCompleted(Object... results) {
-                        Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent goToNextActivity = new Intent(getApplicationContext(), DataActivity.class);
+                        //Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(goToNextActivity);
                         finish();
                     }
