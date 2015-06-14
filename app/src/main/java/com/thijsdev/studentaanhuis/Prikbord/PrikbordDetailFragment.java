@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 
 public class PrikbordDetailFragment extends Fragment {
     final private PrikbordHelper prikbordHelper = new PrikbordHelper();
-    private WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
     private GeoLocationHelper locHelper = new GeoLocationHelper();
 
     private MainActivity mainActivity;
@@ -172,6 +171,8 @@ public class PrikbordDetailFragment extends Fragment {
     }
 
     private String getDistanceString(PrikbordItem prikbordItem) {
+        WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(getActivity());
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
 
@@ -295,7 +296,7 @@ public class PrikbordDetailFragment extends Fragment {
     }
 
     private void showWerkgebiedDialog(final PrikbordItem prikbordItem, final View view, final String beschikbaarheid) {
-        final WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+        final WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(mainActivity);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
         builder.setTitle(mainActivity.getString(R.string.select_workarea));

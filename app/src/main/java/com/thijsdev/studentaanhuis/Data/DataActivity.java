@@ -33,14 +33,26 @@ public class DataActivity extends BasicActionBarActivity {
         progressBar = (ProgressBar) findViewById(R.id.data_progressbar);
 
         Intent intent = new Intent(this, DataService.class);
+        intent.putExtra("ACTION", "ALL");
         startService(intent);
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(progressBar != null)
-                progressBar.setProgress(intent.getIntExtra("COUNTER", 0));
+            if(progressBar != null) {
+                if(intent.hasExtra(DataService.CURRENTLY_UPDATING))
+                    ((TextView) findViewById(R.id.data_state)).setText(intent.getStringExtra(DataService.CURRENTLY_UPDATING));
+
+                if(intent.hasExtra(DataService.CLEAR_PROGRESS))
+                    ((ProgressBar) findViewById(R.id.data_progressbar)).setProgress(0);
+
+                if(intent.hasExtra(DataService.INCREASE_PROGRESS))
+                    ((ProgressBar) findViewById(R.id.data_progressbar)).incrementProgressBy(1);
+
+                if(intent.hasExtra(DataService.SET_TOTAL_PROGRESS))
+                    ((ProgressBar) findViewById(R.id.data_progressbar)).setMax(intent.getIntExtra(DataService.SET_TOTAL_PROGRESS, 0));
+            }
         }
     };
     @Override

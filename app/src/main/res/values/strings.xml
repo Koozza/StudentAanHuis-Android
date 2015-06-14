@@ -41,6 +41,7 @@
     <string name="aantal_servicevragen">Aantal Servicevragen:</string>
     <string name="first_time_setup">Eerste keer initialiseren</string>
     <string name="loading_werkgebied">Werkgebieden laden...</string>
+    <string name="loading_prikbord">Prikbord items laden...</string>
 
     <!-- Sentences -->
     <string name="sure_you_cant_do_appointment">Weet je zeker dat je deze afspraak niet kan doen?</string>

@@ -21,7 +21,7 @@ public class PreferencesFragment extends PreferenceFragment implements FragmentI
         toolbar.setTitle(getString(R.string.settings));
 
         //Setup werkgebied selector
-        WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+        WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(mainActivity);
         createListEntry("prikbord_werkgebied", werkgebiedHelper.getWerkgebiedenArray(getActivity()), werkgebiedHelper.getWerkgebiedenIDArray(getActivity()), (String) werkgebiedHelper.getWerkgebiedenIDArray(getActivity())[0]);
     }
 

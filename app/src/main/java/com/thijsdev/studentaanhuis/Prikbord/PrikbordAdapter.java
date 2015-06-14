@@ -27,11 +27,12 @@ import java.util.regex.Pattern;
 class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private ArrayList<Object> mData = new ArrayList<>();
     private GeoLocationHelper locHelper = new GeoLocationHelper();
-    private WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+    private WerkgebiedHelper werkgebiedHelper;
     private Context context;
 
     public PrikbordAdapter(Context _context) {
         context = _context;
+        werkgebiedHelper = new WerkgebiedHelper(context);
     }
 
     @Override

@@ -74,7 +74,7 @@ public class LoginActivity extends BasicActionBarActivity {
                 }
 
                 //Werkgebieden ophalen
-                WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+                WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(getApplicationContext());
                 werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
                     @Override
                     public void onTaskCompleted(Object... results) {
@@ -85,7 +85,7 @@ public class LoginActivity extends BasicActionBarActivity {
 
                         if(werkgebiedID == "" || werkgebiedID == null) {
                             SharedPreferences.Editor edit = sharedPref.edit();
-                            WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+                            WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(getApplicationContext());
                             edit.putString("prikbord_werkgebied", Integer.toString(werkgebiedHelper.getActiveWerkgebieden(getApplicationContext()).get(0).getId()));
                             edit.commit();
                         }
