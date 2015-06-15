@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.TreeMap;
 
 public class LoonListFragment extends Fragment implements FragmentInterface {
-    private LoonHelper loonHelper = new LoonHelper();
-
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private MainActivity mainActivity;
@@ -85,6 +83,7 @@ public class LoonListFragment extends Fragment implements FragmentInterface {
             toolbar.findViewById(R.id.action_refresh).startAnimation(a);
 
             //TODO: mAdapter.clearItems();
+            LoonHelper loonHelper = new LoonHelper(mainActivity);
             loonHelper.updateLoon(mainActivity, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {

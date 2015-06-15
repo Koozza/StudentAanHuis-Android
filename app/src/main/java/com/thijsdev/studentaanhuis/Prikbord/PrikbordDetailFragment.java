@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PrikbordDetailFragment extends Fragment {
-    final private PrikbordHelper prikbordHelper = new PrikbordHelper();
     private GeoLocationHelper locHelper = new GeoLocationHelper();
 
     private MainActivity mainActivity;
@@ -249,6 +248,7 @@ public class PrikbordDetailFragment extends Fragment {
         final RelativeLayout loadingScreen = (RelativeLayout) mainActivity.findViewById(R.id.main_loading);
         loadingScreen.setVisibility(View.VISIBLE);
 
+        PrikbordHelper prikbordHelper = new PrikbordHelper(mainActivity);
         prikbordHelper.declineItem(mainActivity, prikbordItem, new Callback() {
             @Override
             public void onTaskCompleted(Object... results) {
@@ -307,6 +307,7 @@ public class PrikbordDetailFragment extends Fragment {
                 final RelativeLayout loadingScreen = (RelativeLayout) mainActivity.findViewById(R.id.main_loading);
                 loadingScreen.setVisibility(View.VISIBLE);
 
+                PrikbordHelper prikbordHelper = new PrikbordHelper(mainActivity);
                 prikbordHelper.acceptItem(mainActivity, prikbordItem, beschikbaarheid, werkgebied, new Callback() {
                     @Override
                     public void onTaskCompleted(Object... results) {

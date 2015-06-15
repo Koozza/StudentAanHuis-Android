@@ -54,7 +54,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
                 //Prikbord update
                 if(extras.getString(ALARM).equals(PRIKBORD)) {
 
-                    PrikbordHelper prikbordHelper = new PrikbordHelper();
+                    PrikbordHelper prikbordHelper = new PrikbordHelper(context);
                     prikbordHelper.updatePrikbordItems(context, new Callback(), new Callback(), new Callback() {
                         @Override
                         public void onTaskCompleted(Object... results) {

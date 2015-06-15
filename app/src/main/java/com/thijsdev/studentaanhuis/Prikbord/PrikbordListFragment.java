@@ -20,8 +20,6 @@ import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 
 public class PrikbordListFragment extends Fragment implements FragmentInterface {
-    private PrikbordHelper prikbordHelper = new PrikbordHelper();
-
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private MainActivity mainActivity;
@@ -88,6 +86,7 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
             toolbar.findViewById(R.id.action_refresh).startAnimation(a);
 
             //TODO: mAdapter.clearItems();
+            PrikbordHelper prikbordHelper = new PrikbordHelper(mainActivity);
             prikbordHelper.updatePrikbordItems(mainActivity, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {

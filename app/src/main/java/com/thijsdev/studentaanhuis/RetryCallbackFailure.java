@@ -19,7 +19,7 @@ public class RetryCallbackFailure extends Callback {
         HttpClientClass client = ((HttpClientClass)results[1]);
         if(client.getHttpClientObject().getAttempt() < _retryCount) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

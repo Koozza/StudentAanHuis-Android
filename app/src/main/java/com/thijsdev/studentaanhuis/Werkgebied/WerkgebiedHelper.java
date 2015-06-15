@@ -40,10 +40,6 @@ public class WerkgebiedHelper {
      * @param failure
      */
     public void readWerkgebieden(final Callback finished, final Callback failure) {
-        //Check variables
-        if(context == null)
-            throw new RuntimeException("Context is null. Call constructor first.");
-
         werkgebiedHTTPHandler.getWerkGebieden(context, new Callback() {
             @Override
             public void onTaskCompleted(Object... results) {
@@ -79,8 +75,6 @@ public class WerkgebiedHelper {
      */
     public void processWerkgebieden(Callback itemFinished, Callback finished) {
         //Check variables
-        if(context == null)
-            throw new RuntimeException("Context is null. Call constructor first.");
         if(werkgebieden == null)
             throw new RuntimeException("werkgebieden is null. Call readWerkgebieden() first.");
 
@@ -132,42 +126,10 @@ public class WerkgebiedHelper {
         finished.onTaskCompleted();
     }
 
-    //DEPRICATED
+    /**
+     * DEPRECATED
+     */
     public void updateWerkgebieden(final Activity activity, final Callback callback) {
-        /*
-        final DatabaseHandler db = new DatabaseHandler(activity);
-
-
-                        final Werkgebied werkgebied = new Werkgebied();
-                        int actief = 0;
-                        Location adres = locHelper.getLocationFromAddress(activity, tds.get(2).text() + ", The Netherlands");
-
-                        if(tds.get(0).child(0).attr("checked").equals("checked"))
-                            actief = 1;
-
-                        werkgebied.setId(id);
-                        werkgebied.setActief(actief);
-                        werkgebied.setNaam(tds.get(1).text());
-                        werkgebied.setAdres(tds.get(2).text());
-                        werkgebied.setStraal(tds.get(3).text());
-                        if(adres != null) {
-                            werkgebied.setLat(adres.getLatitude());
-                            werkgebied.setLng(adres.getLongitude());
-                        }else{
-                            werkgebied.setLat(0.0);
-                            werkgebied.setLng(0.0);
-                        }
-
-                        db.addWerkgebied(werkgebied);
-
-                        Log.v("SAH", "Werkgebied Added");
-                    }
-                }
-
-                callback.onTaskCompleted((Object[])null);
-            }
-        }, new Callback());
-        */
     }
 
     public CharSequence[] getWerkgebiedenArray(Context context) {

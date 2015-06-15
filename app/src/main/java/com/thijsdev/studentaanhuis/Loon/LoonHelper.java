@@ -3,9 +3,9 @@ package com.thijsdev.studentaanhuis.Loon;
 import android.content.Context;
 
 import com.thijsdev.studentaanhuis.Callback;
-import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.Database.LoonMaand;
 import com.thijsdev.studentaanhuis.GeneralFunctions;
+import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,7 +25,57 @@ public class LoonHelper {
     final TreeMap<Date, LoonMaand> loonMaandHashMap = new TreeMap<>();
     final LoonHTTPHandler loonHTTPHandler = new LoonHTTPHandler();
 
+    private Context context;
+
+    //Temp variables
+    Elements loonItems = null;
+
+    public LoonHelper(Context _context) {
+        context = _context;
+    }
+
+    public void readLoonItems(final Callback finished, final Callback failure) {
+        loonHTTPHandler.getMonths(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                Document doc = Jsoup.parse((String) results[0]);
+                Element table = doc.getElementsByClass("table").get(0);
+                loonItems = table.getElementsByTag("a");
+
+                for (Element e : loonItems) {
+                    //Get Date & add to hasmap
+                    SimpleDateFormat format = new SimpleDateFormat("M yyyy");
+                    try {
+                        LoonMaand loonMaand = new LoonMaand();
+                        Date datum = format.parse(GeneralFunctions.fixDate(e.children().get(0).text()));
+                        loonMaand.setDatum(datum);
+
+                        //Check if the date is after july 2013
+                        if(datum.after(format.parse("7 2013")))
+                            loonMaandHashMap.put(datum, loonMaand);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                finished.onTaskCompleted(loonMaandHashMap);
+            }
+        }, failure);
+    }
+
+    public int countLoonItems() {
+        return loonMaandHashMap.size();
+    }
+
+
+    public void processLoonItems(final Callback itemFinished, final Callback finished) {
+        nextPage(loonItems, 0, context, countLoonItems(), itemFinished, finished);
+    }
+
+    /**
+     * DEPRECATED
+     */
     public void updateLoon(final Context context, final Callback callback) {
+        /*
         final DatabaseHandler db = new DatabaseHandler(context);
 
         loonHTTPHandler.getMonths(context, new Callback() {
@@ -54,32 +104,35 @@ public class LoonHelper {
                 nextPage(table.getElementsByTag("a"), 0, context, totalItems, callback);
             }
         }, new Callback());
+        */
     }
 
-    private void nextPage(final Elements elm, final int index, final Context context, final int totalItems, final Callback callback) {
+    private void nextPage(final Elements elm, final int index, final Context context, final int totalItems, final Callback itemFinished, final Callback callback) {
         //Get details for month
         String[] datumStringParts = GeneralFunctions.fixDate(elm.get(index).children().get(0).text()).split(" ");
         SimpleDateFormat format = new SimpleDateFormat("M yyyy");
         try {
             if(format.parse(datumStringParts[0] + " " + datumStringParts[1]).after(format.parse("7 2013"))) {
-                loonHTTPHandler.getMonth(context, datumStringParts[1] + "-" + datumStringParts[0] + "-1", new Callback() {
+                loonHTTPHandler.getMonth(datumStringParts[1] + "-" + datumStringParts[0] + "-1", new Callback() {
                     @Override
                     public void onTaskCompleted(Object... results) {
-                        processPage((String) results[0], callback, totalItems);
-                        if (index < elm.size() - 1)
-                            nextPage(elm, index + 1, context, totalItems, callback);
+                        processPage((String) results[0], totalItems, itemFinished, callback);
+                        if (index < elm.size() - 1) {
+                            nextPage(elm, index + 1, context, totalItems, itemFinished, callback);
+                        }
                     }
-                }, new Callback());
+                }, new RetryCallbackFailure(10));
             }else{
-                if (index < elm.size() - 1)
-                    nextPage(elm, index + 1, context, totalItems, callback);
+                if (index < elm.size() - 1) {
+                    nextPage(elm, index + 1, context, totalItems, itemFinished, callback);
+                }
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    private void processPage(String source, Callback callback, int totalItems) {
+    private void processPage(String source, int totalItems, Callback itemFinished, Callback callback) {
         Document doc = Jsoup.parse(source);
         Element tbody = doc.getElementsByTag("tbody").get(0);
 
@@ -111,6 +164,7 @@ public class LoonHelper {
                         current.addAfspraak();
 
                     current.addLoonMogelijk(price);
+                    itemFinished.onTaskCompleted();
                 } else {
                     //Payment for sure
                     SimpleDateFormat format = new SimpleDateFormat("M yyyy");
@@ -161,6 +215,7 @@ public class LoonHelper {
                             loonMaandHashMap.get(date).setIsUitbetaald(true);
 
                         loonMaandHashMap.get(date).addLoonZeker(price);
+                        itemFinished.onTaskCompleted();
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }
