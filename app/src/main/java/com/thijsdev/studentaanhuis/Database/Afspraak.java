@@ -2,7 +2,7 @@ package com.thijsdev.studentaanhuis.Database;
 
 import java.util.Date;
 
-public class Afspraak {
+public class Afspraak implements DatabaseObject {
     private int id;
     private Klant klant;
     private String omschrijving;
@@ -20,10 +20,12 @@ public class Afspraak {
     private float voorfietskosten;
 
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

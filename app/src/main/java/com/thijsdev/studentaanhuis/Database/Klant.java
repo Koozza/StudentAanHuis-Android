@@ -1,15 +1,17 @@
 package com.thijsdev.studentaanhuis.Database;
 
-public class Klant {
+public class Klant implements DatabaseObject {
     private int id;
     private String klantnummer;
     private String naam, adres, email, tel1, tel2;
 
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

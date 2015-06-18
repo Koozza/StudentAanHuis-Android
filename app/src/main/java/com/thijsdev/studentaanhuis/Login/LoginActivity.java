@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.BasicActionBarActivity;
 import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.Data.DataActivity;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 import com.thijsdev.studentaanhuis.SAHApplication;
@@ -90,7 +91,16 @@ public class LoginActivity extends BasicActionBarActivity {
                             edit.commit();
                         }
 
-                        Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                        //Launch next activity
+                        SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+                        Intent goToNextActivity;
+
+                        if(sharedpreferences.getInt("DATA_VERSION", -1) != DataActivity.VERSION) {
+                            goToNextActivity = new Intent(getApplicationContext(), DataActivity.class);
+                        }else{
+                            goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                        }
+
                         startActivity(goToNextActivity);
                         finish();
                     }

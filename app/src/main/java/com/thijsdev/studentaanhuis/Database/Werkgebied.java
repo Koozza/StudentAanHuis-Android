@@ -2,15 +2,18 @@ package com.thijsdev.studentaanhuis.Database;
 
 import android.location.Location;
 
-public class Werkgebied {
-    private int id, actief;
+public class Werkgebied implements DatabaseObject {
+    private int id;
+    private int actief;
     private Double lat, lng;
     private String naam, adres, straal;
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

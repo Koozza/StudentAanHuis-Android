@@ -11,9 +11,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.BasicActionBarActivity;
+import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 
 public class DataActivity extends BasicActionBarActivity {
+    public static final int VERSION = 1;
+
     Typeface robotoLight, robotoRegular;
     private DataService s;
     private ProgressBar progressBar;
@@ -32,6 +35,11 @@ public class DataActivity extends BasicActionBarActivity {
 
         progressBar = (ProgressBar) findViewById(R.id.data_progressbar);
 
+        //Clear existing database
+        //DatabaseHandler databaseHandler = new DatabaseHandler(this);
+        //databaseHandler.clearDatabase();
+
+        //Launch service
         Intent intent = new Intent(this, DataService.class);
         intent.putExtra("ACTION", "ALL");
         startService(intent);
@@ -52,6 +60,12 @@ public class DataActivity extends BasicActionBarActivity {
 
                 if(intent.hasExtra(DataService.SET_TOTAL_PROGRESS))
                     ((ProgressBar) findViewById(R.id.data_progressbar)).setMax(intent.getIntExtra(DataService.SET_TOTAL_PROGRESS, 0));
+
+                if(intent.hasExtra(DataService.FINISHED)) {
+                    Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(goToNextActivity);
+                    finish();
+                }
             }
         }
     };

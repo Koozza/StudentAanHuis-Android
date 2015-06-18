@@ -2,7 +2,7 @@ package com.thijsdev.studentaanhuis.Database;
 
 import java.util.Date;
 
-public class LoonMaand {
+public class LoonMaand implements DatabaseObject {
     private int id, servicevragen, afspraken;
     private String naam;
     private boolean isCompleet, isUitbetaald;
@@ -10,10 +10,13 @@ public class LoonMaand {
     private double loon = 0d;
     private double loonMogelijk = 0d;
 
+
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

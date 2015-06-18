@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "SAHInfo";
     private static final String TABLE_PITEMS = "PrikbordItems";
     private static final String TABLE_WERKGEBIEDEN = "Werkgebieden";
@@ -38,6 +38,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PITEMS);
         onCreate(db);
+    }
+
+    public void clearDatabase()
+    {
+        deleteAllPrikbordItems();
+        deleteAllWerkgebieden();
+        deleteAllLoonMaandItems();
     }
 
     /**
@@ -347,5 +354,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         return db.update(TABLE_LOONMAAND, values, "id = ?",
                 new String[] { String.valueOf(item.getId()) });
+    }
+
+    // Deleting all items
+    public void deleteAllLoonMaandItems() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_LOONMAAND);
+        db.close();
     }
 }

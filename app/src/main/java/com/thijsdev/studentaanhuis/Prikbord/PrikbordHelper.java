@@ -2,10 +2,13 @@ package com.thijsdev.studentaanhuis.Prikbord;
 
 import android.content.Context;
 
+import com.thijsdev.studentaanhuis.ArraylistIdSearch;
 import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
+import com.thijsdev.studentaanhuis.Database.DatabaseObject;
 import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.Database.Werkgebied;
+import com.thijsdev.studentaanhuis.R;
 import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 
 import org.jsoup.Jsoup;
@@ -24,6 +27,10 @@ public class PrikbordHelper {
 
     //Temp variables
     Elements prikbordItems = null;
+    final ArrayList<DatabaseObject> stillActive = new ArrayList<>();
+
+    //Callbacks
+    Callback itemRemovedCallback, itemAddedCallback, itemUpdatedCallback = null;
 
     public PrikbordHelper(Context _context) {
         context = _context;
@@ -89,7 +96,7 @@ public class PrikbordHelper {
 
             if (tds.size() > 3) {
                 int id = Integer.parseInt(tds.get(3).children().first().attr("href").split("/")[3]);
-                final boolean heeftGereageerd = tds.get(3).children().first().text().contains("ingeschreven");
+                final boolean heeftGereageerd = tds.get(3).children().first().text().contains("Reeds gereageerd");
 
                 PrikbordItem piDB = db.getPrikbordItem(id);
                 final boolean isUpdate = piDB != null;
@@ -136,16 +143,50 @@ public class PrikbordHelper {
                         if(!isUpdate) {
                             db.addPrikbordItem(pi);
                             newItems.add(pi);
+                            if(itemAddedCallback != null)
+                                itemAddedCallback.onTaskCompleted(pi);
                         }else{
                             db.updatePrikbordItem(pi);
+                            if(itemUpdatedCallback != null)
+                                itemUpdatedCallback.onTaskCompleted(pi);
                         }
 
+                        //Mark prikbord item as still active
+                        stillActive.add(pi);
+
                         itemFinished.onTaskCompleted(isUpdate, pi);
-                        isFinalPrikbordUpdate(countPrikbordItems(), finished);
+                        isFinalPrikbordUpdate(countPrikbordItems(), db, finished);
                     }
                 }, new RetryCallbackFailure(10));
             }
         }
+    }
+
+    /**
+     * Add callback to Item Removed event.
+     * Returns a prikbord item in the callback
+     * @param callback
+     */
+    public void addItemRemovedCallback(Callback callback) {
+        itemRemovedCallback = callback;
+    }
+
+    /**
+     * Add callback to Item Added event.
+     * Returns a prikbord item in the callback
+     * @param callback
+     */
+    public void addItemAddedCallback(Callback callback) {
+        itemAddedCallback = callback;
+    }
+
+    /**
+     * Add callback to Item Updated event.
+     * Returns a prikbord item in the callback
+     * @param callback
+     */
+    public void addItemUpdatedCallback(Callback callback) {
+        itemUpdatedCallback = callback;
     }
 
     /**
@@ -267,11 +308,36 @@ public class PrikbordHelper {
         });
     }
 
-    private void isFinalPrikbordUpdate(int totalItems, Callback callback) {
+    private void isFinalPrikbordUpdate(int totalItems, DatabaseHandler db, Callback callback) {
         itemsAdded++;
         if(itemsAdded == totalItems) {
             itemsAdded = 0;
+
+            //Remove other prikbord items to keep DB clean
+            for(PrikbordItem pi : db.getPrikbordItems()) {
+                if (!ArraylistIdSearch.compare(stillActive, pi)) {
+                    db.deletePrikbordItem(pi);
+                    if(itemRemovedCallback == null)
+                        itemRemovedCallback.onTaskCompleted(pi);
+                }
+            }
+
             callback.onTaskCompleted(newItems);
+        }
+    }
+
+    public static void fixNoItemsfound(PrikbordAdapter prikbordAdapter, Context context) {
+        for(int i = 0; i<3; i++) {
+            int headerLocation = prikbordAdapter.findItem(i);
+            if(headerLocation+1 < prikbordAdapter.getItemCount()) {
+                if(prikbordAdapter.getItemViewType(headerLocation+1) == 1)
+                    prikbordAdapter.addItem(headerLocation+1, new PrikbordHeader(i+3, context.getString(R.string.no_prikbord_items_found), true));
+                else if(prikbordAdapter.getItemViewType(headerLocation+1) == 0 && prikbordAdapter.findItem(i+3) != -1)
+                    prikbordAdapter.removeItem(prikbordAdapter.findItem(i+3));
+
+            }else{
+                prikbordAdapter.addItem(headerLocation+1, new PrikbordHeader(i+3, context.getString(R.string.no_prikbord_items_found), true));
+            }
         }
     }
 }
