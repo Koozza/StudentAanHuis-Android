@@ -3,6 +3,7 @@ package com.thijsdev.studentaanhuis.Loon;
 import android.content.Context;
 
 import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.Database.LoonMaand;
 import com.thijsdev.studentaanhuis.GeneralFunctions;
 import com.thijsdev.studentaanhuis.RetryCallbackFailure;
@@ -35,6 +36,8 @@ public class LoonHelper {
     }
 
     public void readLoonItems(final Callback finished, final Callback failure) {
+        final DatabaseHandler db = new DatabaseHandler(context);
+
         loonHTTPHandler.getMonths(new Callback() {
             @Override
             public void onTaskCompleted(Object... results) {
@@ -49,10 +52,16 @@ public class LoonHelper {
                         LoonMaand loonMaand = new LoonMaand();
                         Date datum = format.parse(GeneralFunctions.fixDate(e.children().get(0).text()));
                         loonMaand.setDatum(datum);
+                        loonMaand.setNaam(e.children().get(0).text());
 
                         //Check if the date is after july 2013
-                        if(datum.after(format.parse("7 2013")))
+                        if(datum.after(format.parse("7 2013"))) {
+                            //add to the database if it isn't there yet
+                            if(db.getLoonMaand(loonMaand.getNaam()) == null)
+                                db.addLoonMaand(loonMaand);
+
                             loonMaandHashMap.put(datum, loonMaand);
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

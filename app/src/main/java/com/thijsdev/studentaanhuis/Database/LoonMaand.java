@@ -1,5 +1,7 @@
 package com.thijsdev.studentaanhuis.Database;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LoonMaand implements DatabaseObject {
@@ -56,6 +58,17 @@ public class LoonMaand implements DatabaseObject {
 
     public void setDatum(Date datum) {
         this.datum = datum;
+    }
+
+    public void setDatumFromString(String datum) {
+        if(datum != "") {
+            SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            try {
+                this.datum = format.parse(datum);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public int getServicevragen() {

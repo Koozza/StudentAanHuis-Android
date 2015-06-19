@@ -91,6 +91,10 @@ public class PrikbordHelper {
 
         final DatabaseHandler db = new DatabaseHandler(context);
 
+        //Soms zijn er geen prikbord items, dus gelijk een callback aanroepen doen.
+        if(countPrikbordItems() == 0)
+            isFinalPrikbordUpdate(1, db, finished); //Call it with 1 or it'll fail
+
         for (Element tr : prikbordItems) {
             Elements tds = tr.select("td");
 
@@ -316,9 +320,10 @@ public class PrikbordHelper {
             //Remove other prikbord items to keep DB clean
             for(PrikbordItem pi : db.getPrikbordItems()) {
                 if (!ArraylistIdSearch.compare(stillActive, pi)) {
-                    db.deletePrikbordItem(pi);
                     if(itemRemovedCallback == null)
-                        itemRemovedCallback.onTaskCompleted(pi);
+                        itemRemovedCallback.onTaskCompleted(pi.getId());
+
+                    db.deletePrikbordItem(pi);
                 }
             }
 

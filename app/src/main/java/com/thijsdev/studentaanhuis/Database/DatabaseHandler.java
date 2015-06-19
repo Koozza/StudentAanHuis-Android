@@ -30,7 +30,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_CONTACTS_TABLE);
 
 
-        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(id INTEGER PRIMARY KEY,naam TEXT,iscompleet INTEGER)";
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(_id INTEGER PRIMARY KEY, naam TEXT, iscompleet INTEGER, isuitbetaald Integer, datum TEXT, loon REAL)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
@@ -293,9 +293,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("id", item.getId());
         values.put("naam", item.getNaam());
         values.put("iscompleet", item.isCompleet());
+        values.put("isuitbetaald", item.isUitbetaald());
+        values.put("datum", item.getDatum().toString());
+        values.put("loon", item.getLoon());
 
         // Inserting Row
         db.insert(TABLE_LOONMAAND, null, values);
@@ -306,7 +308,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public LoonMaand getLoonMaand(String naam) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_LOONMAAND, new String[] { "id",
+        Cursor cursor = db.query(TABLE_LOONMAAND, new String[] { "_id",
                         "naam", "iscompleet" }, "naam=?",
                 new String[] { naam }, null, null, null, null);
         if (cursor.getCount() > 0)
@@ -318,6 +320,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         item.setId(cursor.getInt(0));
         item.setNaam(cursor.getString(1));
         item.setIsCompleet(cursor.getInt(2) == 1);
+        item.setIsUitbetaald(cursor.getInt(3) == 1);
+        item.setDatumFromString(cursor.getString(4));
+        item.setLoon(cursor.getDouble(5));
 
         return item;
     }
@@ -336,6 +341,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 item.setId(cursor.getInt(0));
                 item.setNaam(cursor.getString(1));
                 item.setIsCompleet(cursor.getInt(2) == 1);
+                item.setIsUitbetaald(cursor.getInt(3) == 1);
+                item.setDatumFromString(cursor.getString(4));
+                item.setLoon(cursor.getDouble(5));
 
                 loonmaandList.add(item);
             } while (cursor.moveToNext());
@@ -351,9 +359,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("naam", item.getNaam());
         values.put("iscompleet", item.isCompleet());
+        values.put("isuitbetaald", item.isUitbetaald());
+        values.put("datum", item.getDatum().toString());
+        values.put("loon", item.getLoon());
 
-        return db.update(TABLE_LOONMAAND, values, "id = ?",
-                new String[] { String.valueOf(item.getId()) });
+        return db.update(TABLE_LOONMAAND, values, "naam = ?",
+                new String[] { String.valueOf(item.getNaam()) });
     }
 
     // Deleting all items

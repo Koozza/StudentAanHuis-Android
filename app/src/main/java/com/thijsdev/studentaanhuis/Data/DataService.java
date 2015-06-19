@@ -103,7 +103,7 @@ public class DataService extends IntentService {
         prikbordHelper.addItemRemovedCallback(new Callback() {
             @Override
             public void onTaskCompleted(Object... results) {
-                statusUpdate(PRIKBORD_ITEM_REMOVED, (PrikbordItem) results[0]);
+                statusUpdate(PRIKBORD_ITEM_REMOVED, (Integer) results[0]);
             }
         });
 
