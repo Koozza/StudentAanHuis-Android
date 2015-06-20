@@ -15,6 +15,7 @@ import org.jsoup.select.Elements;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeMap;
@@ -25,14 +26,21 @@ public class LoonHelper {
     private int itemsAdded = 0;
     final TreeMap<Date, LoonMaand> loonMaandHashMap = new TreeMap<>();
     final LoonHTTPHandler loonHTTPHandler = new LoonHTTPHandler();
+    DatabaseHandler databaseHandler;
 
     private Context context;
 
     //Temp variables
     Elements loonItems = null;
+    LoonMaand tempLoon = new LoonMaand();
+    ArrayList<LoonMaand> finishedMonths = new ArrayList<>();
+
+    //Callbacks
+    Callback itemAddedCallback, itemUpdatedCallback = null;
 
     public LoonHelper(Context _context) {
         context = _context;
+        databaseHandler = new DatabaseHandler(context);
     }
 
     public void readLoonItems(final Callback finished, final Callback failure) {
@@ -50,17 +58,33 @@ public class LoonHelper {
                     SimpleDateFormat format = new SimpleDateFormat("M yyyy");
                     try {
                         LoonMaand loonMaand = new LoonMaand();
-                        Date datum = format.parse(GeneralFunctions.fixDate(e.children().get(0).text()));
-                        loonMaand.setDatum(datum);
-                        loonMaand.setNaam(e.children().get(0).text());
+                        if(db.getLoonMaand(e.children().get(0).text()) == null) {
+                            Date datum = format.parse(GeneralFunctions.fixDate(e.children().get(0).text()));
+                            loonMaand.setDatum(datum);
+                            loonMaand.setNaam(e.children().get(0).text());
+                            if (e.children().get(1).text().equals(e.children().get(4).text()))
+                                finishedMonths.add(loonMaand);
+                        }else{
+                            loonMaand = db.getLoonMaand(e.children().get(0).text());
+                        }
+
+                        //Set values to 0 if it's not completed yet
+                        if(!loonMaand.isUitbetaald() || !loonMaand.isCompleet()) {
+                            loonMaand.setLoon(0);
+                            loonMaand.setLoonMogelijk(0);
+                        }
 
                         //Check if the date is after july 2013
-                        if(datum.after(format.parse("7 2013"))) {
-                            //add to the database if it isn't there yet
-                            if(db.getLoonMaand(loonMaand.getNaam()) == null)
-                                db.addLoonMaand(loonMaand);
+                        if(loonMaand.getDatum().after(format.parse("7 2013"))) {
+                            loonMaandHashMap.put(loonMaand.getDatum(), loonMaand);
 
-                            loonMaandHashMap.put(datum, loonMaand);
+                            //add to the database if it isn't there yet
+                            if(databaseHandler.getLoonMaand(loonMaand.getNaam()) == null) {
+                                databaseHandler.addLoonMaand(loonMaand);
+
+                                if(itemAddedCallback != null)
+                                    itemAddedCallback.onTaskCompleted(loonMaand.getNaam());
+                            }
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -78,6 +102,24 @@ public class LoonHelper {
 
     public void processLoonItems(final Callback itemFinished, final Callback finished) {
         nextPage(loonItems, 0, context, countLoonItems(), itemFinished, finished);
+    }
+
+    /**
+     * Add callback to Item Added event.
+     * Returns a loonmaand in the callback
+     * @param callback
+     */
+    public void addItemAddedCallback(Callback callback) {
+        itemAddedCallback = callback;
+    }
+
+    /**
+     * Add callback to Item Updated event.
+     * Returns a loonmaand in the callback
+     * @param callback
+     */
+    public void addItemUpdatedCallback(Callback callback) {
+        itemUpdatedCallback = callback;
     }
 
     /**
@@ -122,15 +164,31 @@ public class LoonHelper {
         SimpleDateFormat format = new SimpleDateFormat("M yyyy");
         try {
             if(format.parse(datumStringParts[0] + " " + datumStringParts[1]).after(format.parse("7 2013"))) {
-                loonHTTPHandler.getMonth(datumStringParts[1] + "-" + datumStringParts[0] + "-1", new Callback() {
-                    @Override
-                    public void onTaskCompleted(Object... results) {
-                        processPage((String) results[0], totalItems, itemFinished, callback);
-                        if (index < elm.size() - 1) {
-                            nextPage(elm, index + 1, context, totalItems, itemFinished, callback);
-                        }
+                //check if we actually have to do this
+
+                try {
+                    Date datum = format.parse(GeneralFunctions.fixDate(elm.get(index).children().get(0).text()));
+                    if(loonMaandHashMap.get(datum).isUitbetaald() && loonMaandHashMap.get(datum).isCompleet()) {
+                        isFinalLoonUpdate(totalItems, callback);
+                        itemFinished.onTaskCompleted();
+
+                        nextPage(elm, index + 1, context, totalItems, itemFinished, callback);
+                        return;
                     }
-                }, new RetryCallbackFailure(10));
+
+                    loonHTTPHandler.getMonth(datumStringParts[1] + "-" + datumStringParts[0] + "-1", new Callback() {
+                        @Override
+                        public void onTaskCompleted(Object... results) {
+                            processPage((String) results[0], totalItems, itemFinished, callback);
+                            if (index < elm.size() - 1) {
+                                nextPage(elm, index + 1, context, totalItems, itemFinished, callback);
+                            }
+                        }
+                    }, new RetryCallbackFailure(10));
+
+                }catch(Exception e) {
+                    e.printStackTrace();
+                }
             }else{
                 if (index < elm.size() - 1) {
                     nextPage(elm, index + 1, context, totalItems, itemFinished, callback);
@@ -151,13 +209,6 @@ public class LoonHelper {
             for (Element tr : reversed(trs)) {
                 //Mogelijk voor de huidige maand
                 if (tr.children().get(3).text().equals("") && tr.children().get(4).text().equals("")) {
-                    //Find first unpayed loonmaand
-                    LoonMaand current = null;
-                    for (LoonMaand loonMaand : loonMaandHashMap.values()) {
-                        if (!loonMaand.isUitbetaald())
-                            current = loonMaand;
-                    }
-
                     //Calculate price
                     boolean isServiceVraag = tr.children().get(tr.children().size() - 1).text().contains("-");
                     Double price = Double.parseDouble(tr.children().get(tr.children().size() - 1).text().replace("-", "").substring(1).replace(",", "."));
@@ -165,15 +216,14 @@ public class LoonHelper {
                     //Check servicevraag
                     if (isServiceVraag) {
                         price = price * -1;
-                        current.addServicevraag();
+                        tempLoon.addServicevraag();
                     }
 
                     //check if uurloon
                     if (tr.children().get(1).text().contains("uurloon"))
-                        current.addAfspraak();
+                        tempLoon.addAfspraak();
 
-                    current.addLoonMogelijk(price);
-                    itemFinished.onTaskCompleted();
+                    tempLoon.addLoonMogelijk(price);
                 } else {
                     //Payment for sure
                     SimpleDateFormat format = new SimpleDateFormat("M yyyy");
@@ -203,7 +253,15 @@ public class LoonHelper {
                             try {
                                 LoonMaand loonMaand = new LoonMaand();
                                 loonMaand.setDatum(date);
+                                loonMaand.setNaam(datumStringParts[1] + " " + datumStringParts[2]);
                                 loonMaandHashMap.put(date, loonMaand);
+
+                                if(databaseHandler.getLoonMaand(loonMaand.getNaam()) == null) {
+                                    databaseHandler.addLoonMaand(loonMaand);
+
+                                    if(itemAddedCallback != null)
+                                        itemAddedCallback.onTaskCompleted(loonMaand.getNaam());
+                                }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
@@ -224,13 +282,17 @@ public class LoonHelper {
                             loonMaandHashMap.get(date).setIsUitbetaald(true);
 
                         loonMaandHashMap.get(date).addLoonZeker(price);
-                        itemFinished.onTaskCompleted();
+                        databaseHandler.updateLoonMaand(loonMaandHashMap.get(date));
+                        if(itemUpdatedCallback != null)
+                            itemUpdatedCallback.onTaskCompleted(loonMaandHashMap.get(date).getNaam());
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }
                 }
             }
+
             isFinalLoonUpdate(totalItems, callback);
+            itemFinished.onTaskCompleted();
         }
     }
 
@@ -238,6 +300,29 @@ public class LoonHelper {
         itemsAdded++;
         if(itemsAdded == totalItems) {
             itemsAdded = 0;
+
+            //Complete, Mogelijkloon bij de goeie maand zetten
+            for (LoonMaand loonMaand : loonMaandHashMap.values()) {
+                if (!loonMaand.isUitbetaald()) {
+                    loonMaand.addLoonMogelijk(tempLoon.getLoonMogelijk());
+                    loonMaand.addAfspraken(tempLoon.getAfspraken());
+                    loonMaand.addServicevragen(tempLoon.getServicevragen());
+
+                    databaseHandler.updateLoonMaand(loonMaand);
+                    if(itemUpdatedCallback != null)
+                        itemUpdatedCallback.onTaskCompleted(loonMaand.getNaam());
+
+                    break;
+                }
+            }
+
+            //Maanden die klaar zijn op Compleet zetten
+            for(LoonMaand loonMaand : finishedMonths) {
+                loonMaand.setIsCompleet(true);
+
+                databaseHandler.updateLoonMaand(loonMaand);
+            }
+
             callback.onTaskCompleted(loonMaandHashMap);
         }
     }

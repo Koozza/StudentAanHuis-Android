@@ -320,7 +320,7 @@ public class PrikbordHelper {
             //Remove other prikbord items to keep DB clean
             for(PrikbordItem pi : db.getPrikbordItems()) {
                 if (!ArraylistIdSearch.compare(stillActive, pi)) {
-                    if(itemRemovedCallback == null)
+                    if(itemRemovedCallback != null)
                         itemRemovedCallback.onTaskCompleted(pi.getId());
 
                     db.deletePrikbordItem(pi);

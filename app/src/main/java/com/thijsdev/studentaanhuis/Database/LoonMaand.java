@@ -47,7 +47,6 @@ public class LoonMaand implements DatabaseObject {
         this.loon = _loon;
     }
 
-
     public void addLoonZeker(double _loon) {
         this.loon += _loon;
     }
@@ -75,12 +74,20 @@ public class LoonMaand implements DatabaseObject {
         return servicevragen;
     }
 
+    public void addServicevragen(int servicevragen) {
+        this.servicevragen += servicevragen;
+    }
+
     public void addServicevraag() {
         this.servicevragen++;
     }
 
     public int getAfspraken() {
         return afspraken;
+    }
+
+    public void addAfspraken(int afspraken) {
+        this.afspraken += afspraken;
     }
 
     public void addAfspraak() {

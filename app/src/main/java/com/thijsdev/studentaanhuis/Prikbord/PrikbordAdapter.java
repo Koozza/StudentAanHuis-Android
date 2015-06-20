@@ -52,12 +52,12 @@ class PrikbordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
                 prikbordListItem.setClickListener(new PrikbordListItem.ClickListener() {
                     @Override
                     public void onClick(View v, int pos) {
-                        ((FragmentInterface)((MainActivity) context).getActiveFragement()).unload();
+                        ((FragmentInterface) ((MainActivity) context).getActiveFragement()).unload();
 
                         PrikbordDetailFragment fragment = new PrikbordDetailFragment();
 
                         Bundle bundle = new Bundle();
-                        bundle.putInt("PrikbordId", ((PrikbordItem)mData.get(pos)).getId());
+                        bundle.putInt("PrikbordId", ((PrikbordItem) mData.get(pos)).getId());
                         fragment.setArguments(bundle);
 
                         FragmentTransaction transaction = ((Activity) context).getFragmentManager().beginTransaction();

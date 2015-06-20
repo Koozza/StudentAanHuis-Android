@@ -31,6 +31,12 @@ public class DataService extends IntentService {
     public static String PRIKBORD_ITEM_UPDATED = "prikbord_item_updated";
     public static String PRIKBORD_FINISHED = "prikbord_finished";
 
+    //Loon
+    public static String LOON_ITEM_REMOVED = "loon_item_removed";
+    public static String LOON_ITEM_ADDED = "loon_item_added";
+    public static String LOON_ITEM_UPDATED = "loon_item_updated";
+    public static String LOON_FINISHED = "loon_finished";
+
     private int progress = 0;
 
     public DataService() {
@@ -44,6 +50,8 @@ public class DataService extends IntentService {
             processAll();
         }else if (action.equals("PRIKBORD")) {
             processPrikbord(new Callback());
+        }else if (action.equals("LOON")) {
+            processLoon(new Callback());
         }
     }
 
@@ -149,6 +157,22 @@ public class DataService extends IntentService {
         statusUpdate(SET_TOTAL_PROGRESS, 2);
         statusUpdate(INCREASE_PROGRESS, 0);
 
+        //Callback for added loon items
+        loonHelper.addItemAddedCallback(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(LOON_ITEM_ADDED, (String) results[0]);
+            }
+        });
+
+        //Callback for updated loon items
+        loonHelper.addItemUpdatedCallback(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(LOON_ITEM_UPDATED, (String) results[0]);
+            }
+        });
+
         loonHelper.readLoonItems(new Callback() {
             @Override
             public void onTaskCompleted(Object... results) {
@@ -158,7 +182,13 @@ public class DataService extends IntentService {
                     public void onTaskCompleted(Object... results) {
                         statusUpdate(INCREASE_PROGRESS, 0);
                     }
-                }, callback);
+                }, new Callback() {
+                    @Override
+                    public void onTaskCompleted(Object... results) {
+                        statusUpdate(LOON_FINISHED);
+                        callback.onTaskCompleted(results);
+                    }
+                });
             }
         }, new RetryCallbackFailure(10));
     }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "SAHInfo";
     private static final String TABLE_PITEMS = "PrikbordItems";
     private static final String TABLE_WERKGEBIEDEN = "Werkgebieden";
@@ -30,13 +30,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_CONTACTS_TABLE);
 
 
-        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(_id INTEGER PRIMARY KEY, naam TEXT, iscompleet INTEGER, isuitbetaald Integer, datum TEXT, loon REAL)";
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(_id INTEGER PRIMARY KEY, naam TEXT, isuitbetaald Integer, iscompleet Integer, datum TEXT, loon REAL, mogelijkloon REAL)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PITEMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WERKGEBIEDEN);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOONMAAND);
         onCreate(db);
     }
 
@@ -294,10 +296,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("naam", item.getNaam());
-        values.put("iscompleet", item.isCompleet());
         values.put("isuitbetaald", item.isUitbetaald());
+        values.put("iscompleet", item.isCompleet());
         values.put("datum", item.getDatum().toString());
         values.put("loon", item.getLoon());
+        values.put("mogelijkloon", item.getLoonMogelijk());
 
         // Inserting Row
         db.insert(TABLE_LOONMAAND, null, values);
@@ -309,7 +312,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_LOONMAAND, new String[] { "_id",
-                        "naam", "iscompleet" }, "naam=?",
+                        "naam", "isuitbetaald", "iscompleet", "datum", "loon", "mogelijkloon" }, "naam=?",
                 new String[] { naam }, null, null, null, null);
         if (cursor.getCount() > 0)
             cursor.moveToFirst();
@@ -319,10 +322,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         LoonMaand item = new LoonMaand();
         item.setId(cursor.getInt(0));
         item.setNaam(cursor.getString(1));
-        item.setIsCompleet(cursor.getInt(2) == 1);
-        item.setIsUitbetaald(cursor.getInt(3) == 1);
+        item.setIsUitbetaald(cursor.getInt(2) == 1);
+        item.setIsCompleet(cursor.getInt(3) == 1);
         item.setDatumFromString(cursor.getString(4));
         item.setLoon(cursor.getDouble(5));
+        item.setLoonMogelijk(cursor.getDouble(6));
 
         return item;
     }
@@ -340,10 +344,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 LoonMaand item = new LoonMaand();
                 item.setId(cursor.getInt(0));
                 item.setNaam(cursor.getString(1));
-                item.setIsCompleet(cursor.getInt(2) == 1);
-                item.setIsUitbetaald(cursor.getInt(3) == 1);
+                item.setIsUitbetaald(cursor.getInt(2) == 1);
+                item.setIsCompleet(cursor.getInt(3) == 1);
                 item.setDatumFromString(cursor.getString(4));
                 item.setLoon(cursor.getDouble(5));
+                item.setLoonMogelijk(cursor.getDouble(6));
 
                 loonmaandList.add(item);
             } while (cursor.moveToNext());
@@ -358,10 +363,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("naam", item.getNaam());
-        values.put("iscompleet", item.isCompleet());
         values.put("isuitbetaald", item.isUitbetaald());
+        values.put("iscompleet", item.isCompleet());
         values.put("datum", item.getDatum().toString());
         values.put("loon", item.getLoon());
+        values.put("mogelijkloon", item.getLoonMogelijk());
 
         return db.update(TABLE_LOONMAAND, values, "naam = ?",
                 new String[] { String.valueOf(item.getNaam()) });
