@@ -11,6 +11,7 @@ public class LoonMaand implements DatabaseObject {
     private Date datum;
     private double loon = 0d;
     private double loonMogelijk = 0d;
+    private double loonAndereMaand = 0d;
 
 
     @Override
@@ -112,5 +113,17 @@ public class LoonMaand implements DatabaseObject {
 
     public void addLoonMogelijk(double loonMogelijk) {
         this.loonMogelijk += loonMogelijk;
+    }
+
+    public double getLoonAndereMaand() {
+        return loonAndereMaand;
+    }
+
+    public void setLoonAndereMaand(double loonAndereMaand) {
+        this.loonAndereMaand = loonAndereMaand;
+    }
+
+    public void addLoonAndereMaand(double loonAndereMaand) {
+        this.loonAndereMaand += loonAndereMaand;
     }
 }

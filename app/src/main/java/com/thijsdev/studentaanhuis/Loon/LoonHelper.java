@@ -160,7 +160,7 @@ public class LoonHelper {
 
     private void nextPage(final Elements elm, final int index, final Context context, final int totalItems, final Callback itemFinished, final Callback callback) {
         //Get details for month
-        String[] datumStringParts = GeneralFunctions.fixDate(elm.get(index).children().get(0).text()).split(" ");
+        final String[] datumStringParts = GeneralFunctions.fixDate(elm.get(index).children().get(0).text()).split(" ");
         SimpleDateFormat format = new SimpleDateFormat("M yyyy");
         try {
             if(format.parse(datumStringParts[0] + " " + datumStringParts[1]).after(format.parse("7 2013"))) {
@@ -179,7 +179,7 @@ public class LoonHelper {
                     loonHTTPHandler.getMonth(datumStringParts[1] + "-" + datumStringParts[0] + "-1", new Callback() {
                         @Override
                         public void onTaskCompleted(Object... results) {
-                            processPage((String) results[0], totalItems, itemFinished, callback);
+                            processPage((String) results[0], totalItems, itemFinished, callback, datumStringParts[0] + " " + datumStringParts[1]);
                             if (index < elm.size() - 1) {
                                 nextPage(elm, index + 1, context, totalItems, itemFinished, callback);
                             }
@@ -199,7 +199,7 @@ public class LoonHelper {
         }
     }
 
-    private void processPage(String source, int totalItems, Callback itemFinished, Callback callback) {
+    private void processPage(String source, int totalItems, Callback itemFinished, Callback callback, String pageDate) {
         Document doc = Jsoup.parse(source);
         Element tbody = doc.getElementsByTag("tbody").get(0);
 
@@ -281,7 +281,11 @@ public class LoonHelper {
                         if(!tr.children().get(4).text().equals(""))
                             loonMaandHashMap.get(date).setIsUitbetaald(true);
 
-                        loonMaandHashMap.get(date).addLoonZeker(price);
+                        if(pageDate.equals(format.format(date)))
+                            loonMaandHashMap.get(date).addLoonZeker(price);
+                        else
+                            loonMaandHashMap.get(date).addLoonAndereMaand(price);
+
                         databaseHandler.updateLoonMaand(loonMaandHashMap.get(date));
                         if(itemUpdatedCallback != null)
                             itemUpdatedCallback.onTaskCompleted(loonMaandHashMap.get(date).getNaam());

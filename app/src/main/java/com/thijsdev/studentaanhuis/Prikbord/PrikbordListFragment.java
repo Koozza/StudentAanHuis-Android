@@ -122,10 +122,11 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
         public void onReceive(Context context, Intent intent) {
             if(intent.hasExtra(DataService.PRIKBORD_ITEM_REMOVED)) {
                 mAdapter.removeItem(mAdapter.findItem(intent.getIntExtra(DataService.PRIKBORD_ITEM_REMOVED, 0)));
+                PrikbordHelper.fixNoItemsfound(mAdapter, getActivity());
             }
 
             if(intent.hasExtra(DataService.PRIKBORD_ITEM_ADDED)) {
-                PrikbordItem pi = db.getPrikbordItem(intent.getIntExtra(DataService.PRIKBORD_ITEM_UPDATED, 0));
+                PrikbordItem pi = db.getPrikbordItem(intent.getIntExtra(DataService.PRIKBORD_ITEM_ADDED, 0));
                 int noItemsFound = mAdapter.findItem(pi.getBeschikbaar() + 3);
                 if (noItemsFound > -1)
                     mAdapter.removeItem(noItemsFound);
