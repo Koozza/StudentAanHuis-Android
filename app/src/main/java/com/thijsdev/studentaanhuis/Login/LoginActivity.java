@@ -1,12 +1,15 @@
 package com.thijsdev.studentaanhuis.Login;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 import com.thijsdev.studentaanhuis.BasicActionBarActivity;
 import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.Data.DataActivity;
+import com.thijsdev.studentaanhuis.Data.DataService;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 import com.thijsdev.studentaanhuis.SAHApplication;
@@ -75,36 +79,9 @@ public class LoginActivity extends BasicActionBarActivity {
                 }
 
                 //Werkgebieden ophalen
-                WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(getApplicationContext());
-                werkgebiedHelper.updateWerkgebieden(activity, new Callback() {
-                    @Override
-                    public void onTaskCompleted(Object... results) {
-
-                        //Checken of er een werkgebied is, en deze als default zetten
-                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
-
-                        if(werkgebiedID == "" || werkgebiedID == null) {
-                            SharedPreferences.Editor edit = sharedPref.edit();
-                            WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(getApplicationContext());
-                            edit.putString("prikbord_werkgebied", Integer.toString(werkgebiedHelper.getActiveWerkgebieden(getApplicationContext()).get(0).getId()));
-                            edit.commit();
-                        }
-
-                        //Launch next activity
-                        SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-                        Intent goToNextActivity;
-
-                        if(sharedpreferences.getInt("DATA_VERSION", -1) != DataActivity.VERSION) {
-                            goToNextActivity = new Intent(getApplicationContext(), DataActivity.class);
-                        }else{
-                            goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
-                        }
-
-                        startActivity(goToNextActivity);
-                        finish();
-                    }
-                });
+                Intent intent = new Intent(getApplicationContext(), DataService.class);
+                intent.putExtra("ACTION", "WERKGEBIED");
+                startService(intent);
             }
         }, new Callback() {
             @Override
@@ -114,6 +91,54 @@ public class LoginActivity extends BasicActionBarActivity {
                 loadingScreen.setVisibility(View.GONE);
             }
         });
+    }
+
+
+
+    //Setup broadcast listener
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.hasExtra(DataService.WERKGEBIED_FINISHED)) {
+                //Checken of er een werkgebied is, en deze als default zetten
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
+
+                if(werkgebiedID == "" || werkgebiedID == null) {
+                    SharedPreferences.Editor edit = sharedPref.edit();
+                    WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(getApplicationContext());
+                    edit.putString("prikbord_werkgebied", Integer.toString(werkgebiedHelper.getActiveWerkgebieden(getApplicationContext()).get(0).getId()));
+                    edit.commit();
+                }
+
+                //Launch next activity
+                SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+                Intent goToNextActivity;
+
+                if(sharedpreferences.getInt("DATA_VERSION", -1) != DataActivity.VERSION) {
+                    goToNextActivity = new Intent(getApplicationContext(), DataActivity.class);
+                }else{
+                    goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                }
+
+                startActivity(goToNextActivity);
+                finish();
+            }
+        }
+    };
+
+    @Override
+    public void onResume() {
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMessageReceiver,
+                new IntentFilter("DATA_UPDATE"));
+
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMessageReceiver);
+        super.onPause();
     }
 
     private void setFontForObject(TextView obj, Typeface font) {
