@@ -26,6 +26,9 @@ public class WerkgebiedHelper {
     //Temp variables
     Elements werkgebieden = null;
 
+    //Callbacks
+    Callback itemRemovedCallback, itemAddedCallback, itemUpdatedCallback = null;
+
     public WerkgebiedHelper(Context _context) {
         context = _context;
     }
@@ -115,15 +118,38 @@ public class WerkgebiedHelper {
                 werkgebied.setLng(0.0);
             }
 
-            if(!isUpdate)
+            if(!isUpdate) {
                 db.addWerkgebied(werkgebied);
-            else
+                if(itemAddedCallback != null)
+                    itemAddedCallback.onTaskCompleted(werkgebied.getId());
+            }else {
                 db.updateWerkgebied(werkgebied);
+                if(itemUpdatedCallback != null)
+                    itemUpdatedCallback.onTaskCompleted(werkgebied.getId());
+            }
 
             itemFinished.onTaskCompleted(isUpdate, werkgebied);
         }
 
         finished.onTaskCompleted();
+    }
+
+    /**
+     * Add callback to Werkgebied Added event.
+     * Returns a Werkgebied item in the callback
+     * @param callback
+     */
+    public void addItemAddedCallback(Callback callback) {
+        itemAddedCallback = callback;
+    }
+
+    /**
+     * Add callback to Werkgebied Updated event.
+     * Returns a Werkgebied item in the callback
+     * @param callback
+     */
+    public void addItemUpdatedCallback(Callback callback) {
+        itemUpdatedCallback = callback;
     }
 
     /**

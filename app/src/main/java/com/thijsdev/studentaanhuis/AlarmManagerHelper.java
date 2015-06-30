@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.thijsdev.studentaanhuis.Data.DataActivity;
+
 public class AlarmManagerHelper {
     private static AlarmManagerHelper instance = null;
 
@@ -17,21 +19,25 @@ public class AlarmManagerHelper {
     }
 
     public void startAlarms(Context context) {
-        //Read prefrences
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        //Only do this when the data format is up to date
+        SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+        if(sharedpreferences.getInt("DATA_VERSION", -1) == DataActivity.VERSION) {
+            //Read prefrences
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        //Set prikbord timer
-        int PRIKBORD_UPDATE_TIME = Integer.parseInt(sharedPref.getString("prikbord_refreshtime", Integer.toString(60 * 120))) * 1000;
+            //Set prikbord timer
+            int PRIKBORD_UPDATE_TIME = Integer.parseInt(sharedPref.getString("prikbord_refreshtime", Integer.toString(60 * 120))) * 1000;
 
-        //Start timers if OS didn't do that already
-        AlarmManagerBroadcastReceiver ambr = new AlarmManagerBroadcastReceiver();
+            //Start timers if OS didn't do that already
+            AlarmManagerBroadcastReceiver ambr = new AlarmManagerBroadcastReceiver();
 
-        //Only start prikbord timer if the timeout is larger then 60 seconds (safety)!
-        if(PRIKBORD_UPDATE_TIME >= 1000*60) {
-            if (!ambr.checkTimerExists(context)) {
-                ambr.createTimer(context, PRIKBORD_UPDATE_TIME, ambr.PRIKBORD);
-            } else {
-                ambr.updateAlaram(context, PRIKBORD_UPDATE_TIME, ambr.PRIKBORD);
+            //Only start prikbord timer if the timeout is larger then 60 seconds (safety)!
+            if(PRIKBORD_UPDATE_TIME >= 1000*60) {
+                if (!ambr.checkTimerExists(context)) {
+                    ambr.createTimer(context, PRIKBORD_UPDATE_TIME, ambr.PRIKBORD);
+                } else {
+                    ambr.updateAlaram(context, PRIKBORD_UPDATE_TIME, ambr.PRIKBORD);
+                }
             }
         }
     }

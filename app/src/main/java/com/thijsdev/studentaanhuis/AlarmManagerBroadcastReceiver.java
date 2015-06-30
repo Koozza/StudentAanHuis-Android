@@ -15,17 +15,19 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
+import com.thijsdev.studentaanhuis.Data.DataActivity;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordHelper;
-import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
     final public static String ALARM = "alarm";
     final public static String PRIKBORD = "prikbord";
     public static final int REQUEST_CODE = 131131;
+
+    private boolean prikbordNotificationShown = false;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -35,9 +37,11 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 
             //Set prikbord timer
             int PRIKBORD_UPDATE_TIME = Integer.parseInt(sharedPref.getString("prikbord_refreshtime", Integer.toString(60 * 120))) * 1000;
+            SharedPreferences sharedpreferences = context.getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
             if(PRIKBORD_UPDATE_TIME >= 1000*60)
-                createTimer(context, PRIKBORD_UPDATE_TIME, PRIKBORD);
-        }else if ("com.thijsdev.studentaanhuis.TIMER_UPDATE".equals(intent.getAction())) {
+                if(sharedpreferences.getInt("DATA_VERSION", -1) == DataActivity.VERSION)
+                    createTimer(context, PRIKBORD_UPDATE_TIME, PRIKBORD);
+        } else if ("com.thijsdev.studentaanhuis.TIMER_UPDATE".equals(intent.getAction())) {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
             PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SAH ALARM MANAGER");
 
@@ -53,20 +57,37 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
 
                 //Prikbord update
                 if(extras.getString(ALARM).equals(PRIKBORD)) {
+                    Log.v("PRIKBORD", "PRIKBORD UPDATE");
 
-                    PrikbordHelper prikbordHelper = new PrikbordHelper(context);
-                    prikbordHelper.updatePrikbordItems(context, new Callback(), new Callback(), new Callback() {
+                    final PrikbordHelper prikbordHelper = new PrikbordHelper(context);
+
+                    prikbordHelper.addItemAddedCallback(new Callback() {
                         @Override
                         public void onTaskCompleted(Object... results) {
-                            if(((ArrayList<PrikbordItem>) results[0]).size() != 0)
+                            if(!isPrikbordNotifictationShown())
                                 generateNewPrikbordNotification(context);
                         }
                     });
+
+                    prikbordHelper.readPrikbordItems(new Callback() {
+                        @Override
+                        public void onTaskCompleted(Object... results) {
+                            prikbordHelper.processPrikbordItems(new Callback(), new Callback());
+                        }
+                    }, new RetryCallbackFailure(10));
                 }
 
                 wl.release();
             }
         }
+    }
+
+    private boolean isPrikbordNotifictationShown() {
+        if(!prikbordNotificationShown) {
+            prikbordNotificationShown = true;
+            return false;
+        }
+        return true;
     }
 
     public static void createTimer(Context context, int frequency, String identifier) {
