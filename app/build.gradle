@@ -4,16 +4,21 @@ android {
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     defaultConfig {
         applicationId "com.thijsdev.studentaanhuis"
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 15
         versionName "1.2.0 Alpha 2"
+        multiDexEnabled true
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -21,7 +26,13 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:multidex:1.0.0'
     compile 'com.android.support:appcompat-v7:22.0.+'
     compile 'com.android.support:recyclerview-v7:22.+'
+    compile 'com.google.android.gms:play-services:7.5.0'
+    compile 'com.google.api-client:google-api-client:1.20.0'
+    compile 'com.google.api-client:google-api-client-android:1.20.0'
+    compile 'com.google.api-client:google-api-client-gson:1.20.0'
+    compile 'com.google.apis:google-api-services-calendar:v3-rev125-1.20.0'
     compile 'org.jsoup:jsoup:1.7.3'
 }
