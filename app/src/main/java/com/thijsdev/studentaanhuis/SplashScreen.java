@@ -1,12 +1,15 @@
 package com.thijsdev.studentaanhuis;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.widget.TextView;
 
+import com.thijsdev.studentaanhuis.Data.DataActivity;
 import com.thijsdev.studentaanhuis.Login.LoginActivity;
 import com.thijsdev.studentaanhuis.Login.LoginHTTPHandler;
 
@@ -38,7 +41,15 @@ public class SplashScreen extends BasicActionBarActivity {
                 lh.checkLogin(SplashScreen.this, new Callback() {
                     @Override
                     public void onTaskCompleted(Object... results) {
-                        Intent goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                        SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+                        Intent goToNextActivity;
+
+                        if(sharedpreferences.getInt("DATA_VERSION", -1) != DataActivity.VERSION) {
+                            goToNextActivity = new Intent(getApplicationContext(), DataActivity.class);
+                        }else{
+                            goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);
+                        }
+
                         startActivity(goToNextActivity);
                         finish();
                     }
@@ -51,7 +62,7 @@ public class SplashScreen extends BasicActionBarActivity {
                     }
                 });
             }
-        }, 2000);
+        }, 1500);
     }
 
     private void setFontForObject(TextView obj, Typeface font) {

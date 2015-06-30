@@ -1,0 +1,68 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:orientation="vertical"
+    android:background="@color/SAHlightblue"
+    tools:context=".LoginActivity">
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="center"
+        android:src="@drawable/logo"/>
+
+    <Space
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:text="@string/first_time_setup"
+        android:textColor="@color/darkblue"
+        android:gravity="center"
+        android:id="@+id/data_firsttime"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12sp"
+        android:textSize="12sp"
+        android:text="@string/loading_werkgebied"
+        android:textColor="@color/darkblue"
+        android:gravity="center"
+        android:id="@+id/data_state"/>
+
+    <ProgressBar
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:progressDrawable="@drawable/progressbar"
+        android:layout_height="wrap_content"
+        android:layout_width="250sp"
+        android:layout_gravity="center"
+        android:id="@+id/data_progressbar"/>
+
+    <Space
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_weight="0.2"
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        android:textSize="12sp"
+        android:text="Thijs Dalmaijer"
+        android:textColor="@color/darkblue"
+        android:gravity="center"
+        android:id="@+id/splashscreen_creator"/>
+</LinearLayout>

@@ -10,15 +10,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class PrikbordItem {
+public class PrikbordItem implements DatabaseObject {
     private int id, beschikbaar;
     private String type, adres, deadline, beschrijving;
     private double lat, lng;
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

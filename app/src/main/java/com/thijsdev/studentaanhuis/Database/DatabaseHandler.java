@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "SAHInfo";
     private static final String TABLE_PITEMS = "PrikbordItems";
     private static final String TABLE_WERKGEBIEDEN = "Werkgebieden";
@@ -30,14 +30,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_CONTACTS_TABLE);
 
 
-        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(id INTEGER PRIMARY KEY,naam TEXT,iscompleet INTEGER)";
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(_id INTEGER PRIMARY KEY, naam TEXT, isuitbetaald Integer, iscompleet Integer, datum TEXT, loon REAL, mogelijkloon REAL, loonanderemaand REAL)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PITEMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WERKGEBIEDEN);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOONMAAND);
         onCreate(db);
+    }
+
+    public void clearDatabase()
+    {
+        deleteAllPrikbordItems();
+        deleteAllWerkgebieden();
+        deleteAllLoonMaandItems();
     }
 
     /**
@@ -286,9 +295,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("id", item.getId());
         values.put("naam", item.getNaam());
+        values.put("isuitbetaald", item.isUitbetaald());
         values.put("iscompleet", item.isCompleet());
+        values.put("datum", item.getDatum().toString());
+        values.put("loon", item.getLoon());
+        values.put("mogelijkloon", item.getLoonMogelijk());
+        values.put("loonanderemaand", item.getLoonAndereMaand());
 
         // Inserting Row
         db.insert(TABLE_LOONMAAND, null, values);
@@ -299,8 +312,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public LoonMaand getLoonMaand(String naam) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_LOONMAAND, new String[] { "id",
-                        "naam", "iscompleet" }, "naam=?",
+        Cursor cursor = db.query(TABLE_LOONMAAND, new String[] { "_id",
+                        "naam", "isuitbetaald", "iscompleet", "datum", "loon", "mogelijkloon", "loonanderemaand" }, "naam=?",
                 new String[] { naam }, null, null, null, null);
         if (cursor.getCount() > 0)
             cursor.moveToFirst();
@@ -310,7 +323,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         LoonMaand item = new LoonMaand();
         item.setId(cursor.getInt(0));
         item.setNaam(cursor.getString(1));
-        item.setIsCompleet(cursor.getInt(2) == 1);
+        item.setIsUitbetaald(cursor.getInt(2) == 1);
+        item.setIsCompleet(cursor.getInt(3) == 1);
+        item.setDatumFromString(cursor.getString(4));
+        item.setLoon(cursor.getDouble(5));
+        item.setLoonMogelijk(cursor.getDouble(6));
+        item.setLoonAndereMaand(cursor.getDouble(7));
 
         return item;
     }
@@ -328,7 +346,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 LoonMaand item = new LoonMaand();
                 item.setId(cursor.getInt(0));
                 item.setNaam(cursor.getString(1));
-                item.setIsCompleet(cursor.getInt(2) == 1);
+                item.setIsUitbetaald(cursor.getInt(2) == 1);
+                item.setIsCompleet(cursor.getInt(3) == 1);
+                item.setDatumFromString(cursor.getString(4));
+                item.setLoon(cursor.getDouble(5));
+                item.setLoonMogelijk(cursor.getDouble(6));
+                item.setLoonAndereMaand(cursor.getDouble(7));
 
                 loonmaandList.add(item);
             } while (cursor.moveToNext());
@@ -343,9 +366,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("naam", item.getNaam());
+        values.put("isuitbetaald", item.isUitbetaald());
         values.put("iscompleet", item.isCompleet());
+        values.put("datum", item.getDatum().toString());
+        values.put("loon", item.getLoon());
+        values.put("mogelijkloon", item.getLoonMogelijk());
+        values.put("loonanderemaand", item.getLoonAndereMaand());
 
-        return db.update(TABLE_LOONMAAND, values, "id = ?",
-                new String[] { String.valueOf(item.getId()) });
+        return db.update(TABLE_LOONMAAND, values, "naam = ?",
+                new String[] { String.valueOf(item.getNaam()) });
+    }
+
+    // Deleting all items
+    public void deleteAllLoonMaandItems() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_LOONMAAND);
+        db.close();
     }
 }

@@ -33,8 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PrikbordDetailFragment extends Fragment {
-    final private PrikbordHelper prikbordHelper = new PrikbordHelper();
-    private WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
     private GeoLocationHelper locHelper = new GeoLocationHelper();
 
     private MainActivity mainActivity;
@@ -172,6 +170,8 @@ public class PrikbordDetailFragment extends Fragment {
     }
 
     private String getDistanceString(PrikbordItem prikbordItem) {
+        WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(getActivity());
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String werkgebiedID = sharedPref.getString("prikbord_werkgebied", "");
 
@@ -195,21 +195,6 @@ public class PrikbordDetailFragment extends Fragment {
             }
         }else{
             return null;
-        }
-    }
-
-    private void fixNoItemsfound(PrikbordAdapter prikbordAdapter) {
-        for(int i = 0; i<3; i++) {
-            int headerLocation = prikbordAdapter.findItem(i);
-            if(headerLocation+1 < prikbordAdapter.getItemCount()) {
-                if(prikbordAdapter.getItemViewType(headerLocation+1) == 1)
-                    prikbordAdapter.addItem(headerLocation+1, new PrikbordHeader(i+3, getString(R.string.no_prikbord_items_found), true));
-                else if(prikbordAdapter.getItemViewType(headerLocation+1) == 0 && prikbordAdapter.findItem(i+3) != -1)
-                    prikbordAdapter.removeItem(prikbordAdapter.findItem(i+3));
-
-            }else{
-                prikbordAdapter.addItem(headerLocation+1, new PrikbordHeader(i+3, getString(R.string.no_prikbord_items_found), true));
-            }
         }
     }
 
@@ -248,6 +233,7 @@ public class PrikbordDetailFragment extends Fragment {
         final RelativeLayout loadingScreen = (RelativeLayout) mainActivity.findViewById(R.id.main_loading);
         loadingScreen.setVisibility(View.VISIBLE);
 
+        PrikbordHelper prikbordHelper = new PrikbordHelper(mainActivity);
         prikbordHelper.declineItem(mainActivity, prikbordItem, new Callback() {
             @Override
             public void onTaskCompleted(Object... results) {
@@ -255,7 +241,7 @@ public class PrikbordDetailFragment extends Fragment {
                 PrikbordAdapter prikbordAdapter = ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter"));
                 prikbordAdapter.moveItem(prikbordAdapter.findItem(prikbordItem.getId()), prikbordAdapter.findItem(prikbordItem.getBeschikbaar()) + 1);
                 updateStatus(view);
-                fixNoItemsfound(prikbordAdapter);
+                PrikbordHelper.fixNoItemsfound(prikbordAdapter, mainActivity);
                 mainActivity.onBackPressed();
             }
         });
@@ -295,7 +281,7 @@ public class PrikbordDetailFragment extends Fragment {
     }
 
     private void showWerkgebiedDialog(final PrikbordItem prikbordItem, final View view, final String beschikbaarheid) {
-        final WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper();
+        final WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(mainActivity);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
         builder.setTitle(mainActivity.getString(R.string.select_workarea));
@@ -306,6 +292,7 @@ public class PrikbordDetailFragment extends Fragment {
                 final RelativeLayout loadingScreen = (RelativeLayout) mainActivity.findViewById(R.id.main_loading);
                 loadingScreen.setVisibility(View.VISIBLE);
 
+                PrikbordHelper prikbordHelper = new PrikbordHelper(mainActivity);
                 prikbordHelper.acceptItem(mainActivity, prikbordItem, beschikbaarheid, werkgebied, new Callback() {
                     @Override
                     public void onTaskCompleted(Object... results) {
@@ -313,7 +300,7 @@ public class PrikbordDetailFragment extends Fragment {
                         PrikbordAdapter prikbordAdapter = ((PrikbordAdapter) mainActivity.getSharedObject("prikbordAdapter"));
                         prikbordAdapter.moveItem(prikbordAdapter.findItem(prikbordItem.getId()), prikbordAdapter.findItem(prikbordItem.getBeschikbaar()) + 1);
                         updateStatus(view);
-                        fixNoItemsfound(prikbordAdapter);
+                        PrikbordHelper.fixNoItemsfound(prikbordAdapter, mainActivity);
                         mainActivity.onBackPressed();
                     }
                 });
