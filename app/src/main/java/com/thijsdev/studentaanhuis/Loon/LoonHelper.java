@@ -6,6 +6,7 @@ import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.Database.LoonMaand;
 import com.thijsdev.studentaanhuis.GeneralFunctions;
+import com.thijsdev.studentaanhuis.HttpClientClass;
 import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 
 import org.jsoup.Jsoup;
@@ -50,6 +51,14 @@ public class LoonHelper {
             @Override
             public void onTaskCompleted(Object... results) {
                 Document doc = Jsoup.parse((String) results[0]);
+
+                //Getting crash logs in this; figuring out what to do with it
+                if(doc.getElementsByClass("table").size() == 0) {
+                    HttpClientClass httpClientClass = new HttpClientClass();
+                    httpClientClass.giveFeedback(context, "CRASHLOG ALPHA 2_1 LINE 62: Array empty.", (String) results[0]);
+                    return;
+                }
+
                 Element table = doc.getElementsByClass("table").get(0);
                 loonItems = table.getElementsByTag("a");
 

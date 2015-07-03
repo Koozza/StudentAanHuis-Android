@@ -6,15 +6,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 3;
-    private static final String DATABASE_NAME = "SAHInfo";
+    public static final String DATABASE_NAME = "SAHInfo";
     private static final String TABLE_PITEMS = "PrikbordItems";
     private static final String TABLE_WERKGEBIEDEN = "Werkgebieden";
     private static final String TABLE_LOONMAAND = "LoonMaand";
+
+
+    private static final DateFormat databaseDateFormat = new SimpleDateFormat("dd MM yy HH:mm");
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -22,6 +28,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        createTables(db);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        dropTables(db);
+    }
+
+    private void dropTables(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PITEMS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WERKGEBIEDEN);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOONMAAND);
+        onCreate(db);
+    }
+
+    private void createTables(SQLiteDatabase db) {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_PITEMS + "(id INTEGER PRIMARY KEY,adres TEXT,beschrijving TEXT,type TEXT,deadline DATETIME,beschikbaar INTEGER,lat REAL,lng REAL)";
         db.execSQL(CREATE_CONTACTS_TABLE);
 
@@ -34,13 +56,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PITEMS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_WERKGEBIEDEN);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOONMAAND);
-        onCreate(db);
+    public void RecreateDatabase() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        dropTables(db);
+        createTables(db);
     }
+
 
     public void clearDatabase()
     {
@@ -298,7 +319,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("naam", item.getNaam());
         values.put("isuitbetaald", item.isUitbetaald());
         values.put("iscompleet", item.isCompleet());
-        values.put("datum", item.getDatum().toString());
+        values.put("datum", databaseDateFormat.format(item.getDatum()));
         values.put("loon", item.getLoon());
         values.put("mogelijkloon", item.getLoonMogelijk());
         values.put("loonanderemaand", item.getLoonAndereMaand());
@@ -325,7 +346,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         item.setNaam(cursor.getString(1));
         item.setIsUitbetaald(cursor.getInt(2) == 1);
         item.setIsCompleet(cursor.getInt(3) == 1);
-        item.setDatumFromString(cursor.getString(4));
+        try {
+            item.setDatum(databaseDateFormat.parse(cursor.getString(4)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         item.setLoon(cursor.getDouble(5));
         item.setLoonMogelijk(cursor.getDouble(6));
         item.setLoonAndereMaand(cursor.getDouble(7));
@@ -348,7 +373,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 item.setNaam(cursor.getString(1));
                 item.setIsUitbetaald(cursor.getInt(2) == 1);
                 item.setIsCompleet(cursor.getInt(3) == 1);
-                item.setDatumFromString(cursor.getString(4));
+                try {
+                    item.setDatum(databaseDateFormat.parse(cursor.getString(4)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 item.setLoon(cursor.getDouble(5));
                 item.setLoonMogelijk(cursor.getDouble(6));
                 item.setLoonAndereMaand(cursor.getDouble(7));
@@ -368,7 +397,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put("naam", item.getNaam());
         values.put("isuitbetaald", item.isUitbetaald());
         values.put("iscompleet", item.isCompleet());
-        values.put("datum", item.getDatum().toString());
+        values.put("datum", databaseDateFormat.format(item.getDatum()));
         values.put("loon", item.getLoon());
         values.put("mogelijkloon", item.getLoonMogelijk());
         values.put("loonanderemaand", item.getLoonAndereMaand());

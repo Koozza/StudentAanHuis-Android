@@ -67,7 +67,7 @@ class LoonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         NumberFormat defaultFormat = NumberFormat.getCurrencyInstance(new Locale("nl", "NL"));
 
         loonListItem.maand.setText(dateFormat.format(((LoonMaand) mData.get(position)).getDatum()));
-        loonListItem.verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoon() * vat));
+        loonListItem.verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonAndereMaand()) * vat));
         if(getItemViewType(position) == 1) {
             loonListItem.mogelijke_verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoonMogelijk() * vat));
             loonListItem.totaal_mogelijk_verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonMogelijk() + ((LoonMaand) mData.get(position)).getLoonAndereMaand()) * vat));
