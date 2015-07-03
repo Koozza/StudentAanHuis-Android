@@ -108,35 +108,6 @@ public class LoonListFragment extends Fragment implements FragmentInterface {
             intent.putExtra("ACTION", "LOON");
             getActivity().startService(intent);
         }
-
-        /*
-        if (!isRefreshing) {
-            isRefreshing = true;
-            Animation a = AnimationUtils.loadAnimation(mainActivity, R.anim.rotate);
-            a.setRepeatCount(Animation.INFINITE);
-            toolbar.findViewById(R.id.action_refresh).startAnimation(a);
-
-            //TODO: mAdapter.clearItems();
-            LoonHelper loonHelper = new LoonHelper(mainActivity);
-            loonHelper.updateLoon(mainActivity, new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    TreeMap<Date, LoonMaand> loonMaandHashMap = (TreeMap<Date, LoonMaand>) results[0];
-                    for (LoonMaand loonMaand : loonMaandHashMap.values()) {
-                        if(mAdapter.getPostition(loonMaand) == -1)
-                            mAdapter.addItem(0, loonMaand);
-                        else
-                            mAdapter.updateItem(loonMaand);
-                    }
-
-                    //Stop refresh animation
-                    if (toolbar.findViewById(R.id.action_refresh) != null)
-                        toolbar.findViewById(R.id.action_refresh).clearAnimation();
-                    isRefreshing = false;
-                }
-            });
-        }
-        */
     }
 
     //Setup broadcast listener

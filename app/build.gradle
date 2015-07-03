@@ -8,8 +8,8 @@ android {
         applicationId "com.thijsdev.studentaanhuis"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 15
-        versionName "1.2.0 Alpha 2"
+        versionCode 16
+        versionName "1.2.0 Alpha 2_1"
     }
     buildTypes {
         release {
