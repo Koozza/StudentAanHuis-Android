@@ -16,7 +16,7 @@ import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 
 public class DataActivity extends BasicActionBarActivity {
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     Typeface robotoLight, robotoRegular;
     private ProgressBar progressBar;

@@ -44,7 +44,7 @@ public class LoonListFragment extends Fragment implements FragmentInterface {
         View view = inflater.inflate(R.layout.fragment_loon_list, container, false);
 
         mainActivity = (MainActivity) view.getContext();
-        db = new DatabaseHandler(mainActivity);
+        db = DatabaseHandler.getInstance(mainActivity);
         toolbar = mainActivity.getToolbar();
         toolbar.getMenu().clear();
         toolbar.setTitle(getString(R.string.loon));

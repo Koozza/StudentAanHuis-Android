@@ -12,17 +12,28 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+public class DatabaseHandler extends SQLiteOpenHelper  {
     private static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "SAHInfo";
     private static final String TABLE_PITEMS = "PrikbordItems";
     private static final String TABLE_WERKGEBIEDEN = "Werkgebieden";
     private static final String TABLE_LOONMAAND = "LoonMaand";
+    private static final String TABLE_KLANTEN = "Klanten";
+    private static final String TABLE_AFSPRAKEN = "Afspraken";
+
+    private static DatabaseHandler mInstance = null;
 
 
-    private static final DateFormat databaseDateFormat = new SimpleDateFormat("dd MM yy HH:mm");
+    public static final DateFormat databaseDateFormat = new SimpleDateFormat("dd MM yy HH:mm");
 
-    public DatabaseHandler(Context context) {
+    public static DatabaseHandler getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new DatabaseHandler(context);
+        }
+        return mInstance;
+    }
+
+    private DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -40,6 +51,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PITEMS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_WERKGEBIEDEN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOONMAAND);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_KLANTEN);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_AFSPRAKEN);
         onCreate(db);
     }
 
@@ -53,6 +66,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
         CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(_id INTEGER PRIMARY KEY, naam TEXT, isuitbetaald Integer, iscompleet Integer, datum TEXT, loon REAL, mogelijkloon REAL, loonanderemaand REAL)";
+        db.execSQL(CREATE_CONTACTS_TABLE);
+
+
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_KLANTEN + "(_id INTEGER PRIMARY KEY, klantnummer TEXT, naam TEXT, adres TEXT, email TEXT, tel1 TEXT, tel2 TEXT)";
+        db.execSQL(CREATE_CONTACTS_TABLE);
+
+
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_AFSPRAKEN + "(_id INTEGER PRIMARY KEY, klant TEXT, omschrijving TEXT, start TEXT, end TEXT)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
@@ -68,6 +89,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         deleteAllPrikbordItems();
         deleteAllWerkgebieden();
         deleteAllLoonMaandItems();
+        deleteAllKlanten();
     }
 
     /**
@@ -410,6 +432,203 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void deleteAllLoonMaandItems() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLE_LOONMAAND);
+        db.close();
+    }
+
+    /**
+     * All CRUD functions for Klanten
+     */
+
+    //New item
+    public void addKlant(Klant item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("klantnummer", item.getKlantnummer());
+        values.put("naam", item.getNaam());
+        values.put("adres", item.getAdres());
+        values.put("email", item.getEmail());
+        values.put("tel1", item.getTel1());
+        values.put("tel2", item.getTel2());
+
+        // Inserting Row
+        db.insert(TABLE_KLANTEN, null, values);
+        db.close();
+    }
+
+    // Get Single Item
+    public Klant getKlant(String klantnummer) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_KLANTEN, new String[] { "_id",
+                        "klantnummer", "naam", "adres", "email", "tel1", "tel2" }, "klantnummer=?",
+                new String[] { klantnummer }, null, null, null, null);
+        if (cursor.getCount() > 0)
+            cursor.moveToFirst();
+        else
+            return null;
+
+        Klant item = new Klant();
+        item.setId(cursor.getInt(0));
+        item.setKlantnummer(cursor.getString(1));
+        item.setNaam(cursor.getString(2));
+        item.setAdres(cursor.getString(3));
+        item.setEmail(cursor.getString(4));
+        item.setTel1(cursor.getString(5));
+        item.setTel2(cursor.getString(6));
+
+        return item;
+    }
+
+    // Get All Items
+    public List<Klant> getKlanten() {
+        List<Klant> klantList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_KLANTEN;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Klant item = new Klant();
+                item.setId(cursor.getInt(0));
+                item.setKlantnummer(cursor.getString(1));
+                item.setNaam(cursor.getString(2));
+                item.setAdres(cursor.getString(3));
+                item.setEmail(cursor.getString(4));
+                item.setTel1(cursor.getString(5));
+                item.setTel2(cursor.getString(6));
+
+                klantList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+
+        return klantList;
+    }
+    // Updating item
+    public int updateKlant(Klant item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("klantnummer", item.getKlantnummer());
+        values.put("naam", item.getNaam());
+        values.put("adres", item.getAdres());
+        values.put("email", item.getEmail());
+        values.put("tel1", item.getTel1());
+        values.put("tel2", item.getTel2());
+
+        return db.update(TABLE_KLANTEN, values, "klantnummer = ?",
+                new String[] { String.valueOf(item.getKlantnummer()) });
+    }
+
+    // Deleting all items
+    public void deleteAllKlanten() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_KLANTEN);
+        db.close();
+    }
+
+    /**
+     * All CRUD functions for Afspraken
+     */
+
+    //New item
+    public void addAfspraak(Afspraak item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("klant", item.getKlant().getKlantnummer());
+        values.put("omschrijving", item.getOmschrijving());
+        values.put("start", databaseDateFormat.format(item.getStart()));
+        values.put("end", databaseDateFormat.format(item.getEnd()));
+
+        // Inserting Row
+        db.insert(TABLE_AFSPRAKEN, null, values);
+        db.close();
+    }
+
+    // Get Single Item
+    public Afspraak getAfspraak(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_AFSPRAKEN, new String[] { "_id",
+                        "klant", "omschrijving", "start" , "end" }, "_id=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+        if (cursor.getCount() > 0)
+            cursor.moveToFirst();
+        else
+            return null;
+
+        Afspraak item = new Afspraak();
+        item.setId(cursor.getInt(0));
+        item.setKlant(getKlant(cursor.getString(1)));
+        item.setOmschrijving(cursor.getString(2));
+        try {
+            item.setStart(databaseDateFormat.parse(cursor.getString(3)));
+            item.setEnd(databaseDateFormat.parse(cursor.getString(4)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return item;
+    }
+
+    // Get All Items
+    public List<Afspraak> getAfspraken() {
+        List<Afspraak> afsprakenList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_AFSPRAKEN;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Afspraak item = new Afspraak();
+                item.setId(cursor.getInt(0));
+                item.setKlant(getKlant(cursor.getString(1)));
+                item.setOmschrijving(cursor.getString(2));
+                try {
+                    item.setStart(databaseDateFormat.parse(cursor.getString(3)));
+                    item.setEnd(databaseDateFormat.parse(cursor.getString(4)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                afsprakenList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+
+        return afsprakenList;
+    }
+
+    // Updating item
+    public int updateAfspraak(Afspraak item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("klant", item.getKlant().getKlantnummer());
+        values.put("omschrijving", item.getOmschrijving());
+        values.put("start", databaseDateFormat.format(item.getStart()));
+        values.put("end", databaseDateFormat.format(item.getEnd()));
+
+        return db.update(TABLE_AFSPRAKEN, values, "_id = ?",
+                new String[] { String.valueOf(item.getId()) });
+    }
+
+    // Deleting item
+    public void deleteAfspraak(Afspraak item) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_AFSPRAKEN, "_id = ?",
+                new String[]{String.valueOf(item.getId())});
+        db.close();
+    }
+
+    // Deleting all items
+    public void deleteAllAfspraken() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_AFSPRAKEN);
         db.close();
     }
 }

@@ -89,7 +89,7 @@ public class PrikbordHelper {
         if (prikbordItems == null)
             throw new RuntimeException("werkgebieden is null. Call readWerkgebieden() first.");
 
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
 
         //Soms zijn er geen prikbord items, dus gelijk een callback aanroepen doen.
         if(countPrikbordItems() == 0)
@@ -193,87 +193,8 @@ public class PrikbordHelper {
         itemUpdatedCallback = callback;
     }
 
-    /**
-     * DEPRECATED
-     */
-    public void updatePrikbordItems(final Context context, final Callback existingItemCallback, final Callback newItemCallback, final Callback callback) {
-        /*
-        final DatabaseHandler db = new DatabaseHandler(context);
-        final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
-
-        prikbordHttpHandler.getPrikbordItems(context, new Callback() {
-            @Override
-            public void onTaskCompleted(Object... results) {
-
-                for (Element tr : trs) {
-                    Elements tds = tr.select("td");
-
-                    if (tds.size() > 3) {
-                        gotItem = true;
-                        int id = Integer.parseInt(tds.get(3).children().first().attr("href").split("/")[3]);
-                        final boolean heeftGereageerd = tds.get(3).children().first().text().contains("ingeschreven");
-
-                        PrikbordItem piDB = db.getPrikbordItem(id);
-                        if (piDB == null) {
-                            final PrikbordItem pi = new PrikbordItem();
-                            pi.setType(tds.get(0).text());
-                            pi.setAdres(tds.get(1).text());
-                            pi.setDeadlineFromWebsite(tds.get(2).text());
-                            pi.setId(id);
-
-                            //Ophalen van details
-                            prikbordHttpHandler.getPrikbordItem(context, id, new Callback() {
-                                @Override
-                                public void onTaskCompleted(Object... result) {
-                                    Document doc = Jsoup.parse((String) result[0]);
-                                    String omschrijving = doc.getElementsByClass("widget").first().children().last().text();
-                                    pi.setBeschrijving(omschrijving);
-
-                                    String checked_yes = doc.getElementById("pinboard_note_response_is_available_yes").attr("checked");
-                                    String checked_no = doc.getElementById("pinboard_note_response_is_available_no").attr("checked");
-                                    if (!heeftGereageerd)
-                                        pi.setBeschikbaar(0);
-                                    else if (checked_no.equals("checked"))
-                                        pi.setBeschikbaar(1);
-                                    else if (checked_yes.equals("checked"))
-                                        pi.setBeschikbaar(2);
-
-                                    String loc = doc.getElementById("appt_map_canvas").attr("data-positions").substring(1, doc.getElementById("appt_map_canvas").attr("data-positions").length() - 1);
-                                    String[] coords = loc.split(",");
-
-                                    pi.setLat(Double.parseDouble(coords[0]));
-                                    pi.setLng(Double.parseDouble(coords[1]));
-
-                                    db.addPrikbordItem(pi);
-                                    newItems.add(pi);
-                                    newItemCallback.onTaskCompleted(pi);
-
-                                    isFinalPrikbordUpdate(totalItems, callback);
-                                }
-                            }, new Callback() {
-                                @Override
-                                public void onTaskCompleted(Object... results) {
-                                    isFinalPrikbordUpdate(totalItems, callback);
-                                }
-                            });
-                        } else {
-                            existingItemCallback.onTaskCompleted(piDB);
-                            isFinalPrikbordUpdate(totalItems, callback);
-                        }
-                    }
-                }
-            }
-        }, new Callback() {
-            @Override
-            public void onTaskCompleted(Object... results) {
-                callback.onTaskCompleted(newItems);
-            }
-        });
-        */
-    }
-
     public void declineItem(final Context context, final PrikbordItem item, final Callback callback) {
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
         prikbordHttpHandler.declineItem(item.getId(), context, new Callback() {
@@ -293,7 +214,7 @@ public class PrikbordHelper {
     }
 
     public void acceptItem(final Context context, final PrikbordItem item, final String beschikbaarheid, final Werkgebied werkgebied, final Callback callback) {
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
         final PrikbordHTTPHandler prikbordHttpHandler = new PrikbordHTTPHandler();
 
         prikbordHttpHandler.acceptItem(item.getId(), beschikbaarheid, werkgebied.getId(), context, new Callback() {

@@ -1,6 +1,5 @@
 package com.thijsdev.studentaanhuis.Werkgebied;
 
-import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 
@@ -81,7 +80,7 @@ public class WerkgebiedHelper {
         if(werkgebieden == null)
             throw new RuntimeException("werkgebieden is null. Call readWerkgebieden() first.");
 
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
 
         for (Element tr : werkgebieden) {
             Elements tds = tr.select("td");
@@ -152,14 +151,8 @@ public class WerkgebiedHelper {
         itemUpdatedCallback = callback;
     }
 
-    /**
-     * DEPRECATED
-     */
-    public void updateWerkgebieden(final Activity activity, final Callback callback) {
-    }
-
     public CharSequence[] getWerkgebiedenArray(Context context) {
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
 
         ArrayList<String> werkgebieden = new ArrayList<String>();
         for(Werkgebied werkgebied : db.getActiveWerkgebieden()) {
@@ -170,7 +163,7 @@ public class WerkgebiedHelper {
     }
 
     public CharSequence[] getWerkgebiedenIDArray(Context context) {
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
 
         ArrayList<String> werkgebieden = new ArrayList<String>();
         for(Werkgebied werkgebied : db.getActiveWerkgebieden()) {
@@ -181,13 +174,13 @@ public class WerkgebiedHelper {
     }
 
     public List<Werkgebied> getActiveWerkgebieden(Context context) {
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
 
         return db.getActiveWerkgebieden();
     }
 
     public Location getFirstWerkgebiedLocation(Context context) {
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
         List<Werkgebied> werkgebieden = db.getActiveWerkgebieden();
         if(werkgebieden.size() == 0)
             return null;
@@ -196,17 +189,11 @@ public class WerkgebiedHelper {
     }
 
     public Location getLocationFromWerkgebied(Context context, String WerkgebiedId) {
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
         Werkgebied werkgebied = db.getWerkgebied(Integer.parseInt(WerkgebiedId));
         if(werkgebied == null)
             return null;
 
         return db.getActiveWerkgebieden().get(0).getLocation();
-    }
-
-    public void forceUpdateWerkgebieden(final Activity activity, Callback callback) {
-        final DatabaseHandler db = new DatabaseHandler(activity);
-        db.deleteAllWerkgebieden();
-        updateWerkgebieden(activity, callback);
     }
 }
