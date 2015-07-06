@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,6 +37,12 @@ public class DataActivity extends BasicActionBarActivity {
 
         //Clear existing database
         getApplicationContext().deleteDatabase(DatabaseHandler.DATABASE_NAME);
+
+        //Clear first run settings
+        SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedpreferences.edit();
+        edit.remove("KalenderLastRun");
+        edit.commit();
 
         //Launch service
         Intent intent = new Intent(this, DataService.class);

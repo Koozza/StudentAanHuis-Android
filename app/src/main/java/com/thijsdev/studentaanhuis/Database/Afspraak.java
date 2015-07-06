@@ -5,7 +5,9 @@ import java.util.Date;
 public class Afspraak implements DatabaseObject {
     private int id;
     private Klant klant;
+    private String tags;
     private String omschrijving;
+    private String pin;
     private Date start;
     private Date end;
 
@@ -117,5 +119,21 @@ public class Afspraak implements DatabaseObject {
 
     public void setSalarisronde(Date salarisronde) {
         this.salarisronde = salarisronde;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 }

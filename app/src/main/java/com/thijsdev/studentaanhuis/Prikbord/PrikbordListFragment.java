@@ -17,13 +17,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.Data.DataService;
 import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.DividerItemDecoration;
 import com.thijsdev.studentaanhuis.FragmentInterface;
-import com.thijsdev.studentaanhuis.Kalender.KalenderHelper;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 
@@ -101,9 +99,6 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
 
             mAdapter.addItem(mAdapter.findItem(prikbordItem.getBeschikbaar()) + 1, prikbordItem);
         }
-
-        KalenderHelper kalenderHelper = new KalenderHelper(getActivity());
-        kalenderHelper.processKalenderItems(new Callback(), new Callback());
     }
 
     public void updatePrikbordItems() {

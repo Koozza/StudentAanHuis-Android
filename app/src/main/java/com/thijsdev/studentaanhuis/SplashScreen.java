@@ -44,7 +44,7 @@ public class SplashScreen extends BasicActionBarActivity {
                         SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
                         Intent goToNextActivity;
 
-                        if(sharedpreferences.getInt("DATA_VERSION", -1) != DataActivity.VERSION) {
+                        if(sharedpreferences.getInt("DATA_VERSION", -1) == DataActivity.VERSION) {
                             goToNextActivity = new Intent(getApplicationContext(), DataActivity.class);
                         }else{
                             goToNextActivity = new Intent(getApplicationContext(), MainActivity.class);

@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper  {
@@ -24,7 +25,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
     private static DatabaseHandler mInstance = null;
 
 
-    public static final DateFormat databaseDateFormat = new SimpleDateFormat("dd MM yy HH:mm");
+    public static final DateFormat databaseDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static DatabaseHandler getInstance(Context context) {
         if (mInstance == null) {
@@ -65,7 +66,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         db.execSQL(CREATE_CONTACTS_TABLE);
 
 
-        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(_id INTEGER PRIMARY KEY, naam TEXT, isuitbetaald Integer, iscompleet Integer, datum TEXT, loon REAL, mogelijkloon REAL, loonanderemaand REAL)";
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_LOONMAAND + "(_id INTEGER PRIMARY KEY, naam TEXT, isuitbetaald Integer, iscompleet Integer, datum DATETIME, loon REAL, mogelijkloon REAL, loonanderemaand REAL)";
         db.execSQL(CREATE_CONTACTS_TABLE);
 
 
@@ -73,7 +74,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         db.execSQL(CREATE_CONTACTS_TABLE);
 
 
-        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_AFSPRAKEN + "(_id INTEGER PRIMARY KEY, klant TEXT, omschrijving TEXT, start TEXT, end TEXT)";
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_AFSPRAKEN + "(_id INTEGER PRIMARY KEY, klant TEXT, omschrijving TEXT, tags TEXT, pin TEXT, start DATETIME, end DATETIME)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
@@ -460,9 +461,9 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
     public Klant getKlant(String klantnummer) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_KLANTEN, new String[] { "_id",
-                        "klantnummer", "naam", "adres", "email", "tel1", "tel2" }, "klantnummer=?",
-                new String[] { klantnummer }, null, null, null, null);
+        Cursor cursor = db.query(TABLE_KLANTEN, new String[]{"_id",
+                        "klantnummer", "naam", "adres", "email", "tel1", "tel2"}, "klantnummer=?",
+                new String[]{klantnummer}, null, null, null, null);
         if (cursor.getCount() > 0)
             cursor.moveToFirst();
         else
@@ -540,6 +541,8 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         ContentValues values = new ContentValues();
         values.put("klant", item.getKlant().getKlantnummer());
         values.put("omschrijving", item.getOmschrijving());
+        values.put("tags", item.getTags());
+        values.put("pin", item.getPin());
         values.put("start", databaseDateFormat.format(item.getStart()));
         values.put("end", databaseDateFormat.format(item.getEnd()));
 
@@ -553,7 +556,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_AFSPRAKEN, new String[] { "_id",
-                        "klant", "omschrijving", "start" , "end" }, "_id=?",
+                        "klant", "omschrijving", "tags", "pin", "start" , "end" }, "_id=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor.getCount() > 0)
             cursor.moveToFirst();
@@ -564,9 +567,11 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         item.setId(cursor.getInt(0));
         item.setKlant(getKlant(cursor.getString(1)));
         item.setOmschrijving(cursor.getString(2));
+        item.setTags(cursor.getString(3));
+        item.setPin(cursor.getString(4));
         try {
-            item.setStart(databaseDateFormat.parse(cursor.getString(3)));
-            item.setEnd(databaseDateFormat.parse(cursor.getString(4)));
+            item.setStart(databaseDateFormat.parse(cursor.getString(5)));
+            item.setEnd(databaseDateFormat.parse(cursor.getString(6)));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -588,9 +593,42 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
                 item.setId(cursor.getInt(0));
                 item.setKlant(getKlant(cursor.getString(1)));
                 item.setOmschrijving(cursor.getString(2));
+                item.setTags(cursor.getString(3));
+                item.setPin(cursor.getString(4));
                 try {
-                    item.setStart(databaseDateFormat.parse(cursor.getString(3)));
-                    item.setEnd(databaseDateFormat.parse(cursor.getString(4)));
+                    item.setStart(databaseDateFormat.parse(cursor.getString(5)));
+                    item.setEnd(databaseDateFormat.parse(cursor.getString(6)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                afsprakenList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+
+        return afsprakenList;
+    }
+
+    // Get All Items
+    public List<Afspraak> getAfsprakenBetween(Date date1, Date date2) {
+        List<Afspraak> afsprakenList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_AFSPRAKEN + " WHERE start BETWEEN \"" + databaseDateFormat.format(date1) + "\" AND \"" + databaseDateFormat.format(date2) + "\";";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Afspraak item = new Afspraak();
+                item.setId(cursor.getInt(0));
+                item.setKlant(getKlant(cursor.getString(1)));
+                item.setOmschrijving(cursor.getString(2));
+                item.setTags(cursor.getString(3));
+                item.setPin(cursor.getString(4));
+                try {
+                    item.setStart(databaseDateFormat.parse(cursor.getString(5)));
+                    item.setEnd(databaseDateFormat.parse(cursor.getString(6)));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -610,6 +648,8 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         ContentValues values = new ContentValues();
         values.put("klant", item.getKlant().getKlantnummer());
         values.put("omschrijving", item.getOmschrijving());
+        values.put("tags", item.getTags());
+        values.put("pin", item.getPin());
         values.put("start", databaseDateFormat.format(item.getStart()));
         values.put("end", databaseDateFormat.format(item.getEnd()));
 
