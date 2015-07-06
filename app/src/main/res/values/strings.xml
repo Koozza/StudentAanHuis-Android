@@ -33,6 +33,8 @@
     <string name="denied">Afgewezen</string>
     <string name="accepted">Aangenomen</string>
     <string name="loon">Loon</string>
+    <string name="customers">Klanten</string>
+    <string name="calendar">Agenda</string>
     <string name="algemeen">Algemeen</string>
     <string name="verdiensten">Verdiensten:</string>
     <string name="mogelijke_verdiensten">Mogelijke Verdiensten:</string>
