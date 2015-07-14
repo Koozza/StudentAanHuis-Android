@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="75sp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF"
+    android:layout_gravity="center_horizontal"
+    android:id="@+id/kalender_item_container">
+        <TextView
+            android:layout_width="75sp"
+            android:layout_height="fill_parent"
+            android:text="12:00"
+            android:gravity="center|bottom"/>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:background="@drawable/kalender_border"
+            android:paddingLeft="16sp">
+
+        </LinearLayout>
+</LinearLayout>

@@ -256,7 +256,7 @@ public class LoonHelper {
                         if(!tr.children().get(4).text().equals(""))
                             loonMaandHashMap.get(date).setIsUitbetaald(true);
 
-                        if(pageDate.equals(format.format(date)) && )
+                        if(pageDate.equals(format.format(date)))
                             loonMaandHashMap.get(date).addLoonZeker(price);
                         else
                             loonMaandHashMap.get(date).addLoonAndereMaand(price);

@@ -62,7 +62,7 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.loonList);
         mRecyclerView.setHasFixedSize(false);
 
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL_LIST));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL_LIST));
 
         mLayoutManager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);

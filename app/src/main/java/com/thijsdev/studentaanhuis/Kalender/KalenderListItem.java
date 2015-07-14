@@ -19,7 +19,7 @@ public class KalenderListItem extends RecyclerView.ViewHolder implements View.On
 
     public KalenderListItem(View itemView) {
         super(itemView);
-        maand = (TextView) itemView.findViewById(R.id.loon_maand);
+        /*maand = (TextView) itemView.findViewById(R.id.loon_maand);
         aantal_afspraken_label = (TextView) itemView.findViewById(R.id.loon_aantal_afspraken_label);
         aantal_afspraken = (TextView) itemView.findViewById(R.id.loon_aantal_afspraken);
         aantal_servicevragen_label = (TextView) itemView.findViewById(R.id.loon_aantal_servicevragen_label);
@@ -30,13 +30,12 @@ public class KalenderListItem extends RecyclerView.ViewHolder implements View.On
         totaal_mogelijk_verdiensten = (TextView) itemView.findViewById(R.id.loon_totaal_mogelijk_verdiensten);
         verdiensten = (TextView) itemView.findViewById(R.id.loon_verdiensten);
         verdiensten_label = (TextView) itemView.findViewById(R.id.loon_verdiensten_label);
-        itemView.findViewById(R.id.prikbord_item).setOnClickListener(this);
+        itemView.findViewById(R.id.prikbord_item).setOnClickListener(this);*/
     }
 
     public interface ClickListener
     {
         public void onClick(View v, int position);
-
     }
 
     public void setClickListener(ClickListener clickListener) {

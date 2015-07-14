@@ -35,26 +35,26 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View itemView;
 
-        if(viewType == 0)
-            itemView = inflater.inflate(R.layout.snipet_loon_item_small, viewGroup, false);
-        else
-            itemView = inflater.inflate(R.layout.snipet_loon_item, viewGroup, false);
+        itemView = inflater.inflate(R.layout.snipet_kalender_item, viewGroup, false);
 
         return new KalenderListItem(itemView);
     }
 
     @Override
     public int getItemViewType(int position) {
+        return 0;
+        /*
         if(((LoonMaand)mData.get(position)).getLoonMogelijk() == 0)
             return 0;
         else
-            return 1;
+            return 1;*/
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         KalenderListItem kalenderListItem = (KalenderListItem)viewHolder;
 
+        /*
         //Check if we should substract VAT
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         Double vat = 1d;
@@ -89,7 +89,7 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
             kalenderListItem.totaal_mogelijk_verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
             kalenderListItem.totaal_mogelijk_verdiensten.setTypeface(((MainActivity) context).robotoRegular);
         }
-
+*/
         //set empty click handler, to prevent crash
         kalenderListItem.setClickListener(new KalenderListItem.ClickListener() {
             @Override
