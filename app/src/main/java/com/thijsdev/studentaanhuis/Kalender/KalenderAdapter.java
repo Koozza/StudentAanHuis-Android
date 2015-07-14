@@ -17,11 +17,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-class LoonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private ArrayList<Object> mData = new ArrayList<>();
     private Context context;
 
-    public LoonAdapter(Context _context) {
+    public KalenderAdapter(Context _context) {
         context = _context;
     }
 
@@ -40,7 +40,7 @@ class LoonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         else
             itemView = inflater.inflate(R.layout.snipet_loon_item, viewGroup, false);
 
-        return new LoonListItem(itemView);
+        return new KalenderListItem(itemView);
     }
 
     @Override
@@ -53,7 +53,7 @@ class LoonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        LoonListItem loonListItem = (LoonListItem)viewHolder;
+        KalenderListItem kalenderListItem = (KalenderListItem)viewHolder;
 
         //Check if we should substract VAT
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -66,32 +66,32 @@ class LoonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", new Locale("nl", "NL"));
         NumberFormat defaultFormat = NumberFormat.getCurrencyInstance(new Locale("nl", "NL"));
 
-        loonListItem.maand.setText(dateFormat.format(((LoonMaand) mData.get(position)).getDatum()));
-        loonListItem.verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonAndereMaand()) * vat));
+        kalenderListItem.maand.setText(dateFormat.format(((LoonMaand) mData.get(position)).getDatum()));
+        kalenderListItem.verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonAndereMaand()) * vat));
         if(getItemViewType(position) == 1) {
-            loonListItem.mogelijke_verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoonMogelijk() * vat));
-            loonListItem.totaal_mogelijk_verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonMogelijk() + ((LoonMaand) mData.get(position)).getLoonAndereMaand()) * vat));
+            kalenderListItem.mogelijke_verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoonMogelijk() * vat));
+            kalenderListItem.totaal_mogelijk_verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonMogelijk() + ((LoonMaand) mData.get(position)).getLoonAndereMaand()) * vat));
         }
-        loonListItem.aantal_afspraken.setText(Integer.toString(((LoonMaand) mData.get(position)).getAfspraken()));
-        loonListItem.aantal_servicevragen.setText(Integer.toString(((LoonMaand) mData.get(position)).getServicevragen()));
+        kalenderListItem.aantal_afspraken.setText(Integer.toString(((LoonMaand) mData.get(position)).getAfspraken()));
+        kalenderListItem.aantal_servicevragen.setText(Integer.toString(((LoonMaand) mData.get(position)).getServicevragen()));
 
         //Set fonts
-        loonListItem.maand.setTypeface(((MainActivity) context).robotoMedium);
-        loonListItem.verdiensten.setTypeface(((MainActivity) context).robotoRegular);
-        loonListItem.verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
-        loonListItem.aantal_afspraken_label.setTypeface(((MainActivity) context).robotoRegular);
-        loonListItem.aantal_afspraken.setTypeface(((MainActivity) context).robotoRegular);
-        loonListItem.aantal_servicevragen_label.setTypeface(((MainActivity) context).robotoRegular);
-        loonListItem.aantal_servicevragen.setTypeface(((MainActivity) context).robotoRegular);
+        kalenderListItem.maand.setTypeface(((MainActivity) context).robotoMedium);
+        kalenderListItem.verdiensten.setTypeface(((MainActivity) context).robotoRegular);
+        kalenderListItem.verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
+        kalenderListItem.aantal_afspraken_label.setTypeface(((MainActivity) context).robotoRegular);
+        kalenderListItem.aantal_afspraken.setTypeface(((MainActivity) context).robotoRegular);
+        kalenderListItem.aantal_servicevragen_label.setTypeface(((MainActivity) context).robotoRegular);
+        kalenderListItem.aantal_servicevragen.setTypeface(((MainActivity) context).robotoRegular);
         if(getItemViewType(position) == 1) {
-            loonListItem.mogelijke_verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
-            loonListItem.mogelijke_verdiensten.setTypeface(((MainActivity) context).robotoRegular);
-            loonListItem.totaal_mogelijk_verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
-            loonListItem.totaal_mogelijk_verdiensten.setTypeface(((MainActivity) context).robotoRegular);
+            kalenderListItem.mogelijke_verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
+            kalenderListItem.mogelijke_verdiensten.setTypeface(((MainActivity) context).robotoRegular);
+            kalenderListItem.totaal_mogelijk_verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
+            kalenderListItem.totaal_mogelijk_verdiensten.setTypeface(((MainActivity) context).robotoRegular);
         }
 
         //set empty click handler, to prevent crash
-        loonListItem.setClickListener(new LoonListItem.ClickListener() {
+        kalenderListItem.setClickListener(new KalenderListItem.ClickListener() {
             @Override
             public void onClick(View v, int pos) {
                 //Nothing

@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:onClick="menuClick"
-        android:tag="loon"
+        android:tag="kalender"
         android:id="@+id/menu_calendar">
         <ImageView
             android:layout_width="25sp"
@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:onClick="menuClick"
-        android:tag="loon"
+        android:tag="klanten"
         android:id="@+id/menu_customers">
         <ImageView
             android:layout_width="25sp"

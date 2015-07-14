@@ -28,14 +28,14 @@ import com.thijsdev.studentaanhuis.R;
 import java.util.Date;
 import java.util.TreeMap;
 
-public class LoonListFragment extends Fragment implements FragmentInterface {
+public class KalenderListFragment extends Fragment implements FragmentInterface {
     DatabaseHandler db;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private MainActivity mainActivity;
     private Toolbar toolbar;
 
-    public LoonAdapter mAdapter;
+    public KalenderAdapter mAdapter;
 
     private boolean isRefreshing = false;
 
@@ -47,16 +47,16 @@ public class LoonListFragment extends Fragment implements FragmentInterface {
         db = DatabaseHandler.getInstance(mainActivity);
         toolbar = mainActivity.getToolbar();
         toolbar.getMenu().clear();
-        toolbar.setTitle(getString(R.string.loon));
+        toolbar.setTitle(getString(R.string.calendar));
         toolbar.inflateMenu(R.menu.menu_loon);
         toolbar.setNavigationIcon(null);
 
         registerToolbarClick();
 
-        if(mainActivity.getSharedObject("loonAdapter") == null) {
-            mAdapter = (LoonAdapter) mainActivity.addSharedObject("loonAdapter", new LoonAdapter(mainActivity));
+        if(mainActivity.getSharedObject("kalenderAdapter") == null) {
+            mAdapter = (KalenderAdapter) mainActivity.addSharedObject("kalenderAdapter", new KalenderAdapter(mainActivity));
         }else{
-            mAdapter = (LoonAdapter) mainActivity.getSharedObject("loonAdapter");
+            mAdapter = (KalenderAdapter) mainActivity.getSharedObject("kalenderAdapter");
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.loonList);
@@ -167,11 +167,11 @@ public class LoonListFragment extends Fragment implements FragmentInterface {
 
     @Override
     public int getDrawerId() {
-        return R.id.menu_loon;
+        return R.id.menu_calendar;
     }
 
     @Override
     public String getTitle() {
-        return getResources().getString(R.string.loon);
+        return getResources().getString(R.string.calendar);
     }
 }

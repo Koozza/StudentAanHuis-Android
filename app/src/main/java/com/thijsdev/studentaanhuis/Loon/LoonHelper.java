@@ -71,10 +71,12 @@ public class LoonHelper {
                             Date datum = format.parse(GeneralFunctions.fixDate(e.children().get(0).text()));
                             loonMaand.setDatum(datum);
                             loonMaand.setNaam(e.children().get(0).text());
-                            if (e.children().get(1).text().equals(e.children().get(4).text()))
+                            if (!e.children().get(1).text().equals(e.children().get(4).text()))
                                 finishedMonths.add(loonMaand);
                         }else{
                             loonMaand = db.getLoonMaand(e.children().get(0).text());
+                            if (!e.children().get(1).text().equals(e.children().get(4).text()))
+                                finishedMonths.add(loonMaand);
                         }
 
                         //Set values to 0 if it's not completed yet
@@ -254,7 +256,7 @@ public class LoonHelper {
                         if(!tr.children().get(4).text().equals(""))
                             loonMaandHashMap.get(date).setIsUitbetaald(true);
 
-                        if(pageDate.equals(format.format(date)))
+                        if(pageDate.equals(format.format(date)) && )
                             loonMaandHashMap.get(date).addLoonZeker(price);
                         else
                             loonMaandHashMap.get(date).addLoonAndereMaand(price);
@@ -295,7 +297,8 @@ public class LoonHelper {
 
             //Maanden die klaar zijn op Compleet zetten
             for(LoonMaand loonMaand : finishedMonths) {
-                loonMaand.setIsCompleet(true);
+                if(loonMaand.isUitbetaald())
+                    loonMaand.setIsCompleet(true);
 
                 databaseHandler.updateLoonMaand(loonMaand);
             }
