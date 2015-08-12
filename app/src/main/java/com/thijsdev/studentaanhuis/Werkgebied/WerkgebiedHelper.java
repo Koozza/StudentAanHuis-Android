@@ -47,7 +47,7 @@ public class WerkgebiedHelper {
             @Override
             public void onTaskCompleted(Object... results) {
                 Document doc = Jsoup.parse((String) results[0]);
-                werkgebieden = doc.select("tr:has(td)");
+                werkgebieden = doc.getElementsByClass("work-area-item");
 
                 finished.onTaskCompleted(werkgebieden);
             }

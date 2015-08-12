@@ -211,7 +211,7 @@ public class PrikbordHelper {
                     if (tds.size() > 3) {
                         gotItem = true;
                         int id = Integer.parseInt(tds.get(3).children().first().attr("href").split("/")[3]);
-                        final boolean heeftGereageerd = tds.get(3).children().first().text().contains("ingeschreven");
+                        final boolean heeftGereageerd = tds.get(3).children().first().text().contains("gereageerd");
 
                         PrikbordItem piDB = db.getPrikbordItem(id);
                         if (piDB == null) {
@@ -226,7 +226,7 @@ public class PrikbordHelper {
                                 @Override
                                 public void onTaskCompleted(Object... result) {
                                     Document doc = Jsoup.parse((String) result[0]);
-                                    String omschrijving = doc.getElementsByClass("widget").first().children().last().text();
+                                    String omschrijving = doc.getElementsByTag("p").first().text();
                                     pi.setBeschrijving(omschrijving);
 
                                     String checked_yes = doc.getElementById("pinboard_note_response_is_available_yes").attr("checked");
