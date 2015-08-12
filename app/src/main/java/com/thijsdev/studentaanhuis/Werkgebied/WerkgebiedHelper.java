@@ -83,9 +83,8 @@ public class WerkgebiedHelper {
 
         final DatabaseHandler db = new DatabaseHandler(context);
 
-        for (Element tr : werkgebieden) {
-            Elements tds = tr.select("td");
-            int id = Integer.parseInt(tds.get(0).child(0).attr("work_area_id"));
+        for (Element area : werkgebieden) {
+            int id = Integer.parseInt(area.getElementsByTag("input").get(0).attr("work_area_id"));
 
             Werkgebied werkgebiedDB = db.getWerkgebied(id);
             boolean isUpdate = werkgebiedDB != null;
@@ -97,9 +96,9 @@ public class WerkgebiedHelper {
                 werkgebied = werkgebiedDB;
 
             int actief = 0;
-            Location adres = locHelper.getLocationFromAddress(context, tds.get(2).text() + ", The Netherlands");
+            Location adres = locHelper.getLocationFromAddress(context, area.getElementsByClass("work-area-address").get(0).child(0).text()  + ", The Netherlands");
 
-            if(tds.get(0).child(0).attr("checked").equals("checked"))
+            if(area.getElementsByTag("input").get(0).attr("checked").equals("checked"))
                 actief = 1;
 
             //Only set the ID if it's not an update
@@ -107,9 +106,9 @@ public class WerkgebiedHelper {
                 werkgebied.setId(id);
 
             werkgebied.setActief(actief);
-            werkgebied.setNaam(tds.get(1).text());
-            werkgebied.setAdres(tds.get(2).text());
-            werkgebied.setStraal(tds.get(3).text());
+            werkgebied.setNaam(area.getElementsByClass("work-area-name").get(0).child(0).text());
+            werkgebied.setAdres(area.getElementsByClass("work-area-address").get(0).child(0).text());
+            werkgebied.setStraal(area.getElementsByTag("dd").get(1).text());
             if(adres != null) {
                 werkgebied.setLat(adres.getLatitude());
                 werkgebied.setLng(adres.getLongitude());
