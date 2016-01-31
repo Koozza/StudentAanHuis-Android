@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name='android.permission.WAKE_LOCK'/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,13 +13,12 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <application
-        android:name="com.thijsdev.studentaanhuis.SAHApplication"
+        android:name=".SAHApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
-        <receiver android:name=".AlarmManagerBroadcastReceiver">
+        <receiver android:name=".AlarmManagerBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
@@ -27,12 +26,14 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".Data.DataService" android:exported="false" />
+        <service
+            android:name=".Data.DataService"
+            android:exported="false" />
 
         <activity
             android:name=".Login.LoginActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateUnchanged|adjustResize">
+            android:windowSoftInputMode="stateUnchanged|adjustResize" >
         </activity>
         <activity
             android:name=".MainActivity"
@@ -44,7 +45,7 @@
         </activity>
         <activity
             android:name=".SplashScreen"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,6 +56,11 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".Kalender.VP"
+            android:label="@string/title_activity_vp" >
+        </activity>
     </application>
 
 </manifest>

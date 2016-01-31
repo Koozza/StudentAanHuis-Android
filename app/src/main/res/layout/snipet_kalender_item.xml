@@ -11,6 +11,7 @@
             android:layout_width="75sp"
             android:layout_height="fill_parent"
             android:text="12:00"
+            android:id="@+id/calendar_time"
             android:gravity="center|bottom"/>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"

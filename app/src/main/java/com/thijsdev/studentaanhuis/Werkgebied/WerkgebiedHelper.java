@@ -46,7 +46,7 @@ public class WerkgebiedHelper {
             @Override
             public void onTaskCompleted(Object... results) {
                 Document doc = Jsoup.parse((String) results[0]);
-                werkgebieden = doc.select("tr:has(td)");
+                werkgebieden = doc.getElementsByClass("work-areas-listing").get(1).child(1).children();
 
                 finished.onTaskCompleted(werkgebieden);
             }
@@ -82,9 +82,8 @@ public class WerkgebiedHelper {
 
         final DatabaseHandler db = DatabaseHandler.getInstance(context);
 
-        for (Element tr : werkgebieden) {
-            Elements tds = tr.select("td");
-            int id = Integer.parseInt(tds.get(0).child(0).attr("work_area_id"));
+        for (Element area : werkgebieden) {
+            int id = Integer.parseInt(area.child(0).child(0).attr("work_area_id"));
 
             Werkgebied werkgebiedDB = db.getWerkgebied(id);
             boolean isUpdate = werkgebiedDB != null;
@@ -96,9 +95,9 @@ public class WerkgebiedHelper {
                 werkgebied = werkgebiedDB;
 
             int actief = 0;
-            Location adres = locHelper.getLocationFromAddress(context, tds.get(2).text() + ", The Netherlands");
+            Location adres = locHelper.getLocationFromAddress(context, area.child(2).text()  + ", The Netherlands");
 
-            if(tds.get(0).child(0).attr("checked").equals("checked"))
+            if(!area.hasClass("work-area-item-inactive"))
                 actief = 1;
 
             //Only set the ID if it's not an update
@@ -106,9 +105,9 @@ public class WerkgebiedHelper {
                 werkgebied.setId(id);
 
             werkgebied.setActief(actief);
-            werkgebied.setNaam(tds.get(1).text());
-            werkgebied.setAdres(tds.get(2).text());
-            werkgebied.setStraal(tds.get(3).text());
+            werkgebied.setNaam(area.child(1).text());
+            werkgebied.setAdres(area.child(2).text());
+            werkgebied.setStraal(area.child(3).text());
             if(adres != null) {
                 werkgebied.setLat(adres.getLatitude());
                 werkgebied.setLng(adres.getLongitude());

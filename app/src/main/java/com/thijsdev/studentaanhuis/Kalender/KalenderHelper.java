@@ -8,6 +8,7 @@ import com.thijsdev.studentaanhuis.Database.Afspraak;
 import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.Database.Klant;
 import com.thijsdev.studentaanhuis.Database.LoonMaand;
+import com.thijsdev.studentaanhuis.GeneralFunctions;
 import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 
 import org.jsoup.Jsoup;
@@ -109,7 +110,7 @@ public class KalenderHelper {
 
     private void processPage(String source, Date date, Callback itemFinished) {
         Document doc = Jsoup.parse(source);
-        Elements appointments = doc.getElementsByClass("appointment");
+        Elements days = doc.getElementsByClass("appointment-item");
 
         //Get all appointments for this week
         Calendar cal = Calendar.getInstance();
@@ -118,6 +119,105 @@ public class KalenderHelper {
 
         List<Afspraak> afsprakenThisWeek = databaseHandler.getAfsprakenBetween(date, cal.getTime());
 
+        //Loop trough all the days
+        for(Element day : days) {
+            Elements afspraken = day.getElementsByClass("appointment-person");
+            Elements afspraken_details = day.getElementsByClass("appointment-info-detail");
+
+            for(int i = 0; i < afspraken.size(); i++) {
+                Element afspraak = afspraken.get(i);
+                Element afspraakDetail = afspraken_details.get(i);
+
+
+                //Klantnummer verkrijgen
+                Pattern p = Pattern.compile("\\((\\d+ \\d+)\\)");
+                Matcher m = p.matcher(afspraak.getElementsByClass("appointment-number").get(0).text());
+                m.find();
+
+                //Create/Update customer
+                Klant DBklant = databaseHandler.getKlant(m.group(1));
+                Klant klant;
+                if(DBklant == null) {
+                    klant = new Klant();
+                    klant.setNaam(afspraak.getElementsByClass("appointment-name").get(0).text());
+                    klant.setKlantnummer(m.group(1));
+                }else{
+                    klant = DBklant;
+                }
+
+                if(!updatedKlanten.contains(m.group(1)) || DBklant == null) {
+                    klant.setAdres(afspraak.getElementsByClass("appointment-address").get(0).text().trim());
+
+                    //set email if found
+                    if (afspraakDetail.getElementsByClass("appointment-email").size() > 0)
+                        klant.setEmail(afspraakDetail.getElementsByClass("appointment-email").get(0).text());
+
+                    //set telephone numbers if found
+                    if (afspraakDetail.getElementsByClass("appointment-phone").size() > 0)
+                        if (!afspraakDetail.getElementsByClass("appointment-phone").get(0).text().equals(""))
+                            klant.setTel1(afspraakDetail.getElementsByClass("appointment-phone").get(0).text());
+
+                    if (afspraakDetail.getElementsByClass("appointment-phone").size() > 1)
+                        if (!afspraakDetail.getElementsByClass("appointment-phone").get(1).text().equals(""))
+                            klant.setTel2(afspraakDetail.getElementsByClass("appointment-phone").get(1).text());
+
+                    updatedKlanten.add(klant.getKlantnummer());
+                }
+
+                if(DBklant == null)
+                    databaseHandler.addKlant(klant);
+                else
+                    databaseHandler.updateKlant(klant);
+
+
+                //Process appointment
+                Afspraak afspraakObject = null;
+                String[] times = afspraak.getElementsByClass("appointment-time").get(0).text().split("–");
+                DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                DateFormat afspraakFormat = new SimpleDateFormat("dd M yyyy");
+
+                for(Afspraak a : afsprakenThisWeek) {
+                    //Controleren of deze afspraak er al is; zo ja: removen uit deze lijst. Alles wat over is; wordt geremoved (is kennelijk aangepast of verplaatst).
+                    if(a.getKlant().getKlantnummer() == klant.getKlantnummer() && timeFormat.format(a.getStart()).equals(times[0].trim())) {
+                        //Deze a afspraak bestaat al. Removen uit array, als gevonden zetten en stoppen met zoeken.
+                        afspraakObject = a;
+                        break;
+                    }
+                }
+
+                boolean isUpdate = false;
+                if(afspraakObject != null) {
+                    isUpdate = true;
+                    afsprakenThisWeek.remove(afspraakObject);
+                } else {
+                    afspraakObject = new Afspraak();
+                    afspraakObject.setKlant(klant);
+                }
+
+                //Set or update fields
+                    if(!afspraakDetail.getElementsByTag("p").get(afspraakDetail.getElementsByTag("p").size() - 4).ownText().equals(""))
+                        afspraakObject.setPin(afspraakDetail.getElementsByTag("p").get(afspraakDetail.getElementsByTag("p").size() - 4).ownText());
+
+                afspraakObject.setTags(afspraakDetail.getElementsByTag("p").get(afspraakDetail.getElementsByTag("p").size() - 3).ownText());
+                afspraakObject.setOmschrijving(afspraakDetail.getElementsByTag("p").get(afspraakDetail.getElementsByTag("p").size() - 2).ownText());
+                try {
+                    Date afspraakDatum = afspraakFormat.parse(GeneralFunctions.fixDate(day.getElementsByClass("appointment-date").get(0).ownText()));
+
+                    afspraakObject.setStart(DatabaseHandler.databaseDateFormat.parse(dateFormat.format(afspraakDatum) + " " + times[0].trim() + ":00"));
+                    afspraakObject.setEnd(DatabaseHandler.databaseDateFormat.parse(dateFormat.format(afspraakDatum) + " " + times[1].trim() + ":00"));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if(isUpdate)
+                    databaseHandler.updateAfspraak(afspraakObject);
+                else
+                    databaseHandler.addAfspraak(afspraakObject);
+            }
+        }
+
+        /*
         for(Element appointment : appointments) {
             if(appointment.getElementsByClass("customer").size() == 0)
                 continue;
@@ -217,6 +317,8 @@ public class KalenderHelper {
             else
                 databaseHandler.addAfspraak(afspraak);
         }
+
+        */
 
         //Delete all moved / removed appointments
         for(Afspraak a : afsprakenThisWeek) {

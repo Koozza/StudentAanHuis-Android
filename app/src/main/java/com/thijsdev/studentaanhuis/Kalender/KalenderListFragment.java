@@ -62,8 +62,6 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.loonList);
         mRecyclerView.setHasFixedSize(false);
 
-        //mRecyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL_LIST));
-
         mLayoutManager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -77,36 +75,17 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
         mainActivity.setupActionBar();
 
         if(mAdapter.getItemCount() == 0) {
-            loadLoon();
-            updateLoon();
+            loadAgenda();
         }
 
         super.onStart();
     }
 
-    public void loadLoon() {
-        //Load prikbord items from DB
-        TreeMap<Date, LoonMaand> loonMaandHashMap = new TreeMap<>();
-        for(LoonMaand loonMaand : db.getLoonMaanden()) {
-            loonMaandHashMap.put(loonMaand.getDatum(), loonMaand);
-        }
-
-        //Add them to the listview
-        for(LoonMaand loonMaand : loonMaandHashMap.values()) {
-            mAdapter.addItem(0, loonMaand);
-        }
-    }
-
-    public void updateLoon() {
-        if (!isRefreshing) {
-            isRefreshing = true;
-            Animation a = AnimationUtils.loadAnimation(mainActivity, R.anim.rotate);
-            a.setRepeatCount(Animation.INFINITE);
-            toolbar.findViewById(R.id.action_refresh).startAnimation(a);
-
-            Intent intent = new Intent(getActivity(), DataService.class);
-            intent.putExtra("ACTION", "LOON");
-            getActivity().startService(intent);
+    public void loadAgenda() {
+        for(int i = 7; i <= 23; i++) {
+            AgendaItem agendaItem = new AgendaItem();
+            agendaItem.setHour(i);
+            mAdapter.addItem(mAdapter.getItemCount(), agendaItem);
         }
     }
 
@@ -114,19 +93,6 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.hasExtra(DataService.LOON_ITEM_ADDED)) {
-                mAdapter.addItem(0, db.getLoonMaand(intent.getStringExtra(DataService.LOON_ITEM_UPDATED)));
-            }
-
-            if(intent.hasExtra(DataService.LOON_ITEM_UPDATED)) {
-                mAdapter.updateItem(db.getLoonMaand(intent.getStringExtra(DataService.LOON_ITEM_UPDATED)));
-            }
-
-            if(intent.hasExtra(DataService.LOON_FINISHED)) {
-                if (toolbar.findViewById(R.id.action_refresh) != null)
-                    toolbar.findViewById(R.id.action_refresh).clearAnimation();
-                isRefreshing = false;
-            }
         }
     };
 
@@ -156,7 +122,6 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.action_refresh:
-                        updateLoon();
                         return true;
                 }
 

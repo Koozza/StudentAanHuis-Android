@@ -7,18 +7,15 @@ import android.widget.TextView;
 import com.thijsdev.studentaanhuis.R;
 
 public class KalenderListItem extends RecyclerView.ViewHolder implements View.OnClickListener {
-    public TextView maand;
-    public TextView aantal_afspraken_label, aantal_afspraken;
-    public TextView aantal_servicevragen_label, aantal_servicevragen;
-    public TextView verdiensten_label, verdiensten;
-    public TextView mogelijke_verdiensten_label, mogelijke_verdiensten;
-    public TextView totaal_mogelijk_verdiensten_label, totaal_mogelijk_verdiensten;
+    public TextView time;
 
 
     private ClickListener clickListener;
 
     public KalenderListItem(View itemView) {
         super(itemView);
+        time = (TextView) itemView.findViewById(R.id.calendar_time);
+
         /*maand = (TextView) itemView.findViewById(R.id.loon_maand);
         aantal_afspraken_label = (TextView) itemView.findViewById(R.id.loon_aantal_afspraken_label);
         aantal_afspraken = (TextView) itemView.findViewById(R.id.loon_aantal_afspraken);

@@ -53,6 +53,7 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         KalenderListItem kalenderListItem = (KalenderListItem)viewHolder;
+        kalenderListItem.time.setText(Integer.toString(((AgendaItem) mData.get(position)).getHour()) + ":00");
 
         /*
         //Check if we should substract VAT

@@ -53,14 +53,14 @@ public class LoonHelper {
                 Document doc = Jsoup.parse((String) results[0]);
 
                 //Getting crash logs in this; figuring out what to do with it
-                if(doc.getElementsByClass("table").size() == 0) {
+                if(doc.getElementsByTag("table").size() == 0) {
                     HttpClientClass httpClientClass = new HttpClientClass();
                     httpClientClass.giveFeedback(context, "CRASHLOG ALPHA 2_1 LINE 62: Array empty.", (String) results[0]);
                     return;
                 }
 
-                Element table = doc.getElementsByClass("table").get(0);
-                loonItems = table.getElementsByTag("a");
+                Element table = doc.getElementsByTag("tbody").get(0);
+                loonItems = table.getElementsByTag("tr");
 
                 for (Element e : loonItems) {
                     //Get Date & add to hasmap
@@ -183,7 +183,7 @@ public class LoonHelper {
             Elements trs = tbody.select("tr:has(td)");
             for (Element tr : reversed(trs)) {
                 //Mogelijk voor de huidige maand
-                if (tr.children().get(3).text().equals("") && tr.children().get(4).text().equals("")) {
+                if (tr.children().get(2).text().equals("–") && tr.children().get(3).text().equals("–")) {
                     //Calculate price
                     boolean isServiceVraag = tr.children().get(tr.children().size() - 1).text().contains("-");
                     Double price = Double.parseDouble(tr.children().get(tr.children().size() - 1).text().replace("-", "").substring(1).replace(",", "."));
@@ -195,7 +195,7 @@ public class LoonHelper {
                     }
 
                     //check if uurloon
-                    if (tr.children().get(1).text().contains("uurloon"))
+                    if (tr.children().get(6).text().contains("uurloon"))
                         tempLoon.addAfspraak();
 
                     tempLoon.addLoonMogelijk(price);
@@ -205,16 +205,16 @@ public class LoonHelper {
                     try {
                         //Calculate date
                         String datumString;
-                        if(!tr.children().get(4).text().equals(""))
-                            datumString = tr.children().get(4).text();
-                        else
+                        if(!tr.children().get(3).text().equals("–"))
                             datumString = tr.children().get(3).text();
+                        else
+                            datumString = tr.children().get(2).text();
 
                         String[] datumStringParts = datumString.split(" ");
                         Date date = format.parse(GeneralFunctions.fixDate(datumStringParts[1] + " " + datumStringParts[2]));
                         Calendar cal = Calendar.getInstance();
                         cal.setTime(date);
-                        if(!tr.children().get(4).text().equals(""))
+                        if(!tr.children().get(3).text().equals(""))
                             cal.add(Calendar.MONTH, -1);
                         date = cal.getTime();
 
@@ -224,7 +224,6 @@ public class LoonHelper {
 
                         //Add date if it doesn't exist yet:
                         if(!loonMaandHashMap.containsKey(date)) {
-                            SimpleDateFormat f = new SimpleDateFormat("M yyyy");
                             try {
                                 LoonMaand loonMaand = new LoonMaand();
                                 loonMaand.setDatum(date);
@@ -249,11 +248,11 @@ public class LoonHelper {
                         }
 
                         //check if uurloon
-                        if(tr.children().get(1).text().contains("uurloon"))
+                        if(tr.children().get(6).text().contains("uurloon"))
                             loonMaandHashMap.get(date).addAfspraak();
 
                         //set this month to uitbetaald
-                        if(!tr.children().get(4).text().equals(""))
+                        if(!tr.children().get(3).text().equals(""))
                             loonMaandHashMap.get(date).setIsUitbetaald(true);
 
                         if(pageDate.equals(format.format(date)))

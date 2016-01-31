@@ -81,4 +81,8 @@
     <string name="loon_include_vat">Belasting aftrekken</string>
     <string name="loon_include_vat_desc">Toon loon minus 36.50% belasting. Handig als je geen loonheffings korting hebt. (LET OP: Loon kan een paar cent afwijken met wat SAH uitbetaald)</string>
     <string name="loon_include_vat_default">false</string>
+    <string name="title_activity_vp">VP</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
