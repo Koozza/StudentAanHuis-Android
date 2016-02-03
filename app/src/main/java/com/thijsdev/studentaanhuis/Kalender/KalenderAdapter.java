@@ -54,6 +54,7 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         KalenderListItem kalenderListItem = (KalenderListItem)viewHolder;
         kalenderListItem.time.setText(Integer.toString(((AgendaItem) mData.get(position)).getHour()) + ":00");
+        kalenderListItem.klant.setText(((AgendaItem) mData.get(position)).getKlant());
 
         /*
         //Check if we should substract VAT
@@ -100,9 +101,23 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         });
     }
 
+    public void clear() {
+        mData.clear();
+        notifyDataSetChanged();
+    }
+
     public void addItem(int position, Object loonItem) {
         mData.add(position, loonItem);
         notifyItemInserted(position);
+    }
+
+    public Object getItem(int position) {
+        return mData.get(position);
+    }
+
+    public void setItem(int position, Object loonItem) {
+        mData.set(position, loonItem);
+        notifyItemChanged(position);
     }
 
     public void updateItem(Object loonItem) {

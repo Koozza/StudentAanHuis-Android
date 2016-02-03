@@ -8,6 +8,7 @@ import com.thijsdev.studentaanhuis.R;
 
 public class KalenderListItem extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView time;
+    public TextView klant;
 
 
     private ClickListener clickListener;
@@ -15,6 +16,7 @@ public class KalenderListItem extends RecyclerView.ViewHolder implements View.On
     public KalenderListItem(View itemView) {
         super(itemView);
         time = (TextView) itemView.findViewById(R.id.calendar_time);
+        klant = (TextView) itemView.findViewById(R.id.klantnaam);
 
         /*maand = (TextView) itemView.findViewById(R.id.loon_maand);
         aantal_afspraken_label = (TextView) itemView.findViewById(R.id.loon_aantal_afspraken_label);

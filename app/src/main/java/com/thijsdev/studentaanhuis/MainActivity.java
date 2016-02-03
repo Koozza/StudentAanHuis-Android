@@ -49,7 +49,7 @@ public class MainActivity extends BasicActionBarActivity {
             if (savedInstanceState != null)
                 return;
 
-            currentFragment = new PrikbordListFragment();
+            currentFragment = new KalenderListFragment();
             currentFragment.setArguments(getIntent().getExtras());
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();

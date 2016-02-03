@@ -81,7 +81,7 @@ public class PrikbordItem implements DatabaseObject {
             e.printStackTrace();
         }
 
-        Log.v("DATE:", this.deadline);
+        //Log.v("DATE:", this.deadline);
     }
 
     public String getBeschrijving() {

@@ -3,13 +3,23 @@ package com.thijsdev.studentaanhuis.Kalender;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.support.v7.widget.RecyclerView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.BasicActionBarActivity;
+import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class VP extends BasicActionBarActivity {
 
@@ -70,9 +80,11 @@ public class VP extends BasicActionBarActivity {
                         middlePage.setIndex(oldLeftIndex);
                         rightPage.setIndex(oldMiddleIndex);
 
+                        /*
                         setContent(PAGE_RIGHT);
                         setContent(PAGE_MIDDLE);
                         setContent(PAGE_LEFT);
+                        */
 
                         // user swiped to left direction --> right page
                     } else if (mSelectedPageIndex == PAGE_RIGHT) {
@@ -81,11 +93,17 @@ public class VP extends BasicActionBarActivity {
                         middlePage.setIndex(oldRightIndex);
                         rightPage.setIndex(oldRightIndex + 1);
 
+                        /*
                         setContent(PAGE_LEFT);
                         setContent(PAGE_MIDDLE);
                         setContent(PAGE_RIGHT);
+                        */
                     }
+
                     viewPager.setCurrentItem(PAGE_MIDDLE, false);
+                    setContent(PAGE_MIDDLE);
+                    setContent(PAGE_LEFT);
+                    setContent(PAGE_RIGHT);
                 }
             }
         });
@@ -93,7 +111,30 @@ public class VP extends BasicActionBarActivity {
 
     private void setContent(int index) {
         final PageModel model =  mPageModel[index];
-        model.textView.setText(model.getText());
+        //model.textView.setText(model.getText());
+
+        model.kalenderAdapter.clear();
+
+        model.kalenderAdapter = new KalenderAdapter(model.context);
+        model.recyclerView.setHasFixedSize(false);
+
+        model.mLayoutManager = new LinearLayoutManager(model.context);
+        model.recyclerView.setLayoutManager(model.mLayoutManager);
+
+        model.recyclerView.setAdapter(model.kalenderAdapter);
+
+
+        for(int i = 7; i <= 23; i++) {
+            AgendaItem agendaItem = new AgendaItem();
+            agendaItem.setHour(i);
+            model.kalenderAdapter.addItem(model.kalenderAdapter.getItemCount(), agendaItem);
+        }
+
+        AgendaItem kli = (AgendaItem) model.kalenderAdapter.getItem(0);
+        kli.setKlant(String.valueOf(model.getKlant()));
+        model.kalenderAdapter.setItem(0, kli);
+
+        model.kalenderDatum.setText(model.getDatum());
     }
 
     private void initPageModel() {
@@ -123,12 +164,40 @@ public class VP extends BasicActionBarActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            TextView textView = (TextView) mInflater.inflate(R.layout.content, null);
             PageModel currentPage = mPageModel[position];
-            currentPage.textView = textView;
-            textView.setText(currentPage.getText());
-            container.addView(textView);
-            return textView;
+            currentPage.layout = (LinearLayout) mInflater.inflate(R.layout.content, null);
+            currentPage.recyclerView = (RecyclerView) currentPage.layout.findViewById(R.id.kalenderlist);
+            currentPage.kalenderDatum = (TextView) currentPage.layout.findViewById(R.id.kalenderdatum);
+            //textView.setText(currentPage.getText());
+
+            currentPage.context = container.getContext();
+
+
+            currentPage.kalenderAdapter = new KalenderAdapter(container.getContext());
+            currentPage.recyclerView.setHasFixedSize(false);
+
+            currentPage.mLayoutManager = new LinearLayoutManager(container.getContext());
+            currentPage.recyclerView.setLayoutManager(currentPage.mLayoutManager);
+
+            currentPage.recyclerView.setAdapter(currentPage.kalenderAdapter);
+
+
+            for(int i = 7; i <= 23; i++) {
+                AgendaItem agendaItem = new AgendaItem();
+                agendaItem.setHour(i);
+                currentPage.kalenderAdapter.addItem(currentPage.kalenderAdapter.getItemCount(), agendaItem);
+            }
+
+            AgendaItem kli = (AgendaItem) currentPage.kalenderAdapter.getItem(0);
+            kli.setKlant(String.valueOf(currentPage.getKlant()));
+            currentPage.kalenderAdapter.setItem(0, kli);
+
+            currentPage.kalenderDatum.setText(currentPage.getDatum());
+
+            container.addView(currentPage.layout);
+
+
+            return currentPage.layout;
         }
 
         @Override
