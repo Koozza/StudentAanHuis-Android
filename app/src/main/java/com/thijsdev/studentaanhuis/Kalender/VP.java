@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.BasicActionBarActivity;
-import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class VP extends BasicActionBarActivity {
 
@@ -75,7 +68,7 @@ public class VP extends BasicActionBarActivity {
                     // user swiped to right direction --> left page
                     if (mSelectedPageIndex == PAGE_LEFT) {
 
-                        // moving each page content one page to the right
+                        // moving each page activity_kalender one page to the right
                         leftPage.setIndex(oldLeftIndex - 1);
                         middlePage.setIndex(oldLeftIndex);
                         rightPage.setIndex(oldMiddleIndex);
@@ -130,11 +123,11 @@ public class VP extends BasicActionBarActivity {
             model.kalenderAdapter.addItem(model.kalenderAdapter.getItemCount(), agendaItem);
         }
 
-        AgendaItem kli = (AgendaItem) model.kalenderAdapter.getItem(0);
-        kli.setKlant(String.valueOf(model.getKlant()));
-        model.kalenderAdapter.setItem(0, kli);
+        //AgendaItem kli = (AgendaItem) model.kalenderAdapter.getItem(0);
+        //kli.setKlant(String.valueOf(model.getKlant()));
+        //model.kalenderAdapter.setItem(0, kli);
 
-        model.kalenderDatum.setText(model.getDatum());
+        //model.kalenderDatum.setText(model.getDatum());
     }
 
     private void initPageModel() {
@@ -165,7 +158,7 @@ public class VP extends BasicActionBarActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             PageModel currentPage = mPageModel[position];
-            currentPage.layout = (LinearLayout) mInflater.inflate(R.layout.content, null);
+            currentPage.layout = (LinearLayout) mInflater.inflate(R.layout.activity_kalender, null);
             currentPage.recyclerView = (RecyclerView) currentPage.layout.findViewById(R.id.kalenderlist);
             currentPage.kalenderDatum = (TextView) currentPage.layout.findViewById(R.id.kalenderdatum);
             //textView.setText(currentPage.getText());
@@ -188,11 +181,11 @@ public class VP extends BasicActionBarActivity {
                 currentPage.kalenderAdapter.addItem(currentPage.kalenderAdapter.getItemCount(), agendaItem);
             }
 
-            AgendaItem kli = (AgendaItem) currentPage.kalenderAdapter.getItem(0);
-            kli.setKlant(String.valueOf(currentPage.getKlant()));
-            currentPage.kalenderAdapter.setItem(0, kli);
+            //AgendaItem kli = (AgendaItem) currentPage.kalenderAdapter.getItem(0);
+            //kli.setKlant(String.valueOf(currentPage.getKlant()));
+            //currentPage.kalenderAdapter.setItem(0, kli);
 
-            currentPage.kalenderDatum.setText(currentPage.getDatum());
+            //currentPage.kalenderDatum.setText(currentPage.getDatum());
 
             container.addView(currentPage.layout);
 

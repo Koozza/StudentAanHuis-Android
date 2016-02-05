@@ -1,8 +1,14 @@
 package com.thijsdev.studentaanhuis.Kalender;
 
+import com.thijsdev.studentaanhuis.Database.Afspraak;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class AgendaItem {
     int hour = 0;
-    String klant = "";
+    List<Afspraak> afspraken = new ArrayList<>();
+
 
     public int getHour() {
         return hour;
@@ -12,11 +18,16 @@ public class AgendaItem {
         this.hour = hour;
     }
 
-    public String getKlant() {
-        return klant;
+    public List<Afspraak> getAfspraken() {
+        return afspraken;
     }
 
-    public void setKlant(String klant) {
-        this.klant = klant;
+    public void setAfspraken(List<Afspraak> afspraken) {
+        this.afspraken = afspraken;
+    }
+
+    public void addAfspraak(Afspraak afspraak) {
+        this.afspraken.add(afspraak);
     }
 }
+

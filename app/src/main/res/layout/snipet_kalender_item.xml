@@ -18,11 +18,52 @@
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:background="@drawable/kalender_border"
-            android:paddingLeft="16sp">
-                <TextView
-                    android:id="@+id/klantnaam"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+            android:paddingLeft="16sp"
+            android:paddingRight="16sp">
+                <LinearLayout
+                    android:id="@+id/kalender_min0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25">
+                        <TextView
+                            android:id="@+id/kalender_detailfield0"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="test"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/kalender_min15"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25">
+                    <TextView
+                        android:id="@+id/kalender_detailfield15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="test"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/kalender_min30"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25">
+                    <TextView
+                        android:id="@+id/kalender_detailfield30"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="test"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/kalender_min45"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.25">
+                    <TextView
+                        android:id="@+id/kalender_detailfield45"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="test"/>
+                </LinearLayout>
 
         </LinearLayout>
 </LinearLayout>

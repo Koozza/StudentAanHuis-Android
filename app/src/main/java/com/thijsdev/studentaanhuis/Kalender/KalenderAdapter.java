@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thijsdev.studentaanhuis.Database.Afspraak;
 import com.thijsdev.studentaanhuis.Database.LoonMaand;
 import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
@@ -15,6 +16,7 @@ import com.thijsdev.studentaanhuis.R;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
@@ -54,42 +56,78 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         KalenderListItem kalenderListItem = (KalenderListItem)viewHolder;
         kalenderListItem.time.setText(Integer.toString(((AgendaItem) mData.get(position)).getHour()) + ":00");
-        kalenderListItem.klant.setText(((AgendaItem) mData.get(position)).getKlant());
+
+        kalenderListItem.kalender_min0.setBackgroundColor(0);
+        kalenderListItem.kalender_min15.setBackgroundColor(0);
+        kalenderListItem.kalender_min30.setBackgroundColor(0);
+        kalenderListItem.kalender_min45.setBackgroundColor(0);
+
+        kalenderListItem.kalender_min0_detail.setText("");
+        kalenderListItem.kalender_min15_detail.setText("");
+        kalenderListItem.kalender_min30_detail.setText("");
+        kalenderListItem.kalender_min45_detail.setText("");
+
+
+        for(Afspraak afspraak : ((AgendaItem)mData.get(position)).getAfspraken()) {
+            Calendar begin = Calendar.getInstance();
+            begin.setTime(afspraak.getStart());
+
+            Calendar end = Calendar.getInstance();
+            end.setTime(afspraak.getEnd());
+            if(position >= begin.get(Calendar.HOUR_OF_DAY) - 6 && position <= end.get(Calendar.HOUR_OF_DAY) - 6) {
+                long diff = afspraak.getEnd().getTime() - afspraak.getStart().getTime();
+                int kwartieren = ((int) (diff / (60 * 1000) / 15)) % 4;
+                if(kwartieren == 0)
+                    kwartieren = 4;
+
+
+                if(kwartieren >= 1) {
+                    kalenderListItem.kalender_min0.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
+                }
+                if(kwartieren >= 2) {
+                    kalenderListItem.kalender_min15.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
+                }
+                if(kwartieren >= 3) {
+                    kalenderListItem.kalender_min30.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
+                }
+                if(kwartieren >= 4) {
+                    kalenderListItem.kalender_min45.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
+                }
+
+                //Begint op een heel uur
+                if(begin.get(Calendar.HOUR_OF_DAY) - 6 == position && (begin.get(Calendar.MINUTE) / 15) == 0) {
+                    kalenderListItem.kalender_min0_detail.setText(afspraak.getKlant().getNaam());
+                    kalenderListItem.kalender_min15_detail.setText(afspraak.getKlant().getKlantnummer());
+                    kalenderListItem.kalender_min30_detail.setText(afspraak.getPin());
+                }
+
+            }
+        }
 
         /*
-        //Check if we should substract VAT
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        Double vat = 1d;
+        //Dit gaat mis omdat je vanaf hiet niet de VOLGENDE viewholder kan aanpassen.
+        for(int i = 0; i <= ((AgendaItem) mData.get(position)).getDuration() / 4; i++) {
 
-        if(sharedPref.getBoolean("loon_include_vat", false))
-            vat = 0.635d;
-
-        //Other information
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", new Locale("nl", "NL"));
-        NumberFormat defaultFormat = NumberFormat.getCurrencyInstance(new Locale("nl", "NL"));
-
-        kalenderListItem.maand.setText(dateFormat.format(((LoonMaand) mData.get(position)).getDatum()));
-        kalenderListItem.verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonAndereMaand()) * vat));
-        if(getItemViewType(position) == 1) {
-            kalenderListItem.mogelijke_verdiensten.setText(defaultFormat.format(((LoonMaand) mData.get(position)).getLoonMogelijk() * vat));
-            kalenderListItem.totaal_mogelijk_verdiensten.setText(defaultFormat.format((((LoonMaand) mData.get(position)).getLoon() + ((LoonMaand) mData.get(position)).getLoonMogelijk() + ((LoonMaand) mData.get(position)).getLoonAndereMaand()) * vat));
-        }
-        kalenderListItem.aantal_afspraken.setText(Integer.toString(((LoonMaand) mData.get(position)).getAfspraken()));
-        kalenderListItem.aantal_servicevragen.setText(Integer.toString(((LoonMaand) mData.get(position)).getServicevragen()));
-
-        //Set fonts
-        kalenderListItem.maand.setTypeface(((MainActivity) context).robotoMedium);
-        kalenderListItem.verdiensten.setTypeface(((MainActivity) context).robotoRegular);
-        kalenderListItem.verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
-        kalenderListItem.aantal_afspraken_label.setTypeface(((MainActivity) context).robotoRegular);
-        kalenderListItem.aantal_afspraken.setTypeface(((MainActivity) context).robotoRegular);
-        kalenderListItem.aantal_servicevragen_label.setTypeface(((MainActivity) context).robotoRegular);
-        kalenderListItem.aantal_servicevragen.setTypeface(((MainActivity) context).robotoRegular);
-        if(getItemViewType(position) == 1) {
-            kalenderListItem.mogelijke_verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
-            kalenderListItem.mogelijke_verdiensten.setTypeface(((MainActivity) context).robotoRegular);
-            kalenderListItem.totaal_mogelijk_verdiensten_label.setTypeface(((MainActivity) context).robotoRegular);
-            kalenderListItem.totaal_mogelijk_verdiensten.setTypeface(((MainActivity) context).robotoRegular);
+            if(kwartieren >= 1) {
+                if (((AgendaItem) mData.get(position)).getStart() == 0 && ((AgendaItem) mData.get(position)).getHour() - 7 == position) {
+                    kalenderListItem.kalender_min0.setBackgroundColor(context.getResources().getColor(R.color.black87));
+                }
+            }
+            if(kwartieren >= 2) {
+                if (((AgendaItem) mData.get(position)).getStart() == 0 && ((AgendaItem) mData.get(position)).getHour() - 7 == position) {
+                    kalenderListItem.kalender_min15.setBackgroundColor(context.getResources().getColor(R.color.black87));
+                }
+            }
+            if(kwartieren >= 3) {
+                if (((AgendaItem) mData.get(position)).getStart() == 0 && ((AgendaItem) mData.get(position)).getHour() - 7 == position) {
+                    kalenderListItem.kalender_min30.setBackgroundColor(context.getResources().getColor(R.color.black87));
+                }
+            }
+            if(kwartieren >= 4) {
+                if (((AgendaItem) mData.get(position)).getStart() == 0 && ((AgendaItem) mData.get(position)).getHour() - 7 == position) {
+                    kalenderListItem.kalender_min45.setBackgroundColor(context.getResources().getColor(R.color.black87));
+                }
+            }
         }
 */
         //set empty click handler, to prevent crash
@@ -111,8 +149,13 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         notifyItemInserted(position);
     }
 
-    public Object getItem(int position) {
-        return mData.get(position);
+    public Object getItemByHour(int hour) {
+        for(Object obj : mData) {
+            if (((AgendaItem) obj).getHour() == hour) {
+                return obj;
+            }
+        }
+        return null;
     }
 
     public void setItem(int position, Object loonItem) {
@@ -135,7 +178,7 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     public int getPostition(Object loonItem) {
         int i = 0;
         for(Object obj : mData) {
-            if (((LoonMaand) obj).getDatum().toString().equals(((LoonMaand)loonItem).getDatum().toString())) {
+            if (((AgendaItem) obj).getHour() == ((AgendaItem)loonItem).getHour()) {
                 return i;
             }
             i++;

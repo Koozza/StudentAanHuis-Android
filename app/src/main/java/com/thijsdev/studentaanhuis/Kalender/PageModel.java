@@ -8,12 +8,13 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class PageModel {
 
     private int index;
-    private String datum;
+    private Date datum;
     private String klant;
 
     public Context context;
@@ -39,15 +40,15 @@ public class PageModel {
         setKlant(String.valueOf(index));
     }
 
-    public String getDatum() {
-        return datum;
+    public String getDatum(String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, new Locale("nl", "NL"));
+        return dateFormat.format(datum);
     }
 
     private void setDatum(int index) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, index);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy", new Locale("nl", "NL"));
-        this.datum =  dateFormat.format(c.getTime());
+        datum = c.getTime();
     }
 
     public String getKlant() {

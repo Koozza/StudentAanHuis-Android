@@ -610,6 +610,37 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         return afsprakenList;
     }
 
+    // Get Single Item by Date
+    public List<Afspraak> getAfsprakenForDate(String date) {
+        List<Afspraak> afsprakenList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM "+TABLE_AFSPRAKEN+" WHERE start BETWEEN \""+date+" 00:00:00\" AND \""+date+" 23:59:59\";";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Afspraak item = new Afspraak();
+                item.setId(cursor.getInt(0));
+                item.setKlant(getKlant(cursor.getString(1)));
+                item.setOmschrijving(cursor.getString(2));
+                item.setTags(cursor.getString(3));
+                item.setPin(cursor.getString(4));
+                try {
+                    item.setStart(databaseDateFormat.parse(cursor.getString(5)));
+                    item.setEnd(databaseDateFormat.parse(cursor.getString(6)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                afsprakenList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+
+        return afsprakenList;
+    }
+
     // Get All Items
     public List<Afspraak> getAfsprakenBetween(Date date1, Date date2) {
         List<Afspraak> afsprakenList = new ArrayList<>();

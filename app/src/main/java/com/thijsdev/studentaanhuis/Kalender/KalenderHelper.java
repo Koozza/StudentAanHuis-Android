@@ -139,7 +139,7 @@ public class KalenderHelper {
                 Klant klant;
                 if(DBklant == null) {
                     klant = new Klant();
-                    klant.setNaam(afspraak.getElementsByClass("appointment-name").get(0).text());
+                    klant.setNaam(afspraak.getElementsByClass("appointment-name").get(0).ownText());
                     klant.setKlantnummer(m.group(1));
                 }else{
                     klant = DBklant;

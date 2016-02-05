@@ -76,9 +76,9 @@ public class DataService extends IntentService {
         processWerkgebieden(new Callback() {
             @Override
             public void onTaskCompleted(Object... results) {
-                processPrikbord(new Callback() {
-                    @Override
-                    public void onTaskCompleted(Object... results) {
+                //processPrikbord(new Callback() {
+                    //@Override
+                    //public void onTaskCompleted(Object... results) {
                         processLoon(new Callback() {
                             @Override
                             public void onTaskCompleted(Object... results) {
@@ -97,8 +97,8 @@ public class DataService extends IntentService {
                                 });
                             }
                         });
-                    }
-                });
+                    //}
+                //});
             }
         });
     }
