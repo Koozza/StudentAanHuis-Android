@@ -139,7 +139,8 @@ public class KalenderHelper {
                 Klant klant;
                 if(DBklant == null) {
                     klant = new Klant();
-                    klant.setNaam(afspraak.getElementsByClass("appointment-name").get(0).ownText());
+                    klant.setAanhef(afspraak.getElementsByClass("appointment-name").get(0).ownText().split(" ")[0]);
+                    klant.setNaam(afspraak.getElementsByClass("appointment-name").get(0).ownText().replace("heer ", "").replace("mevrouw ", ""));
                     klant.setKlantnummer(m.group(1));
                 }else{
                     klant = DBklant;
@@ -199,6 +200,7 @@ public class KalenderHelper {
                     if(!afspraakDetail.getElementsByTag("p").get(afspraakDetail.getElementsByTag("p").size() - 4).ownText().equals(""))
                         afspraakObject.setPin(afspraakDetail.getElementsByTag("p").get(afspraakDetail.getElementsByTag("p").size() - 4).ownText());
 
+                afspraakObject.setNieuwLid(afspraak.getElementsByClass("appointment-membership").get(0).children().size() == 1);
                 afspraakObject.setTags(afspraakDetail.getElementsByTag("p").get(afspraakDetail.getElementsByTag("p").size() - 3).ownText());
                 afspraakObject.setOmschrijving(afspraakDetail.getElementsByTag("p").get(afspraakDetail.getElementsByTag("p").size() - 2).ownText());
                 try {

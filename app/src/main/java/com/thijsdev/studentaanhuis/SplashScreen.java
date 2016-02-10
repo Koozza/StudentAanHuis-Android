@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.widget.TextView;
 
 import com.thijsdev.studentaanhuis.Data.DataActivity;
-import com.thijsdev.studentaanhuis.Kalender.VP;
 import com.thijsdev.studentaanhuis.Login.LoginActivity;
 import com.thijsdev.studentaanhuis.Login.LoginHTTPHandler;
 

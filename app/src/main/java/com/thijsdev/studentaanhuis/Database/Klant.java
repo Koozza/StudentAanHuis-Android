@@ -3,7 +3,7 @@ package com.thijsdev.studentaanhuis.Database;
 public class Klant implements DatabaseObject {
     private int id;
     private String klantnummer;
-    private String naam, adres, email, tel1, tel2;
+    private String naam, adres, email, tel1, tel2, aanhef;
 
 
     @Override
@@ -62,5 +62,13 @@ public class Klant implements DatabaseObject {
 
     public void setTel2(String tel2) {
         this.tel2 = tel2;
+    }
+
+    public String getAanhef() {
+        return aanhef;
+    }
+
+    public void setAanhef(String aanhef) {
+        this.aanhef = aanhef;
     }
 }

@@ -70,11 +70,11 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         db.execSQL(CREATE_CONTACTS_TABLE);
 
 
-        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_KLANTEN + "(_id INTEGER PRIMARY KEY, klantnummer TEXT, naam TEXT, adres TEXT, email TEXT, tel1 TEXT, tel2 TEXT)";
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_KLANTEN + "(_id INTEGER PRIMARY KEY, klantnummer TEXT, naam TEXT, adres TEXT, email TEXT, tel1 TEXT, tel2 TEXT, aanhef TEXT)";
         db.execSQL(CREATE_CONTACTS_TABLE);
 
 
-        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_AFSPRAKEN + "(_id INTEGER PRIMARY KEY, klant TEXT, omschrijving TEXT, tags TEXT, pin TEXT, start DATETIME, end DATETIME)";
+        CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_AFSPRAKEN + "(_id INTEGER PRIMARY KEY, klant TEXT, omschrijving TEXT, tags TEXT, pin TEXT, start DATETIME, end DATETIME, nieuwlid INTEGER)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
@@ -451,6 +451,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         values.put("email", item.getEmail());
         values.put("tel1", item.getTel1());
         values.put("tel2", item.getTel2());
+        values.put("aanhef", item.getAanhef());
 
         // Inserting Row
         db.insert(TABLE_KLANTEN, null, values);
@@ -462,7 +463,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_KLANTEN, new String[]{"_id",
-                        "klantnummer", "naam", "adres", "email", "tel1", "tel2"}, "klantnummer=?",
+                        "klantnummer", "naam", "adres", "email", "tel1", "tel2", "aanhef"}, "klantnummer=?",
                 new String[]{klantnummer}, null, null, null, null);
         if (cursor.getCount() > 0)
             cursor.moveToFirst();
@@ -477,6 +478,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         item.setEmail(cursor.getString(4));
         item.setTel1(cursor.getString(5));
         item.setTel2(cursor.getString(6));
+        item.setAanhef(cursor.getString(7));
 
         return item;
     }
@@ -499,6 +501,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
                 item.setEmail(cursor.getString(4));
                 item.setTel1(cursor.getString(5));
                 item.setTel2(cursor.getString(6));
+                item.setAanhef(cursor.getString(7));
 
                 klantList.add(item);
             } while (cursor.moveToNext());
@@ -518,6 +521,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         values.put("email", item.getEmail());
         values.put("tel1", item.getTel1());
         values.put("tel2", item.getTel2());
+        values.put("aanhef", item.getAanhef());
 
         return db.update(TABLE_KLANTEN, values, "klantnummer = ?",
                 new String[] { String.valueOf(item.getKlantnummer()) });
@@ -545,6 +549,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         values.put("pin", item.getPin());
         values.put("start", databaseDateFormat.format(item.getStart()));
         values.put("end", databaseDateFormat.format(item.getEnd()));
+        values.put("nieuwlid", item.isNieuwLid() ? 1 : 0);
 
         // Inserting Row
         db.insert(TABLE_AFSPRAKEN, null, values);
@@ -556,7 +561,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_AFSPRAKEN, new String[] { "_id",
-                        "klant", "omschrijving", "tags", "pin", "start" , "end" }, "_id=?",
+                        "klant", "omschrijving", "tags", "pin", "start" , "end", "nieuwlid" }, "_id=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor.getCount() > 0)
             cursor.moveToFirst();
@@ -575,6 +580,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        item.setNieuwLid(cursor.getInt(7) == 1);
 
         return item;
     }
@@ -601,6 +607,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                item.setNieuwLid(cursor.getInt(7) == 1);
 
                 afsprakenList.add(item);
             } while (cursor.moveToNext());
@@ -632,6 +639,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                item.setNieuwLid(cursor.getInt(7) == 1);
 
                 afsprakenList.add(item);
             } while (cursor.moveToNext());
@@ -663,6 +671,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                item.setNieuwLid(cursor.getInt(7) == 1);
 
                 afsprakenList.add(item);
             } while (cursor.moveToNext());
@@ -683,6 +692,7 @@ public class DatabaseHandler extends SQLiteOpenHelper  {
         values.put("pin", item.getPin());
         values.put("start", databaseDateFormat.format(item.getStart()));
         values.put("end", databaseDateFormat.format(item.getEnd()));
+        values.put("nieuwlid", item.isNieuwLid() ? 1 : 0);
 
         return db.update(TABLE_AFSPRAKEN, values, "_id = ?",
                 new String[] { String.valueOf(item.getId()) });

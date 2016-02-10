@@ -2,6 +2,7 @@ package com.thijsdev.studentaanhuis.Kalender;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -94,13 +95,22 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
                     kalenderListItem.kalender_min45.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
                 }
 
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", new Locale("nl", "NL"));
+
                 //Begint op een heel uur
                 if(begin.get(Calendar.HOUR_OF_DAY) - 6 == position && (begin.get(Calendar.MINUTE) / 15) == 0) {
-                    kalenderListItem.kalender_min0_detail.setText(afspraak.getKlant().getNaam());
-                    kalenderListItem.kalender_min15_detail.setText(afspraak.getKlant().getKlantnummer());
-                    kalenderListItem.kalender_min30_detail.setText(afspraak.getPin());
+                    kalenderListItem.kalender_min0_detail.setText(timeFormat.format(afspraak.getStart()) + " - " + timeFormat.format(afspraak.getEnd()));
+                    kalenderListItem.kalender_min15_detail.setText(afspraak.getKlant().getNaam());
+                    kalenderListItem.kalender_min30_detail.setText(afspraak.getKlant().getKlantnummer() + (afspraak.isNieuwLid() ? " (Nieuw lid!)" : ""));
+                    if(afspraak.getPin() != null)
+                        kalenderListItem.kalender_min45_detail.setText("Pin: " + afspraak.getPin());
                 }
 
+            }
+
+            if(position == end.get(Calendar.HOUR_OF_DAY) - 7 && (end.get(Calendar.MINUTE) / 15) == 0) {
+                Drawable bg = context.getResources().getDrawable(R.drawable.kalender_active_border);
+                kalenderListItem.kalender_min45.setBackgroundDrawable(bg);
             }
         }
 

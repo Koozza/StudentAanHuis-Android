@@ -10,6 +10,7 @@ public class Afspraak implements DatabaseObject {
     private String pin;
     private Date start;
     private Date end;
+    private boolean isNieuwLid = false;
 
     //Afhandeling
     private String werkbonNummer;
@@ -135,5 +136,13 @@ public class Afspraak implements DatabaseObject {
 
     public void setPin(String pin) {
         this.pin = pin;
+    }
+
+    public boolean isNieuwLid() {
+        return isNieuwLid;
+    }
+
+    public void setNieuwLid(boolean nieuwLid) {
+        isNieuwLid = nieuwLid;
     }
 }
