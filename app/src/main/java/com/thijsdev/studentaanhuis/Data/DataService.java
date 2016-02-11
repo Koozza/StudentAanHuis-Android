@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.Database.Afspraak;
 import com.thijsdev.studentaanhuis.Database.DatabaseObject;
 import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.Kalender.KalenderHelper;
@@ -42,6 +43,7 @@ public class DataService extends IntentService {
     //Afspraak
     public static String AFSPRAAK_ITEM_ADDED = "afspraak_item_added";
     public static String AFSPRAAK_ITEM_UPDATED = "afspraak_item_updated";
+    public static String AFSPRAAK_ITEM_REMOVED = "afspraak_item_removed";
     public static String AFSPRAAK_FINISHED = "afspraak_finished";
 
     //Loon
@@ -69,6 +71,8 @@ public class DataService extends IntentService {
             processLoon(new Callback());
         }else if (action.equals("WERKGEBIED")) {
             processWerkgebieden(new Callback());
+        }else if (action.equals("AFSPRAKEN")) {
+            processAfspraken(new Callback());
         }
     }
 
@@ -109,6 +113,30 @@ public class DataService extends IntentService {
         statusUpdate(CURRENTLY_UPDATING, getString(R.string.loading_kalender));
         statusUpdate(CLEAR_PROGRESS);
         statusUpdate(SET_TOTAL_PROGRESS, kalenderHelper.countKalenderPages());
+
+        //Callback for removed prikbord items
+        prikbordHelper.addItemRemovedCallback(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(AFSPRAAK_ITEM_REMOVED, (Integer) results[0]);
+            }
+        });
+
+        //Callback for added prikbord items
+        prikbordHelper.addItemAddedCallback(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(AFSPRAAK_ITEM_ADDED, (Afspraak) results[0]);
+            }
+        });
+
+        //Callback for updated prikbord items
+        prikbordHelper.addItemUpdatedCallback(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(AFSPRAAK_ITEM_UPDATED, (Afspraak) results[0]);
+            }
+        });
 
         kalenderHelper.processKalenderItems(new Callback() {
             @Override

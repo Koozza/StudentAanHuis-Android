@@ -35,7 +35,7 @@ public class KalenderHelper {
     private Date stopDate;
 
     //Callbacks
-    Callback itemAddedCallback, itemUpdatedCallback = null;
+    Callback itemAddedCallback, itemUpdatedCallback, itemRemovedCallback = null;
 
     //Temp Variables
     ArrayList<String> updatedKlanten = new ArrayList<>();
@@ -65,11 +65,18 @@ public class KalenderHelper {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+
+
+            //Substract 3 days for extra margin
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(startDate);
+            cal.add(Calendar.DAY_OF_MONTH, -3);
+            startDate = cal.getTime();
         }
 
-        //Set stopDate
+        //Set stopDate, 2 months ahead
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, 1);
+        cal.add(Calendar.MONTH, 2);
         stopDate = cal.getTime();
     }
 
@@ -214,8 +221,12 @@ public class KalenderHelper {
 
                 if(isUpdate)
                     databaseHandler.updateAfspraak(afspraakObject);
+                    if(itemUpdatedCallback != null)
+                        itemUpdatedCallback.onTaskCompleted(afspraakObject);
                 else
                     databaseHandler.addAfspraak(afspraakObject);
+                    if(itemAddedCallback != null)
+                        itemAddedCallback.onTaskCompleted(afspraakObject);
             }
         }
 
@@ -324,8 +335,37 @@ public class KalenderHelper {
 
         //Delete all moved / removed appointments
         for(Afspraak a : afsprakenThisWeek) {
+            if(itemRemovedCallback != null)
+                itemRemovedCallback.onTaskCompleted(a.getId());
             databaseHandler.deleteAfspraak(a);
         }
+    }
+
+    /**
+     * Add callback to Item Removed event.
+     * Returns a prikbord item in the callback
+     * @param callback
+     */
+    public void addItemRemovedCallback(Callback callback) {
+        itemRemovedCallback = callback;
+    }
+
+    /**
+     * Add callback to Item Added event.
+     * Returns a prikbord item in the callback
+     * @param callback
+     */
+    public void addItemAddedCallback(Callback callback) {
+        itemAddedCallback = callback;
+    }
+
+    /**
+     * Add callback to Item Updated event.
+     * Returns a prikbord item in the callback
+     * @param callback
+     */
+    public void addItemUpdatedCallback(Callback callback) {
+        itemUpdatedCallback = callback;
     }
 
     private Calendar getDatePart(Date date){

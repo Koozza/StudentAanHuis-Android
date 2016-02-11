@@ -1,6 +1,8 @@
 package com.thijsdev.studentaanhuis.Kalender;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,9 +18,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.thijsdev.studentaanhuis.Data.DataService;
 import com.thijsdev.studentaanhuis.Database.Afspraak;
 import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.FragmentInterface;
@@ -30,8 +35,6 @@ import java.util.List;
 
 public class KalenderListFragment extends Fragment implements FragmentInterface {
     DatabaseHandler db;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
     private MainActivity mainActivity;
     private Toolbar toolbar;
 
@@ -49,81 +52,82 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
     private int mSelectedPageIndex = 1;
     // we save each page in a model
     private PageModel[] mPageModel = new PageModel[3];
-
+    MyagerAdaper adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.activity_vp, container, false);
+            //super.onCreate(savedInstanceState);
+            View view = inflater.inflate(R.layout.activity_vp, container, false);
+
+            mainActivity = (MainActivity) view.getContext();
+            db = DatabaseHandler.getInstance(mainActivity);
+            toolbar = mainActivity.getToolbar();
+            toolbar.getMenu().clear();
+            toolbar.setTitle(getString(R.string.calendar));
+            toolbar.inflateMenu(R.menu.menu_loon);
+            toolbar.setNavigationIcon(null);
+
+            registerToolbarClick();
 
 
-        mainActivity = (MainActivity) view.getContext();
-        db = DatabaseHandler.getInstance(mainActivity);
-        toolbar = mainActivity.getToolbar();
-        toolbar.getMenu().clear();
-        toolbar.setTitle(getString(R.string.calendar));
-        toolbar.inflateMenu(R.menu.menu_loon);
-        toolbar.setNavigationIcon(null);
+        if(mPageModel[0] == null) {
+            // initializing the model
+            initPageModel();
+            mInflater = getActivity().getLayoutInflater();
+            adapter = new MyagerAdaper();
+        }
 
-        registerToolbarClick();
+            final ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+            viewPager.setAdapter(adapter);
+            // we dont want any smoothscroll. This enables us to switch the page
+            // without the user notifiying this
+            viewPager.setCurrentItem(PAGE_MIDDLE, false);
 
+            viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-        // initializing the model
-        initPageModel();
-
-        mInflater = getActivity().getLayoutInflater();
-        MyagerAdaper adapter = new MyagerAdaper();
-
-        final ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        viewPager.setAdapter(adapter);
-        // we dont want any smoothscroll. This enables us to switch the page
-        // without the user notifiying this
-        viewPager.setCurrentItem(PAGE_MIDDLE, false);
-
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-                mSelectedPageIndex = position;
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) { }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-
-                    final PageModel leftPage = mPageModel[PAGE_LEFT];
-                    final PageModel middlePage = mPageModel[PAGE_MIDDLE];
-                    final PageModel rightPage = mPageModel[PAGE_RIGHT];
-
-                    final int oldLeftIndex = leftPage.getIndex();
-                    final int oldMiddleIndex = middlePage.getIndex();
-                    final int oldRightIndex = rightPage.getIndex();
-
-                    // user swiped to right direction --> left page
-                    if (mSelectedPageIndex == PAGE_LEFT) {
-
-                        // moving each page activity_kalender one page to the right
-                        leftPage.setIndex(oldLeftIndex - 1);
-                        middlePage.setIndex(oldLeftIndex);
-                        rightPage.setIndex(oldMiddleIndex);
-
-                        // user swiped to left direction --> right page
-                    } else if (mSelectedPageIndex == PAGE_RIGHT) {
-
-                        leftPage.setIndex(oldMiddleIndex);
-                        middlePage.setIndex(oldRightIndex);
-                        rightPage.setIndex(oldRightIndex + 1);
-                    }
-
-                    setContent(PAGE_MIDDLE);
-                    viewPager.setCurrentItem(PAGE_MIDDLE, false);
-                    setContent(PAGE_LEFT);
-                    setContent(PAGE_RIGHT);
+                @Override
+                public void onPageSelected(int position) {
+                    mSelectedPageIndex = position;
                 }
-            }
-        });
+
+                @Override
+                public void onPageScrolled(int arg0, float arg1, int arg2) {
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    if (state == ViewPager.SCROLL_STATE_IDLE) {
+
+                        final PageModel leftPage = mPageModel[PAGE_LEFT];
+                        final PageModel middlePage = mPageModel[PAGE_MIDDLE];
+                        final PageModel rightPage = mPageModel[PAGE_RIGHT];
+
+                        final int oldLeftIndex = leftPage.getIndex();
+                        final int oldMiddleIndex = middlePage.getIndex();
+                        final int oldRightIndex = rightPage.getIndex();
+
+                        // user swiped to right direction --> left page
+                        if (mSelectedPageIndex == PAGE_LEFT) {
+
+                            // moving each page activity_kalender one page to the right
+                            leftPage.setIndex(oldLeftIndex - 1);
+                            middlePage.setIndex(oldLeftIndex);
+                            rightPage.setIndex(oldMiddleIndex);
+
+                            // user swiped to left direction --> right page
+                        } else if (mSelectedPageIndex == PAGE_RIGHT) {
+
+                            leftPage.setIndex(oldMiddleIndex);
+                            middlePage.setIndex(oldRightIndex);
+                            rightPage.setIndex(oldRightIndex + 1);
+                        }
+
+                        setContent(PAGE_MIDDLE);
+                        viewPager.setCurrentItem(PAGE_MIDDLE, false);
+                        setContent(PAGE_LEFT);
+                        setContent(PAGE_RIGHT);
+                    }
+                }
+            });
 
         return view;
     }
@@ -148,6 +152,7 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
             agendaItem.setHour(i);
             model.kalenderAdapter.addItem(model.kalenderAdapter.getItemCount(), agendaItem);
         }
+
 
         List<Afspraak> afspraken = db.getAfsprakenForDate(model.getDatum("yyyy-MM-dd"));
         for(Afspraak afspraak : afspraken) {
@@ -221,6 +226,25 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
                 currentPage.kalenderAdapter.addItem(currentPage.kalenderAdapter.getItemCount(), agendaItem);
             }
 
+
+            List<Afspraak> afspraken = db.getAfsprakenForDate(currentPage.getDatum("yyyy-MM-dd"));
+            for(Afspraak afspraak : afspraken) {
+                Calendar begin = Calendar.getInstance();
+                begin.setTime(afspraak.getStart());
+
+                Calendar end = Calendar.getInstance();
+                end.setTime(afspraak.getEnd());
+
+                int beginhour = begin.get(Calendar.HOUR_OF_DAY);
+                int endhour = end.get(Calendar.HOUR_OF_DAY);
+
+                for(int a = 0; a < endhour - beginhour; a++) {
+                    AgendaItem kli = (AgendaItem) currentPage.kalenderAdapter.getItemByHour(beginhour + 1 + a);
+                    kli.addAfspraak(afspraak);
+                    currentPage.kalenderAdapter.updateItem(kli);
+                }
+            }
+
             currentPage.kalenderDatum.setText(currentPage.getDatum("dd MMMM yyyy"));
 
             container.addView(currentPage.layout);
@@ -235,18 +259,44 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
         }
     }
 
-    @Override
-    public void onStart() {
-        mainActivity.setupActionBar();
-        super.onStart();
+    public void updateKalender() {
+        if (!isRefreshing) {
+            isRefreshing = true;
+            Animation a = AnimationUtils.loadAnimation(mainActivity, R.anim.rotate);
+            a.setRepeatCount(Animation.INFINITE);
+            toolbar.findViewById(R.id.action_refresh).startAnimation(a);
+
+            Intent intent = new Intent(getActivity(), DataService.class);
+            intent.putExtra("ACTION", "AFSPRAKEN");
+            getActivity().startService(intent);
+        }
     }
 
     //Setup broadcast listener
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(intent.hasExtra(DataService.LOON_ITEM_ADDED)) {
+                //mAdapter.addItem(0, db.getLoonMaand(intent.getStringExtra(DataService.LOON_ITEM_UPDATED)));
+            }
+
+            if(intent.hasExtra(DataService.LOON_ITEM_UPDATED)) {
+                //mAdapter.updateItem(db.getLoonMaand(intent.getStringExtra(DataService.LOON_ITEM_UPDATED)));
+            }
+
+            if(intent.hasExtra(DataService.AFSPRAAK_FINISHED)) {
+                if (toolbar.findViewById(R.id.action_refresh) != null)
+                    toolbar.findViewById(R.id.action_refresh).clearAnimation();
+                isRefreshing = false;
+            }
         }
     };
+
+    @Override
+    public void onStart() {
+        mainActivity.setupActionBar();
+        super.onStart();
+    }
 
     @Override
     public void onResume() {
@@ -274,6 +324,7 @@ public class KalenderListFragment extends Fragment implements FragmentInterface 
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.action_refresh:
+                        updateKalender();
                         return true;
                 }
 

@@ -1,8 +1,11 @@
 package com.thijsdev.studentaanhuis.Kalender;
 
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +14,11 @@ import android.view.ViewGroup;
 
 import com.thijsdev.studentaanhuis.Database.Afspraak;
 import com.thijsdev.studentaanhuis.Database.LoonMaand;
+import com.thijsdev.studentaanhuis.Database.PrikbordItem;
+import com.thijsdev.studentaanhuis.FragmentInterface;
 import com.thijsdev.studentaanhuis.MainActivity;
+import com.thijsdev.studentaanhuis.Prikbord.PrikbordDetailFragment;
+import com.thijsdev.studentaanhuis.Prikbord.PrikbordListItem;
 import com.thijsdev.studentaanhuis.R;
 
 import java.text.NumberFormat;
@@ -39,18 +46,14 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         View itemView;
 
         itemView = inflater.inflate(R.layout.snipet_kalender_item, viewGroup, false);
+        KalenderListItem kalenderListItem = new KalenderListItem(itemView);
 
-        return new KalenderListItem(itemView);
+        return kalenderListItem;
     }
 
     @Override
     public int getItemViewType(int position) {
         return 0;
-        /*
-        if(((LoonMaand)mData.get(position)).getLoonMogelijk() == 0)
-            return 0;
-        else
-            return 1;*/
     }
 
     @Override
@@ -68,6 +71,11 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
         kalenderListItem.kalender_min30_detail.setText("");
         kalenderListItem.kalender_min45_detail.setText("");
 
+        kalenderListItem.kalender_min0_detail.setOnClickListener(null);
+        kalenderListItem.kalender_min15_detail.setOnClickListener(null);
+        kalenderListItem.kalender_min30_detail.setOnClickListener(null);
+        kalenderListItem.kalender_min45_detail.setOnClickListener(null);
+
 
         for(Afspraak afspraak : ((AgendaItem)mData.get(position)).getAfspraken()) {
             Calendar begin = Calendar.getInstance();
@@ -84,15 +92,19 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
                 if(kwartieren >= 1) {
                     kalenderListItem.kalender_min0.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
+                    addClickHandler(kalenderListItem.kalender_min0, afspraak);
                 }
                 if(kwartieren >= 2) {
                     kalenderListItem.kalender_min15.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
+                    addClickHandler(kalenderListItem.kalender_min15, afspraak);
                 }
                 if(kwartieren >= 3) {
                     kalenderListItem.kalender_min30.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
+                    addClickHandler(kalenderListItem.kalender_min30, afspraak);
                 }
                 if(kwartieren >= 4) {
                     kalenderListItem.kalender_min45.setBackgroundColor(context.getResources().getColor(R.color.SAHlightblue));
+                    addClickHandler(kalenderListItem.kalender_min45, afspraak);
                 }
 
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", new Locale("nl", "NL"));
@@ -108,43 +120,32 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
             }
 
+            //TODO: afmaken
             if(position == end.get(Calendar.HOUR_OF_DAY) - 7 && (end.get(Calendar.MINUTE) / 15) == 0) {
                 Drawable bg = context.getResources().getDrawable(R.drawable.kalender_active_border);
                 kalenderListItem.kalender_min45.setBackgroundDrawable(bg);
             }
         }
+    }
 
-        /*
-        //Dit gaat mis omdat je vanaf hiet niet de VOLGENDE viewholder kan aanpassen.
-        for(int i = 0; i <= ((AgendaItem) mData.get(position)).getDuration() / 4; i++) {
-
-            if(kwartieren >= 1) {
-                if (((AgendaItem) mData.get(position)).getStart() == 0 && ((AgendaItem) mData.get(position)).getHour() - 7 == position) {
-                    kalenderListItem.kalender_min0.setBackgroundColor(context.getResources().getColor(R.color.black87));
-                }
-            }
-            if(kwartieren >= 2) {
-                if (((AgendaItem) mData.get(position)).getStart() == 0 && ((AgendaItem) mData.get(position)).getHour() - 7 == position) {
-                    kalenderListItem.kalender_min15.setBackgroundColor(context.getResources().getColor(R.color.black87));
-                }
-            }
-            if(kwartieren >= 3) {
-                if (((AgendaItem) mData.get(position)).getStart() == 0 && ((AgendaItem) mData.get(position)).getHour() - 7 == position) {
-                    kalenderListItem.kalender_min30.setBackgroundColor(context.getResources().getColor(R.color.black87));
-                }
-            }
-            if(kwartieren >= 4) {
-                if (((AgendaItem) mData.get(position)).getStart() == 0 && ((AgendaItem) mData.get(position)).getHour() - 7 == position) {
-                    kalenderListItem.kalender_min45.setBackgroundColor(context.getResources().getColor(R.color.black87));
-                }
-            }
-        }
-*/
-        //set empty click handler, to prevent crash
-        kalenderListItem.setClickListener(new KalenderListItem.ClickListener() {
+    private void addClickHandler(View v, final Afspraak afspraak) {
+        v.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v, int pos) {
-                //Nothing
+            public void onClick(View v) {
+                ((FragmentInterface) ((MainActivity) context).getActiveFragement()).unload();
+
+                AfspraakDetailFragment fragment = new AfspraakDetailFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("AfspraakId", afspraak.getId());
+                fragment.setArguments(bundle);
+
+                FragmentTransaction transaction = ((MainActivity)context).getFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.prikbord_fragments, fragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
             }
         });
     }
@@ -171,6 +172,10 @@ class KalenderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     public void setItem(int position, Object loonItem) {
         mData.set(position, loonItem);
         notifyItemChanged(position);
+    }
+
+    public Object getItem(int position) {
+        return mData.get(position);
     }
 
     public void updateItem(Object loonItem) {

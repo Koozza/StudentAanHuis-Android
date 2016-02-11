@@ -25,6 +25,7 @@
     <string name="refresh">Refresh</string>
     <string name="no_prikbord_items_found">Geen prikbord items gevonden</string>
     <string name="prikbord_item">Prikbord Item</string>
+    <string name="afspraak_details">Afspraak Details</string>
     <string name="aanmelden">Aanmelden</string>
     <string name="afmelden">Afmelden</string>
     <string name="distance">Afstand:</string>
@@ -36,7 +37,13 @@
     <string name="customers">Klanten</string>
     <string name="calendar">Agenda</string>
     <string name="algemeen">Algemeen</string>
+    <string name="klant">Klant:</string>
+    <string name="pin">Pin:</string>
+    <string name="klantnummer">Klantnummer:</string>
+    <string name="adres">Adres:</string>
     <string name="verdiensten">Verdiensten:</string>
+    <string name="telefoonnummer">Telefoon:</string>
+    <string name="email">Email:</string>
     <string name="mogelijke_verdiensten">Mogelijke Verdiensten:</string>
     <string name="totaal_mogelijk_verdiensten">Totaal Mogelijke Verdiensten:</string>
     <string name="aantal_afspraken">Aantal Afspraken:</string>

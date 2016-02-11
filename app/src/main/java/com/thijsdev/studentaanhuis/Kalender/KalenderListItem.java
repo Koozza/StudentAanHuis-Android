@@ -27,24 +27,12 @@ public class KalenderListItem extends RecyclerView.ViewHolder implements View.On
         kalender_min15_detail = (TextView) itemView.findViewById(R.id.kalender_detailfield15);
         kalender_min30_detail = (TextView) itemView.findViewById(R.id.kalender_detailfield30);
         kalender_min45_detail = (TextView) itemView.findViewById(R.id.kalender_detailfield45);
-
-        /*maand = (TextView) itemView.findViewById(R.id.loon_maand);
-        aantal_afspraken_label = (TextView) itemView.findViewById(R.id.loon_aantal_afspraken_label);
-        aantal_afspraken = (TextView) itemView.findViewById(R.id.loon_aantal_afspraken);
-        aantal_servicevragen_label = (TextView) itemView.findViewById(R.id.loon_aantal_servicevragen_label);
-        aantal_servicevragen = (TextView) itemView.findViewById(R.id.loon_aantal_servicevragen);
-        mogelijke_verdiensten_label = (TextView) itemView.findViewById(R.id.loon_mogelijk_verdiensten_label);
-        mogelijke_verdiensten = (TextView) itemView.findViewById(R.id.loon_mogelijk_verdiensten);
-        totaal_mogelijk_verdiensten_label = (TextView) itemView.findViewById(R.id.loon_totaal_mogelijk_verdiensten_label);
-        totaal_mogelijk_verdiensten = (TextView) itemView.findViewById(R.id.loon_totaal_mogelijk_verdiensten);
-        verdiensten = (TextView) itemView.findViewById(R.id.loon_verdiensten);
-        verdiensten_label = (TextView) itemView.findViewById(R.id.loon_verdiensten_label);
-        itemView.findViewById(R.id.prikbord_item).setOnClickListener(this);*/
     }
 
     public interface ClickListener
     {
         public void onClick(View v, int position);
+
     }
 
     public void setClickListener(ClickListener clickListener) {

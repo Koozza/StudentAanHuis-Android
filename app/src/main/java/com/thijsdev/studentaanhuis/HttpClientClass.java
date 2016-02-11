@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
+import com.google.api.client.http.HttpStatusCodes;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -108,6 +110,12 @@ public class HttpClientClass {
                 urlConnection.setReadTimeout(20000);
                 urlConnection.setConnectTimeout(20000);
                 urlConnection.setDoInput(true);
+
+                int status = urlConnection.getResponseCode();
+
+                if(status != HttpStatusCodes.STATUS_CODE_OK) {
+                    String a = convertStreamToString(new BufferedInputStream(urlConnection.getErrorStream()));
+                }
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 result = convertStreamToString(in);
