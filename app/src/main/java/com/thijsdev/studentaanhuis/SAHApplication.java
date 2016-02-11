@@ -5,6 +5,8 @@ import java.net.CookieManager;
 public class SAHApplication extends android.support.multidex.MultiDexApplication {
     final public static int HTTP_RETRIES = 2;
 
+    public static HttpClientClass httpClientClass = new HttpClientClass();
+
     public static CookieManager cookieManager = new CookieManager();
 
     public static boolean isActivityVisible() {

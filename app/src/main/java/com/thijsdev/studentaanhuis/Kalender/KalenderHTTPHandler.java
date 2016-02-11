@@ -2,6 +2,7 @@ package com.thijsdev.studentaanhuis.Kalender;
 
 import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.HttpClientClass;
+import com.thijsdev.studentaanhuis.SAHApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +20,7 @@ public class KalenderHTTPHandler {
             obj.put("url", "https://nl.sah3.net/students/calendar?start_day="+urlDateformat.format(date));
 
             HttpClientClass client = new HttpClientClass();
-            client.getSource(obj, success, failure);
+            SAHApplication.httpClientClass.getSource(obj, success, failure);
         }catch (JSONException e) {
             e.printStackTrace();
         }
