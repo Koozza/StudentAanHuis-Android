@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.thijsdev.studentaanhuis.Callback;
+import com.thijsdev.studentaanhuis.Database.Afspraak;
 import com.thijsdev.studentaanhuis.Database.DatabaseObject;
 import com.thijsdev.studentaanhuis.Database.PrikbordItem;
+import com.thijsdev.studentaanhuis.Kalender.KalenderHelper;
 import com.thijsdev.studentaanhuis.Loon.LoonHelper;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordHelper;
 import com.thijsdev.studentaanhuis.R;
@@ -16,9 +18,11 @@ import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
 
 public class DataService extends IntentService {
-    WerkgebiedHelper werkgebiedHelper = new WerkgebiedHelper(this);
-    PrikbordHelper prikbordHelper = new PrikbordHelper(this);
-    LoonHelper loonHelper = new LoonHelper(this);
+    private WerkgebiedHelper werkgebiedHelper;
+    private PrikbordHelper prikbordHelper ;
+    private LoonHelper loonHelper;
+    private KalenderHelper kalenderHelper;
+
     public static String CURRENTLY_UPDATING = "currently_updating";
     public static String SET_TOTAL_PROGRESS = "set_total_progress";
     public static String INCREASE_PROGRESS = "increase_progress";
@@ -36,6 +40,12 @@ public class DataService extends IntentService {
     public static String LOON_ITEM_UPDATED = "loon_item_updated";
     public static String LOON_FINISHED = "loon_finished";
 
+    //Afspraak
+    public static String AFSPRAAK_ITEM_ADDED = "afspraak_item_added";
+    public static String AFSPRAAK_ITEM_UPDATED = "afspraak_item_updated";
+    public static String AFSPRAAK_ITEM_REMOVED = "afspraak_item_removed";
+    public static String AFSPRAAK_FINISHED = "afspraak_finished";
+
     //Loon
     public static String WERKGEBIED_FINISHED = "werkgebied_finished";
 
@@ -47,6 +57,11 @@ public class DataService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        werkgebiedHelper = new WerkgebiedHelper(getApplicationContext());
+        prikbordHelper = new PrikbordHelper(getApplicationContext());
+        loonHelper = new LoonHelper(getApplicationContext());
+        kalenderHelper = new KalenderHelper(getApplicationContext());
+
         String action = intent.getStringExtra("ACTION");
         if(action.equals("ALL")) {
             processAll();
@@ -56,6 +71,8 @@ public class DataService extends IntentService {
             processLoon(new Callback());
         }else if (action.equals("WERKGEBIED")) {
             processWerkgebieden(new Callback());
+        }else if (action.equals("AFSPRAKEN")) {
+            processAfspraken(new Callback());
         }
     }
 
@@ -63,24 +80,74 @@ public class DataService extends IntentService {
         processWerkgebieden(new Callback() {
             @Override
             public void onTaskCompleted(Object... results) {
-                processPrikbord(new Callback() {
-                    @Override
-                    public void onTaskCompleted(Object... results) {
+                //processPrikbord(new Callback() {
+                    //@Override
+                    //public void onTaskCompleted(Object... results) {
                         processLoon(new Callback() {
                             @Override
                             public void onTaskCompleted(Object... results) {
+                                processAfspraken(new Callback() {
+                                    @Override
+                                    public void onTaskCompleted(Object... results) {
 
-                                //Set status to completely updated.
-                                SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor edit = sharedpreferences.edit();
-                                edit.putInt("DATA_VERSION", DataActivity.VERSION);
-                                edit.commit();
+                                        //Set status to completely updated.
+                                        SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor edit = sharedpreferences.edit();
+                                        edit.putInt("DATA_VERSION", DataActivity.VERSION);
+                                        edit.commit();
 
-                                statusUpdate(FINISHED);
+                                        statusUpdate(FINISHED);
+                                    }
+                                });
                             }
                         });
-                    }
-                });
+                    //}
+                //});
+            }
+        });
+    }
+
+    private void processAfspraken(final Callback callback) {
+        kalenderHelper.getStartAndEndDate();
+
+        statusUpdate(CURRENTLY_UPDATING, getString(R.string.loading_kalender));
+        statusUpdate(CLEAR_PROGRESS);
+        statusUpdate(SET_TOTAL_PROGRESS, kalenderHelper.countKalenderPages());
+
+        //Callback for removed prikbord items
+        prikbordHelper.addItemRemovedCallback(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(AFSPRAAK_ITEM_REMOVED, (Integer) results[0]);
+            }
+        });
+
+        //Callback for added prikbord items
+        prikbordHelper.addItemAddedCallback(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(AFSPRAAK_ITEM_ADDED, (Afspraak) results[0]);
+            }
+        });
+
+        //Callback for updated prikbord items
+        prikbordHelper.addItemUpdatedCallback(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(AFSPRAAK_ITEM_UPDATED, (Afspraak) results[0]);
+            }
+        });
+
+        kalenderHelper.processKalenderItems(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(INCREASE_PROGRESS, 0);
+            }
+        }, new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                statusUpdate(AFSPRAAK_FINISHED);
+                callback.onTaskCompleted(results);
             }
         });
     }

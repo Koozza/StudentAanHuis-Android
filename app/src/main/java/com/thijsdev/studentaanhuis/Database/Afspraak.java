@@ -5,8 +5,12 @@ import java.util.Date;
 public class Afspraak implements DatabaseObject {
     private int id;
     private Klant klant;
+    private String tags;
     private String omschrijving;
-    private Date datum;
+    private String pin;
+    private Date start;
+    private Date end;
+    private boolean isNieuwLid = false;
 
     //Afhandeling
     private String werkbonNummer;
@@ -46,12 +50,20 @@ public class Afspraak implements DatabaseObject {
         this.omschrijving = omschrijving;
     }
 
-    public Date getDatum() {
-        return datum;
+    public Date getStart() {
+        return start;
     }
 
-    public void setDatum(Date datum) {
-        this.datum = datum;
+    public void setStart(Date start) {
+        this.start = start;
+    }
+
+    public Date getEnd() {
+        return end;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
     }
 
     public String getWerkbonNummer() {
@@ -108,5 +120,29 @@ public class Afspraak implements DatabaseObject {
 
     public void setSalarisronde(Date salarisronde) {
         this.salarisronde = salarisronde;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
+    }
+
+    public boolean isNieuwLid() {
+        return isNieuwLid;
+    }
+
+    public void setNieuwLid(boolean nieuwLid) {
+        isNieuwLid = nieuwLid;
     }
 }

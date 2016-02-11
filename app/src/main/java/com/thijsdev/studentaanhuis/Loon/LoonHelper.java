@@ -41,11 +41,11 @@ public class LoonHelper {
 
     public LoonHelper(Context _context) {
         context = _context;
-        databaseHandler = new DatabaseHandler(context);
+        databaseHandler = DatabaseHandler.getInstance(context);
     }
 
     public void readLoonItems(final Callback finished, final Callback failure) {
-        final DatabaseHandler db = new DatabaseHandler(context);
+        final DatabaseHandler db = DatabaseHandler.getInstance(context);
 
         loonHTTPHandler.getMonths(new Callback() {
             @Override
@@ -71,10 +71,12 @@ public class LoonHelper {
                             Date datum = format.parse(GeneralFunctions.fixDate(e.children().get(0).text()));
                             loonMaand.setDatum(datum);
                             loonMaand.setNaam(e.children().get(0).text());
-                            if (e.children().get(1).text().equals(e.children().get(4).text()))
+                            if (!e.children().get(1).text().equals(e.children().get(4).text()))
                                 finishedMonths.add(loonMaand);
                         }else{
                             loonMaand = db.getLoonMaand(e.children().get(0).text());
+                            if (!e.children().get(1).text().equals(e.children().get(4).text()))
+                                finishedMonths.add(loonMaand);
                         }
 
                         //Set values to 0 if it's not completed yet
@@ -129,42 +131,6 @@ public class LoonHelper {
      */
     public void addItemUpdatedCallback(Callback callback) {
         itemUpdatedCallback = callback;
-    }
-
-    /**
-     * DEPRECATED
-     */
-    public void updateLoon(final Context context, final Callback callback) {
-        /*
-        final DatabaseHandler db = new DatabaseHandler(context);
-
-        loonHTTPHandler.getMonths(context, new Callback() {
-            @Override
-            public void onTaskCompleted(Object... results) {
-                Document doc = Jsoup.parse((String) results[0]);
-                Element table = doc.getElementsByClass("table").get(0);
-
-                for (Element e : table.getElementsByTag("a")) {
-                    //Get Date & add to hasmap
-                    SimpleDateFormat format = new SimpleDateFormat("M yyyy");
-                    try {
-                        LoonMaand loonMaand = new LoonMaand();
-                        Date datum = format.parse(GeneralFunctions.fixDate(e.children().get(0).text()));
-                        loonMaand.setDatum(datum);
-
-                        //Check if the date is after july 2013
-                        if(datum.after(format.parse("7 2013")))
-                            loonMaandHashMap.put(datum, loonMaand);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-
-                final int totalItems = loonMaandHashMap.size();
-                nextPage(table.getElementsByTag("a"), 0, context, totalItems, callback);
-            }
-        }, new Callback());
-        */
     }
 
     private void nextPage(final Elements elm, final int index, final Context context, final int totalItems, final Callback itemFinished, final Callback callback) {
@@ -330,7 +296,8 @@ public class LoonHelper {
 
             //Maanden die klaar zijn op Compleet zetten
             for(LoonMaand loonMaand : finishedMonths) {
-                loonMaand.setIsCompleet(true);
+                if(loonMaand.isUitbetaald())
+                    loonMaand.setIsCompleet(true);
 
                 databaseHandler.updateLoonMaand(loonMaand);
             }

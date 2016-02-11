@@ -63,7 +63,7 @@ public class PrikbordDetailFragment extends Fragment {
             }
         });
 
-        databaseHandler = new DatabaseHandler(getActivity());
+        databaseHandler = DatabaseHandler.getInstance(getActivity());
 
         Bundle bundle = this.getArguments();
         int PrikbordId = bundle.getInt("PrikbordId", -1);

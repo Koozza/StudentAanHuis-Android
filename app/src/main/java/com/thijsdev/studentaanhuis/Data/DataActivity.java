@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,7 +17,7 @@ import com.thijsdev.studentaanhuis.MainActivity;
 import com.thijsdev.studentaanhuis.R;
 
 public class DataActivity extends BasicActionBarActivity {
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     Typeface robotoLight, robotoRegular;
     private ProgressBar progressBar;
@@ -36,6 +37,12 @@ public class DataActivity extends BasicActionBarActivity {
 
         //Clear existing database
         getApplicationContext().deleteDatabase(DatabaseHandler.DATABASE_NAME);
+
+        //Clear first run settings
+        SharedPreferences sharedpreferences = getSharedPreferences("SAH_PREFS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedpreferences.edit();
+        edit.remove("KalenderLastRun");
+        edit.commit();
 
         //Launch service
         Intent intent = new Intent(this, DataService.class);

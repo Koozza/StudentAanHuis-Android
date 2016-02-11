@@ -10,9 +10,30 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:onClick="menuClick"
-        android:tag="prikbord"
-        android:id="@+id/menu_prikbord"
+        android:tag="kalender"
+        android:id="@+id/menu_calendar"
         android:background="@color/SAHlightblue">
+        <ImageView
+            android:layout_width="25sp"
+            android:layout_height="25sp"
+            android:layout_margin="16sp"
+            android:src="@drawable/icon_calendar"
+            android:layout_marginRight="31sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/calendar"
+            android:textColor="@color/black87"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:onClick="menuClick"
+        android:tag="prikbord"
+        android:id="@+id/menu_prikbord">
         <ImageView
             android:layout_width="25sp"
             android:layout_height="25sp"
@@ -44,6 +65,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/loon"
+            android:textColor="@color/black87"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:onClick="menuClick"
+        android:tag="klanten"
+        android:id="@+id/menu_customers">
+        <ImageView
+            android:layout_width="25sp"
+            android:layout_height="25sp"
+            android:layout_margin="16sp"
+            android:src="@drawable/icon_users"
+            android:layout_marginRight="31sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/customers"
             android:textColor="@color/black87"
             android:layout_gravity="center"/>
     </LinearLayout>

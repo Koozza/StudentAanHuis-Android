@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.thijsdev.studentaanhuis.Kalender.KalenderListFragment;
 import com.thijsdev.studentaanhuis.Login.LoginHelper;
 import com.thijsdev.studentaanhuis.Loon.LoonListFragment;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordListFragment;
@@ -48,7 +49,7 @@ public class MainActivity extends BasicActionBarActivity {
             if (savedInstanceState != null)
                 return;
 
-            currentFragment = new PrikbordListFragment();
+            currentFragment = new KalenderListFragment();
             currentFragment.setArguments(getIntent().getExtras());
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -114,6 +115,8 @@ public class MainActivity extends BasicActionBarActivity {
             switchFragment(new PrikbordListFragment());
         }else if(v.getTag().equals("loon")) {
             switchFragment(new LoonListFragment());
+        }else if(v.getTag().equals("kalender")) {
+            switchFragment(new KalenderListFragment());
         }
         mDrawerLayout.closeDrawers();
     }

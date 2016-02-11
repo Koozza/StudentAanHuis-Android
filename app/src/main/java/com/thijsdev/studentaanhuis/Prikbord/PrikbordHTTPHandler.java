@@ -90,7 +90,7 @@ public class PrikbordHTTPHandler {
 
                         params.put("authenticity_token", content.attr("value"));
                         params.put("pinboard_note_response[is_available]", "yes");
-                        params.put("pinboard_note_response[content]", beschikbaarheid);
+                        params.put("pinboard_note_response[activity_kalender]", beschikbaarheid);
                         params.put("pinboard_note_response[address_id]", werkgebiedId);
                         params.put("commit", "Opslaan");
 

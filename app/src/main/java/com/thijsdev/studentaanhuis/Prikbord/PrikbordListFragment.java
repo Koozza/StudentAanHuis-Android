@@ -42,7 +42,7 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
         View view = inflater.inflate(R.layout.fragment_prikbord_list, container, false);
 
         mainActivity = (MainActivity) view.getContext();
-        db = new DatabaseHandler(mainActivity);
+        db = DatabaseHandler.getInstance(mainActivity);
         prikbordHelper = new PrikbordHelper(mainActivity);
 
         toolbar = mainActivity.getToolbar();
