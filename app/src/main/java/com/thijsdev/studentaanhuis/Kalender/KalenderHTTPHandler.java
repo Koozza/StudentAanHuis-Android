@@ -19,7 +19,7 @@ public class KalenderHTTPHandler {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/calendar?start_day="+urlDateformat.format(date));
 
-            HttpClientClass client = new HttpClientClass();
+            //HttpClientClass client = new HttpClientClass();
             SAHApplication.httpClientClass.getSource(obj, success, failure);
         }catch (JSONException e) {
             e.printStackTrace();

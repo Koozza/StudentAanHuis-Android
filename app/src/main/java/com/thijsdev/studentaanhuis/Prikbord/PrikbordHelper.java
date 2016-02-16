@@ -9,7 +9,6 @@ import com.thijsdev.studentaanhuis.Database.DatabaseObject;
 import com.thijsdev.studentaanhuis.Database.PrikbordItem;
 import com.thijsdev.studentaanhuis.Database.Werkgebied;
 import com.thijsdev.studentaanhuis.R;
-import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -161,7 +160,7 @@ public class PrikbordHelper {
                         itemFinished.onTaskCompleted(isUpdate, pi);
                         isFinalPrikbordUpdate(countPrikbordItems(), db, finished);
                     }
-                }, new RetryCallbackFailure(10));
+                }, new Callback());
             }
         }
     }

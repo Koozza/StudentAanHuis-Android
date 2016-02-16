@@ -9,7 +9,6 @@ import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.Database.Klant;
 import com.thijsdev.studentaanhuis.Database.LoonMaand;
 import com.thijsdev.studentaanhuis.GeneralFunctions;
-import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -112,7 +111,7 @@ public class KalenderHelper {
                 }
 
             }
-        }, new RetryCallbackFailure(10));
+        }, new Callback());
     }
 
     private void processPage(String source, Date date, Callback itemFinished) {

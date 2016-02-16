@@ -28,7 +28,6 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class HttpClientClass {
     final private HttpClientClass self = this;
@@ -58,12 +57,12 @@ public class HttpClientClass {
         httpClientObject.setAttempt(0);
         httpClientObject.setType(HttpClientObject.GET);
 
+        httpClientObject = addCallbacks(httpClientObject);
+
         httpClientObjectStack.add(httpClientObject);
 
         if(!isWorking)
             processQueue();
-
-        //new getSource().execute(httpClientObject);
     }
 
     public void doPost(JSONObject obj, Callback success, Callback failed) {
@@ -75,12 +74,54 @@ public class HttpClientClass {
         httpClientObject.setAttempt(0);
         httpClientObject.setType(HttpClientObject.POST);
 
+        httpClientObject = addCallbacks(httpClientObject);
+
         httpClientObjectStack.add(httpClientObject);
 
         if(!isWorking)
             processQueue();
+    }
 
-        //new doPost().execute(httpClientObject);
+    private HttpClientObject addCallbacks(HttpClientObject httpClientObject) {
+        //add Success Callback
+        final Callback originalSuccessCallback = httpClientObject.getSuccess();
+        httpClientObject.setSuccess(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                httpClientObjectStack.poll();
+                originalSuccessCallback.onTaskCompleted(results);
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        processQueue();
+                    }
+                }, SAHApplication.HTTP_DELAY);
+            }
+        });
+
+        //add Failure Callback
+        final Callback originalFailureCallback = httpClientObject.getFailed();
+        httpClientObject.setFailed(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                if(httpClientObjectStack.peek().getAttempt() <= SAHApplication.HTTP_RETRIES) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            retryLastCall();
+                        }
+                    }, SAHApplication.HTTP_RATE_LIMIT_TIMEOUT);
+                }else{
+                    httpClientObjectStack.poll();
+                    originalFailureCallback.onTaskCompleted(results);
+                    processQueue();
+                }
+            }
+        });
+
+
+        return httpClientObject;
     }
 
     private void processQueue() {
@@ -89,23 +130,6 @@ public class HttpClientClass {
         HttpClientObject httpClientObject = httpClientObjectStack.peek();
 
         if(httpClientObject != null) {
-            final Callback originalSuccessCallback = httpClientObject.getSuccess();
-            httpClientObject.setSuccess(new Callback() {
-                @Override
-                public void onTaskCompleted(Object... results) {
-                    originalSuccessCallback.onTaskCompleted(results);
-                    httpClientObjectStack.poll();
-
-                    //Wait 500 miliseconds to execute next request
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            processQueue();
-                        }
-                    }, 500);
-                }
-            });
-
             if(httpClientObject.getType() == HttpClientObject.GET) {
                 new getSource().execute(httpClientObject);
             }
@@ -196,9 +220,9 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                httpClientObject.getFailed().onTaskCompleted(result, self);
+                httpClientObjectStack.peek().getFailed().onTaskCompleted(result, self);
             else
-                httpClientObject.getSuccess().onTaskCompleted(result);
+                httpClientObjectStack.peek().getSuccess().onTaskCompleted(result);
         }
     }
 
@@ -249,9 +273,9 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                httpClientObject.getFailed().onTaskCompleted(result, self);
+                httpClientObjectStack.peek().getFailed().onTaskCompleted(result, self);
             else
-                httpClientObject.getSuccess().onTaskCompleted(result);
+                httpClientObjectStack.peek().getSuccess().onTaskCompleted(result);
         }
     }
 

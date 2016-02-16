@@ -3,7 +3,9 @@ package com.thijsdev.studentaanhuis;
 import java.net.CookieManager;
 
 public class SAHApplication extends android.support.multidex.MultiDexApplication {
-    final public static int HTTP_RETRIES = 2;
+    final public static int HTTP_RETRIES = 3;
+    final public static int HTTP_DELAY = 200;
+    final public static int HTTP_RATE_LIMIT_TIMEOUT = 3000;
 
     public static HttpClientClass httpClientClass = new HttpClientClass();
 
