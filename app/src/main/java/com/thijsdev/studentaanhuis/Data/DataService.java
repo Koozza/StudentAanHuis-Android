@@ -14,7 +14,6 @@ import com.thijsdev.studentaanhuis.Kalender.KalenderHelper;
 import com.thijsdev.studentaanhuis.Loon.LoonHelper;
 import com.thijsdev.studentaanhuis.Prikbord.PrikbordHelper;
 import com.thijsdev.studentaanhuis.R;
-import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 import com.thijsdev.studentaanhuis.Werkgebied.WerkgebiedHelper;
 
 public class DataService extends IntentService {
@@ -175,7 +174,7 @@ public class DataService extends IntentService {
                     }
                 });
             }
-        }, new RetryCallbackFailure(10));
+        }, new Callback());
     }
 
     private void processPrikbord(final Callback callback) {
@@ -225,7 +224,7 @@ public class DataService extends IntentService {
                     }
                 });
             }
-        }, new RetryCallbackFailure(10));
+        }, new Callback());
     }
 
     private void processLoon(final Callback callback) {
@@ -267,7 +266,7 @@ public class DataService extends IntentService {
                     }
                 });
             }
-        }, new RetryCallbackFailure(10));
+        }, new Callback());
     }
 
     private void statusUpdate(String key) {

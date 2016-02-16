@@ -74,7 +74,7 @@ public class AlarmManagerBroadcastReceiver extends BroadcastReceiver {
                         public void onTaskCompleted(Object... results) {
                             prikbordHelper.processPrikbordItems(new Callback(), new Callback());
                         }
-                    }, new RetryCallbackFailure(10));
+                    }, new Callback());
                 }
 
                 wl.release();

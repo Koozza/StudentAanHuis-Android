@@ -31,8 +31,8 @@ public class LoginHTTPHandler {
                 JSONObject obj = new JSONObject();
                 obj.put("url", "https://nl.sah3.net/students/time_offs");
 
-                HttpClientClass client = new HttpClientClass();
-                client.getSource(obj, new Callback() {
+                //HttpClientClass client = new HttpClientClass();
+                SAHApplication.httpClientClass.getSource(obj, new Callback() {
                     @Override
                     public void onTaskCompleted(Object... results) {
                         Document doc = Jsoup.parse((String) results[0]);
@@ -81,8 +81,8 @@ public class LoginHTTPHandler {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/login");
 
-            HttpClientClass client = new HttpClientClass();
-            client.getSource(obj, new Callback() {
+            //HttpClientClass client = new HttpClientClass();
+            SAHApplication.httpClientClass.getSource(obj, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {
                     Document doc = Jsoup.parse((String) results[0]);
@@ -101,8 +101,8 @@ public class LoginHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/sessions");
                         obj.put("params", params);
 
-                        HttpClientClass client = new HttpClientClass();
-                        client.doPost(obj, new Callback() {
+                        //HttpClientClass client = new HttpClientClass();
+                        SAHApplication.httpClientClass.doPost(obj, new Callback() {
                             @Override
                             public void onTaskCompleted(Object... results) {
                                 Document doc = Jsoup.parse((String) results[0]);

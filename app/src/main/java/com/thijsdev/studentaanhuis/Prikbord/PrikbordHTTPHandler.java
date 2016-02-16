@@ -5,6 +5,7 @@ import android.content.Context;
 import com.thijsdev.studentaanhuis.Callback;
 import com.thijsdev.studentaanhuis.DefaultCallbackFailure;
 import com.thijsdev.studentaanhuis.HttpClientClass;
+import com.thijsdev.studentaanhuis.SAHApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,8 +19,8 @@ public class PrikbordHTTPHandler {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes");
 
-            HttpClientClass client = new HttpClientClass();
-            client.getSource(obj, success, new DefaultCallbackFailure(context, failure));
+            //HttpClientClass client = new HttpClientClass();
+            SAHApplication.httpClientClass.getSource(obj, success, new DefaultCallbackFailure(context, failure));
         }catch (JSONException e) {
             e.printStackTrace();
         }
@@ -30,8 +31,8 @@ public class PrikbordHTTPHandler {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/" + id + "/respond");
 
-            HttpClientClass client = new HttpClientClass();
-            client.getSource(obj, success ,new DefaultCallbackFailure(context, failure));
+            //HttpClientClass client = new HttpClientClass();
+            SAHApplication.httpClientClass.getSource(obj, success ,new DefaultCallbackFailure(context, failure));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -42,8 +43,8 @@ public class PrikbordHTTPHandler {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
 
-            HttpClientClass client = new HttpClientClass();
-            client.getSource(obj, new Callback() {
+            //HttpClientClass client = new HttpClientClass();
+            SAHApplication.httpClientClass.getSource(obj, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {
                     Document doc = Jsoup.parse((String) results[0]);
@@ -60,8 +61,8 @@ public class PrikbordHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/create_or_update");
                         obj.put("params", params);
 
-                        HttpClientClass client = new HttpClientClass();
-                        client.doPost(obj, success, new DefaultCallbackFailure(context, failure));
+                        //HttpClientClass client = new HttpClientClass();
+                        SAHApplication.httpClientClass.doPost(obj, success, new DefaultCallbackFailure(context, failure));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -77,8 +78,8 @@ public class PrikbordHTTPHandler {
             JSONObject obj = new JSONObject();
             obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
 
-            HttpClientClass client = new HttpClientClass();
-            client.getSource(obj, new Callback() {
+            //HttpClientClass client = new HttpClientClass();
+            SAHApplication.httpClientClass.getSource(obj, new Callback() {
                 @Override
                 public void onTaskCompleted(Object... results) {
                     Document doc = Jsoup.parse((String) results[0]);
@@ -97,8 +98,8 @@ public class PrikbordHTTPHandler {
                         obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/create_or_update");
                         obj.put("params", params);
 
-                        HttpClientClass client = new HttpClientClass();
-                        client.doPost(obj, success, new DefaultCallbackFailure(context, failure));
+                        //HttpClientClass client = new HttpClientClass();
+                        SAHApplication.httpClientClass.doPost(obj, success, new DefaultCallbackFailure(context, failure));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

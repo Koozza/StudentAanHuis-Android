@@ -7,7 +7,6 @@ import com.thijsdev.studentaanhuis.Database.DatabaseHandler;
 import com.thijsdev.studentaanhuis.Database.LoonMaand;
 import com.thijsdev.studentaanhuis.GeneralFunctions;
 import com.thijsdev.studentaanhuis.HttpClientClass;
-import com.thijsdev.studentaanhuis.RetryCallbackFailure;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -159,7 +158,7 @@ public class LoonHelper {
                                 nextPage(elm, index + 1, context, totalItems, itemFinished, callback);
                             }
                         }
-                    }, new RetryCallbackFailure(10));
+                    }, new Callback());
 
                 }catch(Exception e) {
                     e.printStackTrace();

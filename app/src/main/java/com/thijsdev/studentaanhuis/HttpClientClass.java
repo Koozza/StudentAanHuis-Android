@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 
 import com.google.api.client.http.HttpStatusCodes;
@@ -25,15 +26,21 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class HttpClientClass {
-    private HttpClientObject httpClientObject = new HttpClientObject();
     final private HttpClientClass self = this;
+    private Queue<HttpClientObject> httpClientObjectStack = new LinkedList<>();
+    private boolean isWorking = false;
+
 
     public HttpClientClass() {
     }
 
     public void retryLastCall() {
+        HttpClientObject httpClientObject = httpClientObjectStack.peek();
+
         httpClientObject.addAttempt();
         if(httpClientObject.getType() == HttpClientObject.GET) {
             new getSource().execute(httpClientObject);
@@ -43,23 +50,97 @@ public class HttpClientClass {
     }
 
     public void getSource(JSONObject obj, Callback success, Callback failed) {
+        HttpClientObject httpClientObject = new HttpClientObject();
         httpClientObject.setArguments(obj);
         httpClientObject.setSuccess(success);
         httpClientObject.setFailed(failed);
         httpClientObject.setAttempt(0);
         httpClientObject.setType(HttpClientObject.GET);
 
-        new getSource().execute(httpClientObject);
+        httpClientObject = addCallbacks(httpClientObject);
+
+        httpClientObjectStack.add(httpClientObject);
+
+        if(!isWorking)
+            processQueue();
     }
 
     public void doPost(JSONObject obj, Callback success, Callback failed) {
+        HttpClientObject httpClientObject = new HttpClientObject();
+
         httpClientObject.setArguments(obj);
         httpClientObject.setSuccess(success);
         httpClientObject.setFailed(failed);
         httpClientObject.setAttempt(0);
         httpClientObject.setType(HttpClientObject.POST);
 
-        new doPost().execute(httpClientObject);
+        httpClientObject = addCallbacks(httpClientObject);
+
+        httpClientObjectStack.add(httpClientObject);
+
+        if(!isWorking)
+            processQueue();
+    }
+
+    private HttpClientObject addCallbacks(HttpClientObject httpClientObject) {
+        //add Success Callback
+        final Callback originalSuccessCallback = httpClientObject.getSuccess();
+        httpClientObject.setSuccess(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                httpClientObjectStack.poll();
+                originalSuccessCallback.onTaskCompleted(results);
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        processQueue();
+                    }
+                }, SAHApplication.HTTP_DELAY);
+            }
+        });
+
+        //add Failure Callback
+        final Callback originalFailureCallback = httpClientObject.getFailed();
+        httpClientObject.setFailed(new Callback() {
+            @Override
+            public void onTaskCompleted(Object... results) {
+                if(httpClientObjectStack.peek().getAttempt() <= SAHApplication.HTTP_RETRIES) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            retryLastCall();
+                        }
+                    }, SAHApplication.HTTP_RATE_LIMIT_TIMEOUT);
+                }else{
+                    httpClientObjectStack.poll();
+                    originalFailureCallback.onTaskCompleted(results);
+                    processQueue();
+                }
+            }
+        });
+
+
+        return httpClientObject;
+    }
+
+    private void processQueue() {
+        isWorking = true;
+
+        HttpClientObject httpClientObject = httpClientObjectStack.peek();
+
+        if(httpClientObject != null) {
+            if(httpClientObject.getType() == HttpClientObject.GET) {
+                new getSource().execute(httpClientObject);
+            }
+
+
+            if(httpClientObject.getType() == HttpClientObject.POST) {
+                new doPost().execute(httpClientObject);
+            }
+        }else{
+            isWorking = false;
+        }
     }
 
     public void giveFeedback(Context context, final String title, final String data) {
@@ -92,7 +173,7 @@ public class HttpClientClass {
     }
 
     public HttpClientObject getHttpClientObject() {
-        return httpClientObject;
+        return httpClientObjectStack.peek();
     }
 
     private class getSource extends AsyncTask<HttpClientObject, Void, Void> {
@@ -139,9 +220,9 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                httpClientObject.getFailed().onTaskCompleted(result, self);
+                httpClientObjectStack.peek().getFailed().onTaskCompleted(result, self);
             else
-                httpClientObject.getSuccess().onTaskCompleted(result);
+                httpClientObjectStack.peek().getSuccess().onTaskCompleted(result);
         }
     }
 
@@ -192,9 +273,9 @@ public class HttpClientClass {
         @Override
         protected void onPostExecute(Void r) {
             if(result == null)
-                httpClientObject.getFailed().onTaskCompleted(result, self);
+                httpClientObjectStack.peek().getFailed().onTaskCompleted(result, self);
             else
-                httpClientObject.getSuccess().onTaskCompleted(result);
+                httpClientObjectStack.peek().getSuccess().onTaskCompleted(result);
         }
     }
 
