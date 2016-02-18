@@ -4,6 +4,15 @@ android {
     compileSdkVersion 23
     buildToolsVersion "21.1.2"
 
+    sourceSets {
+        main {
+            java {
+                exclude '**/ApiAsyncTask.java'
+                exclude '**/Calender.java'
+            }
+        }
+    }
+
     dexOptions {
         javaMaxHeapSize "4g"
     }
@@ -14,7 +23,7 @@ android {
         targetSdkVersion 23
         versionCode 16
         versionName "1.2.0 Alpha 2_1"
-        multiDexEnabled true
+        //multiDexEnabled true
     }
     buildTypes {
         release {
@@ -26,13 +35,13 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:multidex:1.0.0'
+    //compile 'com.android.support:multidex:1.0.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.+'
-    compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.google.api-client:google-api-client:1.20.0'
-    compile 'com.google.api-client:google-api-client-android:1.20.0'
-    compile 'com.google.api-client:google-api-client-gson:1.20.0'
-    compile 'com.google.apis:google-api-services-calendar:v3-rev125-1.20.0'
+    //compile 'com.google.android.gms:play-services:6.5.87'
+    //compile 'com.google.api-client:google-api-client:1.20.0'
+    //compile 'com.google.api-client:google-api-client-android:1.20.0'
+    //compile 'com.google.api-client:google-api-client-gson:1.20.0'
+    //compile 'com.google.apis:google-api-services-calendar:v3-rev125-1.20.0'
     compile 'org.jsoup:jsoup:1.8.3'
 }
