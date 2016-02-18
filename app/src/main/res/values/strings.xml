@@ -22,7 +22,9 @@
     <string name="cancel">Annuleren</string>
     <string name="prikbord">Prikbord</string>
     <string name="settings">Instellingen</string>
+    <string name="donate">Donatie</string>
     <string name="refresh">Refresh</string>
+    <string name="current_date">Vandaag</string>
     <string name="no_prikbord_items_found">Geen prikbord items gevonden</string>
     <string name="prikbord_item">Prikbord Item</string>
     <string name="afspraak_details">Afspraak Details</string>

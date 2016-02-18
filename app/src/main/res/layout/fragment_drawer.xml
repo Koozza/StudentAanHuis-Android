@@ -26,7 +26,7 @@
             android:textColor="@color/black87"
             android:layout_gravity="center"/>
     </LinearLayout>
-
+<!--
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             android:textColor="@color/black87"
             android:layout_gravity="center"/>
     </LinearLayout>
-
+-->
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -107,6 +107,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/settings"
+            android:textColor="@color/black87"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:onClick="menuClick"
+        android:id="@+id/menu_donate"
+        android:tag="settings">
+        <ImageView
+            android:layout_width="25sp"
+            android:layout_height="25sp"
+            android:layout_margin="16sp"
+            android:src="@drawable/icon_donate"
+            android:layout_marginRight="31sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/donate"
             android:textColor="@color/black87"
             android:layout_gravity="center"/>
     </LinearLayout>

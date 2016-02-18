@@ -195,7 +195,8 @@ public class PrikbordListFragment extends Fragment implements FragmentInterface 
 
     @Override
     public int getDrawerId() {
-        return R.id.menu_prikbord;
+        //return R.id.menu_prikbord;
+        return 0;
     }
 
     @Override
