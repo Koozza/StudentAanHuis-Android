@@ -66,18 +66,7 @@ public class PrikbordItem {
     }
 
     public void setDeadlineFromWebsite(String deadline) {
-        deadline = fixDate(deadline);
-
-        SimpleDateFormat importDateFormat = new SimpleDateFormat("dd MM yyyy", Locale.getDefault());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        try {
-            Date date = importDateFormat.parse(deadline);
-            this.deadline = dateFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        Log.v("DATE:", this.deadline);
+        Log.v("DATE:", deadline);
     }
 
     public String getBeschrijving() {

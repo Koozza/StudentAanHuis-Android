@@ -28,7 +28,7 @@ public class WerkgebiedHelper {
             public void onTaskCompleted(Object... results) {
 
                 Document doc = Jsoup.parse((String) results[0]);
-                Elements areas = doc.getElementsByClass("work-area-item");
+                Elements areas = doc.getElementsByTag("tr");
                 for (Element area : areas) {
 
                     int id = Integer.parseInt(area.getElementsByTag("input").get(0).attr("work_area_id"));

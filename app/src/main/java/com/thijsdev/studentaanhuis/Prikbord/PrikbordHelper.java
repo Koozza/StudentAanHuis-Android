@@ -74,14 +74,7 @@ public class PrikbordHelper {
                                     String omschrijving = doc.getElementsByTag("p").first().text();
                                     pi.setBeschrijving(omschrijving);
 
-                                    String checked_yes = doc.getElementById("pinboard_note_response_is_available_yes").attr("checked");
-                                    String checked_no = doc.getElementById("pinboard_note_response_is_available_no").attr("checked");
-                                    if (!heeftGereageerd)
-                                        pi.setBeschikbaar(0);
-                                    else if (checked_no.equals("checked"))
-                                        pi.setBeschikbaar(1);
-                                    else if (checked_yes.equals("checked"))
-                                        pi.setBeschikbaar(2);
+                                    pi.setBeschikbaar(0);
 
                                     String loc = doc.getElementById("appt_map_canvas").attr("data-positions").substring(1, doc.getElementById("appt_map_canvas").attr("data-positions").length() - 1);
                                     String[] coords = loc.split(",");
