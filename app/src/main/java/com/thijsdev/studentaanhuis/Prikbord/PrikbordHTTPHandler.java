@@ -28,7 +28,7 @@ public class PrikbordHTTPHandler {
     public void getPrikbordItem(final Context context, final int id, final Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
-            obj.put("url", "https://nl.sah3.net/students/pinboard_notes/" + id + "/respond");
+            obj.put("url", "https://nl.sah3.net/students/pinboard_notes/" + id);
 
             HttpClientClass client = new HttpClientClass();
             client.getSource(obj, success ,new DefaultCallbackFailure(context, failure));
@@ -40,7 +40,7 @@ public class PrikbordHTTPHandler {
     public void declineItem(final int id, final Context context, final Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
-            obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
+            obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id);
 
             HttpClientClass client = new HttpClientClass();
             client.getSource(obj, new Callback() {
@@ -75,7 +75,7 @@ public class PrikbordHTTPHandler {
     public void acceptItem(final int id, final String beschikbaarheid, final int werkgebiedId, final Context context, final Callback success, final Callback failure) {
         try {
             JSONObject obj = new JSONObject();
-            obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id+"/respond");
+            obj.put("url", "https://nl.sah3.net/students/pinboard_notes/"+id);
 
             HttpClientClass client = new HttpClientClass();
             client.getSource(obj, new Callback() {
